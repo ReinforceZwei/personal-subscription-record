@@ -9,7 +9,7 @@ import { BsCoin } from "react-icons/bs";
 
 export default function HeaderLayout() {
     return (
-        <Navbar className='bg-body-tertiary' expand="md" collapseOnSelect>
+        <Navbar className='bg-body-tertiary' expand="md" collapseOnSelect sticky="top">
             <Container>
                 <Navbar.Brand>
                     <Stack direction='horizontal' gap={1}><BsCoin className='fs-1' /> Subscription Record</Stack>

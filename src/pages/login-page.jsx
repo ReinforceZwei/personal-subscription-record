@@ -30,7 +30,13 @@ export default function LoginPage() {
     }
 
     const handleGithub = (e) => {
-        pb.collection('users').authWithOAuth2({ provider: 'github' })
+        let w = window.open()
+        pb.collection('users').authWithOAuth2({
+            provider: 'github',
+            urlCallback: (url) => {
+                w.location.href = url
+            },
+        })
         .then(authData => {
             navigate("/")
         })

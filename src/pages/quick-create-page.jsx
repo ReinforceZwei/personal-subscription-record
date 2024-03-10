@@ -16,7 +16,7 @@ export default function QuickCreatePage() {
 
     const [showModal, setShowModal] = useState(false)
 
-    const { register, handleSubmit, reset } = useForm()
+    const { register, handleSubmit, reset, setFocus } = useForm()
 
     useEffect(() => {
         (async () => {
@@ -42,6 +42,10 @@ export default function QuickCreatePage() {
             setSuggestedName(names)
         })()
     }, [selectedType])
+
+    useEffect(() => {
+        setFocus('price')
+    }, [selectedType, setFocus])
 
     const handleSelectType = (type) => {
         setShowModal(true)
@@ -104,7 +108,7 @@ export default function QuickCreatePage() {
                                 <Form.Label>Price</Form.Label>
                                 <InputGroup>
                                     <InputGroup.Text>$</InputGroup.Text>
-                                    <Form.Control type="number" {...register("price", { required: true })} />
+                                    <Form.Control type="number" inputmode="numeric" {...register("price", { required: true })} />
                                 </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} className="mb-3">

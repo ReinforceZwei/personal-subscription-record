@@ -58,7 +58,7 @@ export default function SpentRecordPage() {
                                         </Stack>
                                         <small className='text-body-secondary'>{DateTime.fromSQL(record.created).toLocaleString(DateTime.TIME_SIMPLE)}</small>
                                     </Stack>
-                                    {record.payment && <BsColorBadge className="fs-6" bg={record.expand.payment.color}>{record.expand.payment.name}</BsColorBadge>}
+                                    {record.payment && <BsColorBadge bg={record.expand.payment.color}>{record.expand.payment.name}</BsColorBadge>}
                                     <div className='ms-auto'>${record.price}</div>
                                 </Stack>
                                 
