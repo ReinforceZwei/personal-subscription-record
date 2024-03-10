@@ -23,6 +23,7 @@ import ConfigPage from './pages/config-page.jsx'
 import ConfigTypePage from './pages/config-pages/config-type-page.jsx'
 import ConfigPaymentPage from './pages/config-pages/config-payment-page.jsx'
 
+export const PocketBaseContext = React.createContext({})
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -47,8 +48,6 @@ const router = createBrowserRouter(
     )
   ])
 );
-
-export const PocketBaseContext = React.createContext({})
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

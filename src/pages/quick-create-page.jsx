@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from "react"
 import { PocketBaseContext } from "../main"
-import { PAYMENT_METHOD_COL, SPENT_TYPE_COL } from "../services/pocketbase"
+import { PAYMENT_METHOD_COL, SPENT_RECORD_COL, SPENT_TYPE_COL, SPENT_RECORD_NAME_COL } from "../services/pocketbase"
 import { Button, Card, Modal, Form, InputGroup, Row, Col, Badge } from "react-bootstrap"
 import { useForm } from "react-hook-form"
 import BsColorButton from "../components/bs-color-button"
+import BsColorBadge from "../components/bs-color-badge"
 
 export default function QuickCreatePage() {
     const pb = useContext(PocketBaseContext)
@@ -11,10 +12,11 @@ export default function QuickCreatePage() {
     const [types, setTypes] = useState([])
     const [payments, setPayments] = useState([])
     const [selectedType, setSelectedType] = useState({})
+    const [suggestedName, setSuggestedName] = useState([])
 
     const [showModal, setShowModal] = useState(false)
 
-    const { register, handleSubmit } = useForm()
+    const { register, handleSubmit, reset } = useForm()
 
     useEffect(() => {
         (async () => {
@@ -31,6 +33,16 @@ export default function QuickCreatePage() {
         
     }, [])
 
+    useEffect(() => {
+        (async () => {
+            let names = await pb.collection(SPENT_RECORD_NAME_COL).getFullList({
+                sort: '+name',
+                filter: `type = '${selectedType.id}'`
+            })
+            setSuggestedName(names)
+        })()
+    }, [selectedType])
+
     const handleSelectType = (type) => {
         setShowModal(true)
         setSelectedType(type)
@@ -39,6 +51,20 @@ export default function QuickCreatePage() {
 
     const onCreate = (data) => {
         console.log(data)
+        let final = {
+            type: selectedType.id,
+            owned_by: pb.authStore.model.id,
+            ...data,
+        }
+        pb.collection(SPENT_RECORD_COL).create(final).then(() => {
+            alert('created')
+            setShowModal(false)
+            reset()
+        })
+        .catch((err) => {
+            console.error(err)
+            alert(err)
+        })
     }
 
     return (
@@ -68,7 +94,7 @@ export default function QuickCreatePage() {
 
             <Modal show={showModal}  onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title><Badge bg="secondary" className="fs-5">{selectedType.name}</Badge> Create Record</Modal.Title>
+                    <Modal.Title><BsColorBadge className="fs-5" bg={selectedType.color}>{selectedType.name}</BsColorBadge> Create Record</Modal.Title>
                 </Modal.Header>
 
                 <Form onSubmit={handleSubmit(onCreate)}>
@@ -91,9 +117,18 @@ export default function QuickCreatePage() {
                             </Form.Group>
                         </Row>
                         
-                        <Form.Group className="mb-3">
+                        {/* <Form.Group className="mb-3">
                             <Form.Label>Name</Form.Label>
                             <Form.Control type="text" {...register("name", { required: true })} />
+                        </Form.Group> */}
+                        <Form.Group className="mb-3">
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control type="search" list="data" {...register("name", { required: true })} autoComplete="off" />
+                            <datalist id='data'>
+                                {suggestedName.map(({ name }) => (
+                                    <option key={name} value={name}></option>
+                                ))}
+                            </datalist>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Description</Form.Label>

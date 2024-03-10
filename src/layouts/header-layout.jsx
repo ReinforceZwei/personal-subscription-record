@@ -3,12 +3,18 @@ import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import { NavLink } from "react-router-dom"
+import { BsCollectionFill } from "react-icons/bs";
+import { Stack } from 'react-bootstrap'
+import { BsCoin } from "react-icons/bs";
 
 export default function HeaderLayout() {
     return (
         <Navbar className='bg-body-tertiary' expand="md" collapseOnSelect>
             <Container>
-                <Navbar.Brand>Subscription Record</Navbar.Brand>
+                <Navbar.Brand>
+                    <Stack direction='horizontal' gap={1}><BsCoin className='fs-1' /> Subscription Record</Stack>
+                    
+                </Navbar.Brand>
                 <Navbar.Toggle />
 
                 <Navbar.Collapse>

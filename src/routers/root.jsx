@@ -11,6 +11,7 @@ export default function Root() {
     const pb = useContext(PocketBaseContext)
     const navigate = useNavigate()
     
+    console.log(pb)
     if (!pb.authStore.isValid) {
         navigate("/login")
     }
