@@ -1,16 +1,19 @@
 import { useContext, useEffect, useState } from "react"
 import { PocketBaseContext } from "../main"
 import { USER_COL } from "../services/pocketbase"
-import { Button, Container, ListGroup, Stack } from "react-bootstrap"
-import Form from 'react-bootstrap/Form'
 import { Navigate, useNavigate } from "react-router-dom"
+import { Alert, Box, Button, ButtonGroup, Container, CssBaseline, Divider, InputAdornment, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Paper, TextField, Typography } from "@mui/material"
+import { Controller, useForm } from "react-hook-form"
+import Grid from "@mui/material/Unstable_Grid2"
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 export default function LoginPage() {
     const pb = useContext(PocketBaseContext)
     const navigate = useNavigate()
     const [authMethods, setAuthMethods] = useState([])
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const [loginError, setLoginError] = useState('')
+    
+    const { handleSubmit, reset, setValue, setFocus, control } = useForm()
 
     useEffect(() => {
         let getAuthMethods = async () => {
@@ -20,12 +23,14 @@ export default function LoginPage() {
         getAuthMethods()
     }, [])
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log(username, password)
+    const handleLogin = ({ username, password }) => {
         pb.collection('users').authWithPassword(username, password)
         .then(authData => {
             navigate("/")
+        })
+        .catch(err => {
+            console.log(err)
+            setLoginError(err?.message || 'Unknown error')
         })
     }
 
@@ -45,7 +50,70 @@ export default function LoginPage() {
     return (
         <div>
             {pb.authStore.isValid && <Navigate to="/" />}
-            <Container>
+            <CssBaseline />
+            <Container maxWidth='sm'>
+                <Paper sx={{ margin: 2, padding: 2 }}>
+                    <Typography variant="h4">SSRS</Typography>
+                    <form onSubmit={handleSubmit(handleLogin)}>
+                        <Grid container spacing={2}>
+                            <Grid xs={12}>
+                                <Controller
+                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                        <TextField
+                                            onBlur={onBlur}
+                                            onChange={onChange}
+                                            inputRef={ref}
+                                            value={value}
+                                            name={name}
+                                            disabled={disabled}
+                                            label='Username'
+                                            fullWidth
+                                        />
+                                    )}
+                                    name='username'
+                                    rules={{ required: true }}
+                                    control={control}
+                                />
+                            </Grid>
+                            <Grid xs={12}>
+                                <Controller
+                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                        <TextField
+                                            onBlur={onBlur}
+                                            onChange={onChange}
+                                            inputRef={ref}
+                                            value={value}
+                                            name={name}
+                                            disabled={disabled}
+                                            label='Password'
+                                            type='password'
+                                            fullWidth
+                                        />
+                                    )}
+                                    name='password'
+                                    rules={{ required: true }}
+                                    control={control}
+                                />
+                            </Grid>
+                            <Grid xs={12} sx={{textAlign: 'center'}}>
+                                <Button type='submit' variant="outlined">Login</Button>
+                            </Grid>
+                            {loginError && (
+                                <Grid xs={12}>
+                                    <Alert severity="error">Login failed: {loginError}</Alert>
+                                </Grid>
+                            )}
+                        </Grid>
+                    </form>
+                </Paper>
+                <Divider>Or</Divider>
+                <Box textAlign='center'>
+                    <ButtonGroup orientation="vertical" variant="outlined" size="large">
+                        <Button variant="outlined" startIcon={<GitHubIcon />} onClick={handleGithub}>Signin with Github</Button>
+                    </ButtonGroup>
+                </Box>
+            </Container>
+            {/* <Container>
                 <Stack gap={2} className="col-md-5 mx-auto">
                     <h3>Login</h3>
                     <Form onSubmit={handleSubmit}>
@@ -69,7 +137,7 @@ export default function LoginPage() {
                         ))}
                     </div>
                 </Stack>
-            </Container>
+            </Container> */}
         </div>
     )
 }

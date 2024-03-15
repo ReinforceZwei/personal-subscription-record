@@ -1,18 +1,26 @@
-import { Nav } from "react-bootstrap"
-import { Outlet, NavLink } from "react-router-dom"
+import { Autocomplete, Tab, Tabs, TextField } from "@mui/material"
+import { useEffect, useState } from "react"
+import { Outlet, NavLink, useLocation } from "react-router-dom"
 
 export default function ConfigPage() {
+    const { pathname } = useLocation()
+    const [value, setValue] = useState('')
+
+    useEffect(() => {
+        if (pathname.includes('/type')) {
+            setValue('type')
+        } else if (pathname.includes('/payment')) {
+            setValue('payment')
+        }
+    }, [value])
+
     return (
         <div>
             <h1>This is config page</h1>
-            <Nav variant="tabs" defaultActiveKey="type">
-                <Nav.Item>
-                    <Nav.Link href="type" as={NavLink} to="type">Type</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                    <Nav.Link href="payment" as={NavLink} to="payment">Payment</Nav.Link>
-                </Nav.Item>
-            </Nav>
+            <Tabs value={value} onChange={(e, v) => setValue(v)} role='navigation'>
+                <Tab LinkComponent={NavLink} to='type' value='type' label='Type' />
+                <Tab LinkComponent={NavLink} to='payment' value='payment' label='Payment' />
+            </Tabs>
             <div>
                 <Outlet />
             </div>

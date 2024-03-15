@@ -8,13 +8,21 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom'
+
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
+
 import './index.css'
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 import Root from './routers/root.jsx'
 import ErrorPage from "./error-page"
 import LoginPage from './pages/login-page.jsx'
 import SpentRecordPage from './pages/spent-record-page.jsx'
 import pb from './services/pocketbase.js'
-import 'bootstrap/dist/css/bootstrap.min.css'
 
 import rootLoader from './routers/loaders/root-loader.js'
 import logoutAction from './routers/actions/logout-action.js'
@@ -52,9 +60,11 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <PocketBaseContext.Provider value={pb}>
-      <div>
-       <RouterProvider router={router} />
-      </div>
+      <LocalizationProvider dateAdapter={AdapterLuxon}>
+        <div>
+        <RouterProvider router={router} />
+        </div>
+      </LocalizationProvider>
     </PocketBaseContext.Provider>
   </React.StrictMode>,
 )

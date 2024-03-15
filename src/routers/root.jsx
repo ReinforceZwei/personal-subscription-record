@@ -1,11 +1,11 @@
 
 import { useEffect, useState, useContext } from 'react'
-import { Outlet, useNavigate } from "react-router-dom"
-import Container from 'react-bootstrap/Container'
+import { Navigate, Outlet, useNavigate } from "react-router-dom"
 import { PocketBaseContext } from '../main'
 import HeaderLayout from '../layouts/header-layout'
-import SideNavLayout from '../layouts/side-nav-layout'
-import { Stack } from 'react-bootstrap'
+import Stack from '@mui/material/Stack'
+import { Container, CssBaseline } from '@mui/material'
+import FooterLayout from '../layouts/footer-layout'
 
 export default function Root() {
     const pb = useContext(PocketBaseContext)
@@ -13,17 +13,16 @@ export default function Root() {
     
     console.log(pb)
     if (!pb.authStore.isValid) {
-        navigate("/login")
+        return (<Navigate to='/login' />)
     }
     return (
         <div>
+            <CssBaseline />
             <HeaderLayout />
-            <Stack direction='horizontal'>
-                <Container>
-                    <Outlet />
-                </Container>
-            </Stack>
-            
+            <Container>
+                <Outlet />
+            </Container>
+            <FooterLayout />
         </div>
     )
 }
