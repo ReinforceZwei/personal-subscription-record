@@ -15,6 +15,7 @@ import {
 } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import RecordTypeCard from "../components/record-type-card"
+import RecordTypeChip from "../components/record-type-chip"
 
 
 export default function QuickCreatePage() {
@@ -32,6 +33,7 @@ export default function QuickCreatePage() {
         defaultValues: {
             name: '',
             payment: '',
+            price: '',
         }
     })
 
@@ -63,7 +65,9 @@ export default function QuickCreatePage() {
 
     useEffect(() => {
         reset()
-        setFocus('price')
+        setTimeout(() => {
+            setFocus('price')
+        }, 1)
 
     }, [selectedType])
 
@@ -122,7 +126,7 @@ export default function QuickCreatePage() {
                 <DialogTitle>
                     <Grid container spacing={1}>
                         <Grid xs='auto'>
-                            <Chip label={selectedType.name} sx={{backgroundColor: selectedType.color}} />
+                            <RecordTypeChip label={selectedType.name} bg={selectedType.color} />
                         </Grid>
                         <Grid>
                             Create record
@@ -164,17 +168,6 @@ export default function QuickCreatePage() {
                                     rules={{ required: true }}
                                     control={control}
                                 />
-                                {/* <TextFieldElement
-                                    name='price'
-                                    required
-                                    label="Price"
-                                    fullWidth
-                                    InputProps={{
-                                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                                    }}
-                                    inputMode="numeric"
-                                    inputRef={priceRef}
-                                    autoComplete="off" /> */}
                             </Grid>
                             <Grid xs={6}>
                                 <FormControl fullWidth>
@@ -201,15 +194,6 @@ export default function QuickCreatePage() {
                                         control={control}
                                     />
                                 </FormControl>
-                                {/* <FormControl fullWidth={true}>
-                                    <SelectElement
-                                        label="Payment" 
-                                        name='payment' 
-                                        required
-                                        options={
-                                            payments.map((payment) => {return {id: payment.id, label: payment.name}})
-                                        } />
-                                </FormControl> */}
                             </Grid>
                             <Grid xs={12}>
                                 <Controller
@@ -234,17 +218,6 @@ export default function QuickCreatePage() {
                                     rules={{ required: true }}
                                     control={control}
                                 />
-                                {/* <AutocompleteElement
-                                    name='name'
-                                    required
-                                    label="Name"
-                                    fullWidth
-                                    autocompleteProps={{
-                                        freeSolo: true,
-                                        renderInput:(params) => <TextField {...params} label="freeSolo" />
-                                    }}
-                                    options={suggestedName.map((name) => {return {id: name.id, label: name.name}})}
-                                    /> */}
                             </Grid>
                             <Grid xs={12}>
                                 {/* <TextareaAutosizeElement 

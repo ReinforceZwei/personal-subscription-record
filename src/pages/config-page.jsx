@@ -4,7 +4,7 @@ import { Outlet, NavLink, useLocation } from "react-router-dom"
 
 export default function ConfigPage() {
     const { pathname } = useLocation()
-    const [value, setValue] = useState('')
+    const [value, setValue] = useState('type')
 
     useEffect(() => {
         if (pathname.includes('/type')) {
@@ -12,7 +12,7 @@ export default function ConfigPage() {
         } else if (pathname.includes('/payment')) {
             setValue('payment')
         }
-    }, [value])
+    }, [value, pathname])
 
     return (
         <div>
