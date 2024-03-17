@@ -1,12 +1,13 @@
 import { useEffect, useState, useContext } from 'react'
 import { PocketBaseContext } from '../main'
 import { DateTime } from 'luxon'
-import { AppBar, Box, Card, CardContent, Chip, Divider, InputLabel, List, ListItem, ListItemText, Paper, Stack, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, Card, CardContent, Chip, Divider, InputLabel, List, ListItem, ListItemButton, ListItemText, Paper, Stack, Toolbar, Typography } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { DatePicker } from '@mui/x-date-pickers'
 import AirIcon from '@mui/icons-material/Air';
 import { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase'
 import RecordTypeChip from '../components/record-type-chip'
+import RecordDetailModal from '../components/record-detail-modal'
 
 export default function SpentRecordPage() {
     const pb = useContext(PocketBaseContext)
@@ -14,6 +15,25 @@ export default function SpentRecordPage() {
     const [groupedRecords, setGroupedRecords] = useState([])
     const [selectedDate, setSelectedDate] = useState(DateTime.now())
     const [monthSum, setMonthSum] = useState(0)
+
+    const [detailModal, setDetailModal] = useState({
+        record: null,
+        open: false,
+    })
+
+    const handleRecordClick = (record) => {
+        setDetailModal({
+            open: true,
+            record: record,
+        })
+    }
+
+    const handleCloseDetailModal = () => {
+        setDetailModal({
+            ...detailModal,
+            open: false
+        })
+    }
 
     useEffect(() => {
         (async () => {
@@ -98,11 +118,11 @@ export default function SpentRecordPage() {
                         <List key={date}>
                             {records.map((record, i, { length }) => (
                                 <>
-                                <ListItem key={record.id}>
+                                <ListItemButton key={record.id} onClick={() => handleRecordClick(record)}>
                                     <RecordTypeChip label={record.expand.type.name} bg={record.expand.type.color} sx={{mr: 1}} />
                                     <ListItemText primary={record.name} secondary={DateTime.fromSQL(record.created).toLocaleString(DateTime.TIME_SIMPLE)} />
                                     <span>${record.price}</span>
-                                </ListItem>
+                                </ListItemButton>
                                 { (length - 1 !== i)&&<Divider variant='inset'></Divider>}
                                 </>
                             ))}
@@ -110,6 +130,8 @@ export default function SpentRecordPage() {
                     </div>
                 ))}
             </Box>
+
+            <RecordDetailModal open={detailModal.open} onClose={handleCloseDetailModal} record={detailModal.record} />
         </Box>
     )
 }
