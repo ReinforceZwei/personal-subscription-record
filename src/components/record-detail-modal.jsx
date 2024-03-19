@@ -52,7 +52,7 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
                             <Typography variant="subtitle1">Payment</Typography>
-                            <Typography variant="h6">{record.expand.payment.name}</Typography>
+                            <Typography variant="h6">{record.expand.payment?.name || '---'}</Typography>
                         </Box>
                     </Grid>
 

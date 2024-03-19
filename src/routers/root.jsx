@@ -16,7 +16,6 @@ export default function Root() {
     }
     return (
         <div>
-            <CssBaseline />
             <HeaderLayout />
             <Container>
                 <Outlet />

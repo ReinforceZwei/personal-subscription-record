@@ -193,6 +193,7 @@ export default function ConfigTypePage() {
                                             label='Name'
                                             fullWidth
                                             autoComplete="off"
+                                            autoFocus
                                         />
                                     )}
                                     name='name'
@@ -244,7 +245,7 @@ export default function ConfigTypePage() {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" color='error' sx={{mr: 'auto'}} onClick={handleDeleteType}>Delete</Button>
+                    {modalType === 'edit' && (<Button variant="outlined" color='error' sx={{mr: 'auto'}} onClick={handleDeleteType}>Delete</Button>)}
                     <Button onClick={() => setShowModal(false)}>Close</Button>
                     <Button type="submit" variant="contained">{modalType === 'edit' ? 'Save' : 'Create'}</Button>
                 </DialogActions>

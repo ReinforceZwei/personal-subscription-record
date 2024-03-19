@@ -1,41 +1,22 @@
-import { createRef, useContext, useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { PocketBaseContext } from "../main"
-import { PAYMENT_METHOD_COL, SPENT_RECORD_COL, SPENT_TYPE_COL, SPENT_RECORD_NAME_COL } from "../services/pocketbase"
-// import { Button, Card, Modal, Form, InputGroup, Row, Col, Badge } from "react-bootstrap"
+import { SPENT_RECORD_COL, SPENT_TYPE_COL } from "../services/pocketbase"
 import Grid from '@mui/material/Unstable_Grid2'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import Stack from "@mui/material/Stack"
-import { Controller, useForm } from "react-hook-form"
 import {
-    Autocomplete, Box, Card, CardActionArea, CardContent, Chip, DialogActions,
-    DialogContent, DialogTitle, FormControl, IconButton,
-    InputAdornment, InputLabel, MenuItem, Select, Snackbar, TextField,
-    Typography 
+    Snackbar,
 } from "@mui/material"
-import CloseIcon from '@mui/icons-material/Close';
 import RecordTypeCard from "../components/record-type-card"
-import RecordTypeChip from "../components/record-type-chip"
+import CreateRecordModal from "../components/create-record-modal"
 
 
 export default function QuickCreatePage() {
     const pb = useContext(PocketBaseContext)
 
     const [types, setTypes] = useState([])
-    const [payments, setPayments] = useState([])
     const [selectedType, setSelectedType] = useState({})
-    const [suggestedName, setSuggestedName] = useState([])
 
     const [showModal, setShowModal] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
-
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm({
-        defaultValues: {
-            name: '',
-            payment: '',
-            price: '',
-        }
-    })
 
     useEffect(() => {
         (async () => {
@@ -43,38 +24,18 @@ export default function QuickCreatePage() {
                 sort: '+name',
             })
             setTypes(spentTypes)
-
-            let paymentMethods = await pb.collection(PAYMENT_METHOD_COL).getFullList({
-                sort: '+name',
-            })
-            setPayments(paymentMethods)
         })()
         
     }, [])
-
-    useEffect(() => {
-        (async () => {
-            let names = await pb.collection(SPENT_RECORD_NAME_COL).getFullList({
-                sort: '+name',
-                filter: `type = '${selectedType.id}'`
-            })
-            setSuggestedName(names)
-            console.log(names)
-        })()
-    }, [selectedType])
-
-    useEffect(() => {
-        reset()
-        setTimeout(() => {
-            setFocus('price')
-        }, 1)
-
-    }, [selectedType])
 
     const handleSelectType = (type) => {
         setShowModal(true)
         setSelectedType(type)
         console.log(type)
+    }
+
+    const handleCloseModal = () => {
+        setShowModal(false)
     }
 
     const onCreate = (data) => {
@@ -88,7 +49,6 @@ export default function QuickCreatePage() {
         pb.collection(SPENT_RECORD_COL).create(final).then(() => {
             setShowModal(false)
             setShowSnackbar(true)
-            reset()
         })
         .catch((err) => {
             console.error(err)
@@ -114,127 +74,15 @@ export default function QuickCreatePage() {
                 
             </div>
 
-            <Dialog open={showModal}
-                onClose={() => setShowModal(false)}
-                fullWidth={true}
-                maxWidth='sm'
-                sx={{
-                    '& .MuiDialog-container': {
-                        'alignItems': 'flex-start'
-                    }
-                }}>
-                <DialogTitle>
-                    <Grid container spacing={1}>
-                        <Grid xs='auto'>
-                            <RecordTypeChip label={selectedType.name} bg={selectedType.color} />
-                        </Grid>
-                        <Grid>
-                            Create record
-                        </Grid>
-                    </Grid>
-                    
-                    
-                    <IconButton
-                        onClick={() => setShowModal(false)}
-                        sx={{
-                        position: 'absolute',
-                        right: 8,
-                        top: 8,}}><CloseIcon /></IconButton>
-                    
-                </DialogTitle>
-                <form onSubmit={handleSubmit(onCreate)}>
-                
-                <DialogContent>
-                    <Box sx={{pt: 1}}>
-                        <Grid container spacing={1}>
-                            <Grid xs={6}>
-                                <Controller
-                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
-                                        <TextField
-                                            onBlur={onBlur}
-                                            onChange={onChange}
-                                            inputRef={ref}
-                                            value={value}
-                                            name={name}
-                                            disabled={disabled}
-                                            label='Price'
-                                            InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment>, }}
-                                            fullWidth
-                                            autoComplete="off"
-                                            inputMode="numeric"
-                                        />
-                                    )}
-                                    name='price'
-                                    rules={{ required: true }}
-                                    control={control}
-                                />
-                            </Grid>
-                            <Grid xs={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel>Payment</InputLabel>
-                                    <Controller
-                                        render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
-                                            <Select
-                                                onBlur={onBlur}
-                                                onChange={onChange}
-                                                inputRef={ref}
-                                                value={value}
-                                                name={name}
-                                                disabled={disabled}
-                                                label="Payment"
-                                                fullWidth
-                                            >
-                                                {payments.map((payment) => (
-                                                    <MenuItem value={payment.id}>{payment.name}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        )}
-                                        name='payment'
-                                        rules={{ required: true }}
-                                        control={control}
-                                    />
-                                </FormControl>
-                            </Grid>
-                            <Grid xs={12}>
-                                <Controller
-                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
-                                        <Autocomplete
-                                            onBlur={onBlur}
-                                            onChange={(e, v) => {console.log(v)}}
-                                            onInputChange={(e, v) => {onChange(v)}}
-                                            inputRef={ref}
-                                            value={value}
-                                            inputValue={value}
-                                            name={name}
-                                            disabled={disabled}
-                                            freeSolo
-                                            options={suggestedName.map((name) => {return {id: name.id, label: name.name}})}
-                                            renderInput={(params) => <TextField {...params} label="Name" />}
-                                            // getOptionLabel={(option) => option.name}
-                                            // getOptionKey={(option) => option.id}
-                                        />
-                                    )}
-                                    name='name'
-                                    rules={{ required: true }}
-                                    control={control}
-                                />
-                            </Grid>
-                            <Grid xs={12}>
-                                {/* <TextareaAutosizeElement 
-                                    name='description'
-                                    label='Description'
-                                    fullWidth
-                                    rows={2} /> */}
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setShowModal(false)}>Close</Button>
-                    <Button type="submit" variant="contained">Create</Button>
-                </DialogActions>
-                </form>
-            </Dialog>
+            { showModal && (
+                <CreateRecordModal
+                    open={showModal}
+                    onClose={() => handleCloseModal()}
+                    selectedType={selectedType}
+                    onCreate={onCreate}
+                />
+            )}
+            
             <Snackbar
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 open={showSnackbar}

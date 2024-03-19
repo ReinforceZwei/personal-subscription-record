@@ -21,10 +21,10 @@ export default function FooterLayout() {
         }
     }, [])
    
-
+    // FIXME: Bottom margin is not enough on iPhone (overlapped with the bar)
     return (
-        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
-            <BottomNavigation showLabels value={value} onChange={(e, v) => setValue(v)}>
+        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, pb: 2 }} elevation={3}>
+            <BottomNavigation showLabels value={value} onChange={(e, v) => setValue(v)} sx={{backgroundColor: 'initial'}}>
                 <BottomNavigationAction 
                     label='Records'
                     value='records'
