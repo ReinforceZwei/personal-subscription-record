@@ -6,13 +6,17 @@ import { SPENT_TYPE_COL } from "../../services/pocketbase"
 import { useForm, Controller } from "react-hook-form"
 import { SwatchesPicker, ChromePicker } from 'react-color'
 import CloseIcon from '@mui/icons-material/Close'
+import { useSelector, useDispatch } from 'react-redux'
 
 import RecordTypeCard from "../../components/record-type-card"
+import { addType, deleteType, fetchTypes, selectTypes, updateType } from "../../redux/typeSlice"
 
 export default function ConfigTypePage() {
     const pb = useContext(PocketBaseContext)
+    const dispatch = useDispatch()
 
-    const [types, setTypes] = useState([])
+    const types = useSelector(selectTypes)
+    //const [types, setTypes] = useState([])
     const [selectedType, setSelectedType] = useState({})
 
     const [showModal, setShowModal] = useState(false)
@@ -30,12 +34,8 @@ export default function ConfigTypePage() {
     const watchColor = watch('color')
 
     useEffect(() => {
-        (async () => {
-            let spentTypes = await pb.collection(SPENT_TYPE_COL).getFullList({
-                sort: '+name',
-            })
-            setTypes(spentTypes)
-        })()
+        dispatch(fetchTypes())
+
     }, [])
 
     const handleSelectType = (type) => {
@@ -75,18 +75,15 @@ export default function ConfigTypePage() {
             name: data.name,
             color: data.color.hex,
         }
-        pb.collection(SPENT_TYPE_COL).update(selectedType.id, final).then((record) => {
-            setShowModal(false)
-
-            let newTypes = [...types]
-            let idx = newTypes.findIndex((type) => type.id === record.id)
-            newTypes[idx] = record
-            setTypes(newTypes)
-        })
-        .catch((err) => {
-            alert(err)
-            console.log(err)
-        })
+        dispatch(updateType({ id: selectedType.id, data: final }))
+            .unwrap()
+            .then(() => {
+                setShowModal(false)
+            })
+            .catch((err) => {
+                alert(err)
+                console.log(err)
+            })
     }
 
     const onCreate = (data) => {
@@ -97,37 +94,29 @@ export default function ConfigTypePage() {
             name: data.name,
             color: data.color.hex,
         }
-        pb.collection(SPENT_TYPE_COL).create(final).then((record) => {
-            setShowModal(false)
-
-            pb.collection(SPENT_TYPE_COL).getFullList({
-                sort: '+name',
-            }).then((spentTypes) => {
-                setTypes(spentTypes)
+        dispatch(addType({ data: final }))
+            .unwrap()
+            .then(() => {
+                setShowModal(false)
             })
-        })
-        .catch((err) => {
-            alert(err)
-            console.log(err)
-        })
+            .catch((err) => {
+                alert(err)
+                console.log(err)
+            })
     }
 
     const onDelete = () => {
-        pb.collection(SPENT_TYPE_COL).delete(selectedType.id).then((record) => {
-            setShowMsgModal({ open: false })
-            setShowModal(false)
-
-            pb.collection(SPENT_TYPE_COL).getFullList({
-                sort: '+name',
-            }).then((spentTypes) => {
-                setTypes(spentTypes)
+        dispatch(deleteType({ id: selectedType.id }))
+            .unwrap()
+            .then(() => {
+                setShowMsgModal({ open: false })
+                setShowModal(false)
             })
-        })
-        .catch((err) => {
-            //alert(err)
-            alert('Type is in use and cannot deleted.')
-            console.log(err)
-        })
+            .catch((err) => {
+                //alert(err)
+                alert('Type is in use and cannot deleted.')
+                console.log(err)
+            })
     }
 
     return (
