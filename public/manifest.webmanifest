@@ -1,12 +1,12 @@
 {
-    "theme_color": "",
-    "background_color": "#ffffff",
+    "theme_color": "#f69435",
+    "background_color": "#f69435",
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
-    "name": "Subscription & Spending Record System",
+    "name": "Subscription & Spending Record",
     "short_name": "SSRS",
-    "description": "Subscription & Spending Record System",
+    "description": "Subscription & Spending Record",
     "icons": [
         {
             "src": "/icon-192x192.png",

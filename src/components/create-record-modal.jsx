@@ -8,24 +8,29 @@ import {
 import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { Controller, useForm } from "react-hook-form"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchSuggestedName, fetchTypes, selectSuggestedNames, selectTypes } from "../redux/typeSlice"
 
 import { PAYMENT_METHOD_COL, SPENT_RECORD_NAME_COL } from "../services/pocketbase"
 import RecordTypeChip from "../components/record-type-chip"
+import { fetchPayments, selectPayments } from "../redux/paymentSlice"
 
-export const CreateRecordModalProps = {
+const CreateRecordModalProps = {
     selectedType: null,
     open: false,
     onClose: () => {},
     onCreate: (data) => {},
+    onAnimationExited: () => {},
 }
 
 export default function CreateRecordModal(props = CreateRecordModalProps) {
-    const { selectedType, open, onClose, onCreate, ...other } = props
+    const { selectedType, open, onClose, onCreate, onAnimationExited, ...other } = props
 
     const pb = useContext(PocketBaseContext)
+    const dispatch = useDispatch()
 
-    const [suggestedName, setSuggestedName] = useState([])
-    const [payments, setPayments] = useState([])
+    const suggestedName = useSelector(selectSuggestedNames)
+    const payments = useSelector(selectPayments)
 
     const { handleSubmit, reset, setValue, setFocus, control } = useForm({
         defaultValues: {
@@ -36,19 +41,13 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
     })
 
     useEffect(() => {
-        (async () => {
-            let names = await pb.collection(SPENT_RECORD_NAME_COL).getFullList({
-                sort: '+name',
-                filter: `type = '${selectedType.id}'`
-            })
-            setSuggestedName(names)
-            console.log(names)
+        dispatch(fetchSuggestedName({ selectedType }))
 
-            let paymentMethods = await pb.collection(PAYMENT_METHOD_COL).getFullList({
-                sort: '+name',
-            })
-            setPayments(paymentMethods)
-        })()
+    }, [selectedType])
+
+    useEffect(() => {
+        dispatch(fetchPayments())
+
     }, [])
 
     useEffect(() => {
@@ -66,7 +65,11 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                 '& .MuiDialog-container': {
                     'alignItems': 'flex-start'
                 }
-            }}>
+            }}
+            TransitionProps={{
+                onExited: onAnimationExited,
+            }}
+            >
             <DialogTitle>
                 <Grid container spacing={1}>
                     <Grid xs='auto'>
@@ -93,7 +96,6 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                     <Box sx={{ pt: 1 }}>
                         <Grid container spacing={1}>
                             <Grid xs={6}>
-                                {/* FIXME: numeric input not work */}
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                         <TextField
@@ -134,7 +136,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                                 fullWidth
                                             >
                                                 {payments.map((payment) => (
-                                                    <MenuItem value={payment.id}>{payment.name}</MenuItem>
+                                                    <MenuItem key={payment.id} value={payment.id}>{payment.name}</MenuItem>
                                                 ))}
                                             </Select>
                                         )}

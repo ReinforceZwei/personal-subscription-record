@@ -11,7 +11,26 @@ export const fetchRecords = createAsyncThunk('record/fetchRecords', async (args,
         expand: 'type,payment',
         filter: `created >= '${startDate}' && created < '${endDate}'`
     })
-    return records
+
+    let a = records.reduce((prev, curr) => {
+        let date = DateTime.fromSQL(curr.created)
+        let key = date.toLocaleString()
+        if (prev[key]) {
+            prev[key].push(curr)
+        } else {
+            prev[key] = [curr]
+        }
+        return prev
+    }, {})
+    const groupedRecords = Object.keys(a).map((date) => {
+        return {
+            date,
+            records: a[date],
+        }
+    })
+
+
+    return { records, groupedRecords }
 })
 
 export const fetchMonthSum = createAsyncThunk('record/fetchMonthSum', async (args, { getState }) => {
@@ -25,23 +44,19 @@ export const recordSlice = createSlice({
     name: 'record',
     initialState: {
         records: [],
+        groupedRecords: [],
         monthSum: {},
         selectedDate: DateTime.now().toISO(),
     },
     reducers: {
-        setMonthSum: (state, action) => {
-            state.monthSum = action.payload
-        },
-        setRecords: (state, action) => {
-            state.records = action.payload
-        },
         setSelectedDate: (state, action) => {
             state.selectedDate = action.payload
         },
     },
     extraReducers: (builder) => {
         builder.addCase(fetchRecords.fulfilled, (state, action) => {
-            state.records = action.payload
+            state.records = action.payload.records
+            state.groupedRecords = action.payload.groupedRecords
 
         }).addCase(fetchMonthSum.fulfilled, (state, action) => {
             state.monthSum[action.payload['year_month']] = action.payload['price']
@@ -50,9 +65,10 @@ export const recordSlice = createSlice({
     }
 })
 
-export const { setMonthSum, setRecords, setSelectedDate } = recordSlice.actions
+export const { setSelectedDate } = recordSlice.actions
 
 export default recordSlice.reducer
 
 export const selectAllRecord = (state) => state.record.records
+export const selectGroupedRecord = (state) => state.record.groupedRecords
 export const selectSelectedDate = (state) => state.record.selectedDate

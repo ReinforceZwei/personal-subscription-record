@@ -7,24 +7,25 @@ import {
 } from "@mui/material"
 import RecordTypeCard from "../components/record-type-card"
 import CreateRecordModal from "../components/create-record-modal"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchTypes, selectTypes } from "../redux/typeSlice"
 
 
 export default function QuickCreatePage() {
     const pb = useContext(PocketBaseContext)
 
-    const [types, setTypes] = useState([])
+    const dispatch = useDispatch()
+
+    const types = useSelector(selectTypes)
+
+    //const [types, setTypes] = useState([])
     const [selectedType, setSelectedType] = useState({})
 
     const [showModal, setShowModal] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
 
     useEffect(() => {
-        (async () => {
-            let spentTypes = await pb.collection(SPENT_TYPE_COL).getFullList({
-                sort: '+name',
-            })
-            setTypes(spentTypes)
-        })()
+        dispatch(fetchTypes())
         
     }, [])
 
@@ -74,7 +75,7 @@ export default function QuickCreatePage() {
                 
             </div>
 
-            { showModal && (
+            { selectedType.name && (
                 <CreateRecordModal
                     open={showModal}
                     onClose={() => handleCloseModal()}

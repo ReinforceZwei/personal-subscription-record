@@ -9,37 +9,16 @@ import { useSelector, useDispatch } from 'react-redux'
 import { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase'
 import RecordTypeChip from '../components/record-type-chip'
 import RecordDetailModal from '../components/record-detail-modal'
-import { selectAllRecord, fetchRecords, fetchMonthSum, setSelectedDate, selectSelectedDate } from '../redux/recordSlice'
+import { selectAllRecord, fetchRecords, fetchMonthSum, setSelectedDate, selectSelectedDate, selectGroupedRecord } from '../redux/recordSlice'
 
 export default function SpentRecordPage() {
     const pb = useContext(PocketBaseContext)
     const dispatch = useDispatch()
 
-    const records = useSelector(selectAllRecord)
+    const groupedRecords = useSelector(selectGroupedRecord)
     const monthSum = useSelector((state) => state.record.monthSum)
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
     const yearMonth = selectedDate.toFormat('yyyy-MM')
-    //const [records, setRecords] = useState([])
-    //const [groupedRecords, setGroupedRecords] = useState([])
-    //const [selectedDate, setSelectedDate] = useState(DateTime.now())
-    //const [monthSum, setMonthSum] = useState(0)
-
-    let a = records.reduce((prev, curr) => {
-        let date = DateTime.fromSQL(curr.created)
-        let key = date.toLocaleString()
-        if (prev[key]) {
-            prev[key].push(curr)
-        } else {
-            prev[key] = [curr]
-        }
-        return prev
-    }, {})
-    const groupedRecords = Object.keys(a).map((date) => {
-        return {
-            date,
-            records: a[date],
-        }
-    })
 
     useEffect(() => {
         dispatch(fetchRecords())
