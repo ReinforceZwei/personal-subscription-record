@@ -5,7 +5,7 @@ import {
     Route,
     Navigate,
 } from 'react-router-dom'
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
@@ -13,6 +13,8 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { CssBaseline } from '@mui/material';
+
+import { isTokenExpired } from 'pocketbase';
 
 import Root from './routers/root.jsx'
 import ErrorPage from "./error-page"
@@ -74,6 +76,15 @@ export default function App() {
             }),
         [prefersDarkMode],
     );
+
+    useEffect(() => {
+        if (pb.authStore.isValid) {
+            // 7 days
+            if (isTokenExpired(pb.authStore.token, 604800)) {
+                pb.collection("users").authRefresh()
+            }
+        }
+    }, [])
 
     return (
         <div>
