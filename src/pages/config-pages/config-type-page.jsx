@@ -121,7 +121,6 @@ export default function ConfigTypePage() {
 
     return (
         <Box>
-            <h1>This is config type page</h1>
             <Button variant="outlined" onClick={handleCreateType}>Create New Type</Button>
             <Divider>Existing Types</Divider>
             <Box sx={{textAlign: 'center'}}>

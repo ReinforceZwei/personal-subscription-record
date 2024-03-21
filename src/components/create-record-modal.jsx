@@ -20,14 +20,15 @@ const CreateRecordModalProps = {
     open: false,
     onClose: () => {},
     onCreate: (data) => {},
-    onAnimationExited: () => {},
 }
 
 export default function CreateRecordModal(props = CreateRecordModalProps) {
-    const { selectedType, open, onClose, onCreate, onAnimationExited, ...other } = props
+    const { selectedType, open, onClose, onCreate, ...other } = props
 
     const pb = useContext(PocketBaseContext)
     const dispatch = useDispatch()
+
+    const [showThisModal, setShowThisModal] = useState(open)
 
     const suggestedName = useSelector(selectSuggestedNames)
     const payments = useSelector(selectPayments)
@@ -51,14 +52,18 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
     }, [])
 
     useEffect(() => {
+        if (payments.length) {
+            setValue('payment', payments[0].id)
+        }
+
         setTimeout(() => {
             setFocus('price')
         }, 1)
-    }, [])
+    }, [payments])
 
     return (
-        <Dialog open={open}
-            onClose={onClose}
+        <Dialog open={showThisModal}
+            onClose={() => setShowThisModal(false)}
             fullWidth={true}
             maxWidth='sm'
             sx={{
@@ -67,7 +72,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                 }
             }}
             TransitionProps={{
-                onExited: onAnimationExited,
+                onExited: onClose,
             }}
             >
             <DialogTitle>
@@ -82,7 +87,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
 
 
                 <IconButton
-                    onClick={onClose}
+                    onClick={() => setShowThisModal(false)}
                     sx={{
                         position: 'absolute',
                         right: 8,
@@ -135,9 +140,11 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                                 label="Payment"
                                                 fullWidth
                                             >
-                                                {payments.map((payment) => (
+                                                {payments.length ? payments.map((payment) => (
                                                     <MenuItem key={payment.id} value={payment.id}>{payment.name}</MenuItem>
-                                                ))}
+                                                )) : (
+                                                    <MenuItem key='none' value='' disabled><Box fontStyle='italic'>No Payment Config</Box></MenuItem>
+                                                )}
                                             </Select>
                                         )}
                                         name='payment'
@@ -180,7 +187,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={onClose}>Close</Button>
+                    <Button onClick={() => setShowThisModal(false)}>Close</Button>
                     <Button type="submit" variant="contained">Create</Button>
                 </DialogActions>
             </form>

@@ -10,4 +10,7 @@ export const themeOptions = {
             main: '#546e7a',
         },
     },
+    typography: {
+        fontFamily: '"Noto Sans TC Variable", "Helvetica", "Arial", "sans-serif"'
+    }
 };

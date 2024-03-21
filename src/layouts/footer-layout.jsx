@@ -19,7 +19,7 @@ export default function FooterLayout() {
         } else if (pathname.startsWith('/config')) {
             setValue('settings')
         }
-    }, [])
+    }, [pathname])
    
     // FIXME: Bottom margin is not enough on iPhone (overlapped with the bar)
     return (

@@ -75,7 +75,7 @@ export default function QuickCreatePage() {
                 
             </div>
 
-            { selectedType.name && (
+            { showModal && (
                 <CreateRecordModal
                     open={showModal}
                     onClose={() => handleCloseModal()}
