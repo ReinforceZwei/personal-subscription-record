@@ -3,7 +3,7 @@ import {
     Dialog, DialogActions, DialogContent, DialogTitle, TextField,
     InputLabel, Paper, Divider, Typography, ToggleButtonGroup,
     ToggleButton,
-    ListItemButton
+    ListItemButton, FormControlLabel, Switch
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
@@ -30,11 +30,14 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
     const { handleSubmit, reset, setValue, setFocus, control } = useForm({
         defaultValues: {
             name: '',
+            enabled: true,
         }
     })
 
     useEffect(() => {
         setValue('name', payment.name)
+        setValue('enabled', payment.enabled)
+        setValue('weight', payment.weight)
 
         setTimeout(() => {
             setFocus('name')
@@ -95,6 +98,50 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
                                     )}
                                     name='name'
                                     rules={{ required: true }}
+                                    control={control}
+                                />
+                            </Grid>
+                            <Grid xs={12}>
+                                <Controller
+                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                        <TextField
+                                            onBlur={onBlur}
+                                            onChange={onChange}
+                                            inputRef={ref}
+                                            value={value}
+                                            name={name}
+                                            disabled={disabled}
+                                            label='Weight'
+                                            inputProps={{ inputMode: 'numeric' }}
+                                            fullWidth
+                                            autoComplete="off"
+                                            inputMode={'numeric'}
+                                            type="number"
+                                        />
+                                    )}
+                                    name='weight'
+                                    rules={{ required: true }}
+                                    control={control}
+                                />
+                            </Grid>
+                            <Grid xs={12}>
+                                <Controller
+                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    checked={value}
+                                                    inputRef={ref}
+                                                    name={name}
+                                                    disabled={disabled}
+                                                    onChange={onChange}
+                                                    onBlur={onBlur}
+                                                />
+                                            }
+                                            label="Enabled"
+                                        />
+                                    )}
+                                    name='enabled'
                                     control={control}
                                 />
                             </Grid>

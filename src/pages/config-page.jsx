@@ -1,10 +1,17 @@
 import { Autocomplete, Box, Tab, Tabs, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
-import { Outlet, NavLink, useLocation } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom"
+import { selectLastConfigPage, setLastConfigPage } from "../redux/routingSlice"
 
 export default function ConfigPage() {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     const { pathname } = useLocation()
-    const [value, setValue] = useState('type')
+    const lastPage = useSelector(selectLastConfigPage)
+    const [value, setValue] = useState(lastPage || 'preference')
+    
 
     useEffect(() => {
         if (pathname.includes('/type')) {
@@ -13,8 +20,14 @@ export default function ConfigPage() {
             setValue('payment')
         } else if (pathname.includes('/preference')) {
             setValue('preference')
+        } else {
+            navigate(lastPage)
         }
-    }, [value, pathname])
+    }, [value, pathname, lastPage])
+
+    useEffect(() => {
+        dispatch(setLastConfigPage(value))
+    }, [value])
 
     return (
         <div>

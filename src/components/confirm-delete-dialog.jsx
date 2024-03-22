@@ -29,7 +29,7 @@ export default function ConfirmDeleteDialog(props = ConfirmDeleteDialogProps) {
     } = props
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
             <DialogTitle>{title}</DialogTitle>
             {content && (
                 <DialogContent>{content}</DialogContent>

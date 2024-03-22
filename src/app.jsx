@@ -31,24 +31,34 @@ import ConfigPaymentPage from './pages/config-pages/config-payment-page.jsx'
 import { PocketBaseContext } from './main.jsx'
 import { themeOptions } from './themes.js';
 
-import store from './store.js'
-import { Provider } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import UserDefaultPage from './routers/user-default-page.jsx';
 import ConfigPreferencePage from './pages/config-pages/config-preference-page.jsx';
 
+import { fetchUserSettings, selectUserSettings } from "./redux/userSettingsSlice";
 
 export default function App() {
+    const dispatch = useDispatch()
+
+    const userSettings = useSelector(selectUserSettings)
+    const colorMode = userSettings?.color_mode || 'system'
+
+    useEffect(() => {
+        dispatch(fetchUserSettings())
+
+    }, [])
+
     const router = createBrowserRouter(
         createRoutesFromElements([
             (
-                <Route path="/" element={<Root />}>
+                <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
                     <Route index element={<UserDefaultPage />} />
 
                     <Route path="spentRecord" element={<SpentRecordPage />} />
                     <Route path="quickCreate" element={<QuickCreatePage />} />
 
                     <Route path="config" element={<ConfigPage />}>
-                        <Route index element={<Navigate to="preference" replace />} />
+                        {/* <Route index element={<Navigate to="preference" replace />} /> */}
 
                         <Route path="preference" element={<ConfigPreferencePage />} />
                         <Route path="type" element={<ConfigTypePage />} />
@@ -63,18 +73,18 @@ export default function App() {
         ])
     );
 
-    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)') ? 'dark' : 'light'
     const theme = useMemo(
         () =>
             createTheme({
                 ...themeOptions,
                 palette: {
                     ...themeOptions.palette,
-                    mode: prefersDarkMode ? 'dark' : 'light',
+                    mode: colorMode === 'system' ? prefersDarkMode : colorMode,
                     
                 },
             }),
-        [prefersDarkMode],
+        [prefersDarkMode, colorMode],
     );
 
     useEffect(() => {
@@ -89,17 +99,15 @@ export default function App() {
     return (
         <div>
         <PocketBaseContext.Provider value={pb}>
-            <Provider store={store}>
-                <LocalizationProvider dateAdapter={AdapterLuxon}>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        <div>
-                            <RouterProvider router={router} />
-                        </div>
-                    </ThemeProvider>
-                    
-                </LocalizationProvider>
-            </Provider>
+            <LocalizationProvider dateAdapter={AdapterLuxon}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <div>
+                        <RouterProvider router={router} />
+                    </div>
+                </ThemeProvider>
+                
+            </LocalizationProvider>
         </PocketBaseContext.Provider>
         </div>
     )

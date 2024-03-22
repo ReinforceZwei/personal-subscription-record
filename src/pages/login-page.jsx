@@ -51,9 +51,13 @@ export default function LoginPage() {
         <div>
             {pb.authStore.isValid && <Navigate to="/" />}
             <CssBaseline />
-            <Container maxWidth='sm'>
+            <Container maxWidth='sm' sx={{mt: 5}}>
                 <Paper sx={{ margin: 2, padding: 2 }}>
-                    <Typography variant="h4">SSRS</Typography>
+                    <Box mb={1}>
+                        <Typography variant="h4">SSRS</Typography>
+                        <Typography variant="subtitle1">Subscription & Spending Record System</Typography>
+                    </Box>
+                    
                     <form onSubmit={handleSubmit(handleLogin)}>
                         <Grid container spacing={2}>
                             <Grid xs={12}>
@@ -106,38 +110,13 @@ export default function LoginPage() {
                         </Grid>
                     </form>
                 </Paper>
-                <Divider>Or</Divider>
-                <Box textAlign='center'>
+                <Divider>OR</Divider>
+                <Box textAlign='center' mt={1}>
                     <ButtonGroup orientation="vertical" variant="outlined" size="large">
                         <Button variant="outlined" startIcon={<GitHubIcon />} onClick={handleGithub}>Signin with Github</Button>
                     </ButtonGroup>
                 </Box>
             </Container>
-            {/* <Container>
-                <Stack gap={2} className="col-md-5 mx-auto">
-                    <h3>Login</h3>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label>Username</Form.Label>
-                            <Form.Control type="text" value={username} onChange={e => setUsername(e.target.value)} />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} />
-                        </Form.Group>
-                        <div className="d-grid gap-2 col-6 mx-auto">
-                            <Button type="submit">Login</Button>
-                        </div>
-                    </Form>
-                    <hr />
-                    <p>Or login using</p>
-                    <div className="btn-group-vertical">
-                        {authMethods.map((method) => (
-                            <Button variant="outline-primary" onClick={handleGithub}>{method.displayName}</Button>
-                        ))}
-                    </div>
-                </Stack>
-            </Container> */}
         </div>
     )
 }

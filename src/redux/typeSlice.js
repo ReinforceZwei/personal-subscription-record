@@ -4,7 +4,7 @@ import { sort } from 'fast-sort'
 
 export const fetchTypes = createAsyncThunk('type/fetchTypes', async () => {
     const types = await pb.collection(SPENT_TYPE_COL).getFullList({
-        sort: '+name'
+        sort: '+weight,+name'
     })
     return types
 })
@@ -59,6 +59,7 @@ export const typeSlice = createSlice({
             const copy = [...state.types]
             copy[idx] = action.payload
             state.types = sort(copy).by([
+                { asc: x => x.weight },
                 { asc: x => x.name },
             ])
 
@@ -66,6 +67,7 @@ export const typeSlice = createSlice({
             const copy = [...state.types]
             copy.push(action.payload)
             state.types = sort(copy).by([
+                { asc: x => x.weight },
                 { asc: x => x.name },
             ])
 

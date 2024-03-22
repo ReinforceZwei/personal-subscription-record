@@ -4,7 +4,7 @@ import { sort } from 'fast-sort'
 
 export const fetchPayments = createAsyncThunk('payment/fetchPayments', async () => {
     const payments = await pb.collection(PAYMENT_METHOD_COL).getFullList({
-        sort: '+name',
+        sort: '+weight,+name',
     })
     return payments
 })
@@ -42,7 +42,8 @@ export const paymentSlice = createSlice({
             const copy = [...state.payments]
             copy.push(action.payload)
             state.payments = sort(copy).by([
-                { asc: x => x.name }
+                { asc: x => x.weight },
+                { asc: x => x.name },
             ])
 
         }).addCase(updatePayment.fulfilled, (state, action) => {
@@ -50,7 +51,8 @@ export const paymentSlice = createSlice({
             const idx = state.payments.findIndex((payment) => payment.id === action.payload.id)
             copy[idx] = action.payload
             state.payments = sort(copy).by([
-                { asc: x => x.name }
+                { asc: x => x.weight },
+                { asc: x => x.name },
             ])
 
         }).addCase(deletePayment.fulfilled, (state, action) => {

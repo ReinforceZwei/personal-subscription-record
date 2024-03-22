@@ -31,7 +31,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
     const [showThisModal, setShowThisModal] = useState(open)
 
     const suggestedName = useSelector(selectSuggestedNames)
-    const payments = useSelector(selectPayments)
+    const payments = useSelector(selectPayments).filter(x => x.enabled)
 
     const { handleSubmit, reset, setValue, setFocus, control } = useForm({
         defaultValues: {
@@ -182,6 +182,26 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                     label='Description'
                                     fullWidth
                                     rows={2} /> */}
+                                <Controller
+                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                        <TextField
+                                            onBlur={onBlur}
+                                            onChange={onChange}
+                                            inputRef={ref}
+                                            value={value}
+                                            name={name}
+                                            disabled={disabled}
+                                            label='Description'
+                                            fullWidth
+                                            autoComplete="off"
+                                            multiline
+                                            minRows={2}
+                                            maxRows={3}
+                                        />
+                                    )}
+                                    name='description'
+                                    control={control}
+                                />
                             </Grid>
                         </Grid>
                     </Box>

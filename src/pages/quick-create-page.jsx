@@ -3,8 +3,9 @@ import { PocketBaseContext } from "../main"
 import { SPENT_RECORD_COL, SPENT_TYPE_COL } from "../services/pocketbase"
 import Grid from '@mui/material/Unstable_Grid2'
 import {
-    Snackbar,
+    Snackbar, Box, Typography
 } from "@mui/material"
+import { Link } from "react-router-dom"
 import RecordTypeCard from "../components/record-type-card"
 import CreateRecordModal from "../components/create-record-modal"
 import { useDispatch, useSelector } from "react-redux"
@@ -17,6 +18,7 @@ export default function QuickCreatePage() {
     const dispatch = useDispatch()
 
     const types = useSelector(selectTypes)
+    const enabledTypes = types.filter(x => x.enabled)
 
     //const [types, setTypes] = useState([])
     const [selectedType, setSelectedType] = useState({})
@@ -58,22 +60,22 @@ export default function QuickCreatePage() {
     }
 
     return (
-        <div>
-            <h1>This is quick create page</h1>
-            <div className="container text-center" style={{textAlign: 'center'}}>
+        <Box sx={{ mt: 2 }}>
+            <Typography variant="h5">Select Type and Create Record</Typography>
+            <Box sx={{textAlign: 'center', mt: 2}}>
                 <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
-                {types.map((type) => (
+                {enabledTypes.length ? enabledTypes.map((type) => (
                     <Grid key={type.id} xs={2} sm={2} md={3}>
                         <RecordTypeCard bg={type.color} onClick={() => handleSelectType(type)}>
                             {type.name}
                         </RecordTypeCard>
                     </Grid>
                     
-                ))}
+                )) : (<Grid xs={12} mt={12}><Link to='/config/type'>Create new type</Link>{' to get started'}</Grid>)}
                 
                 </Grid>
                 
-            </div>
+            </Box>
 
             { showModal && (
                 <CreateRecordModal
@@ -93,6 +95,6 @@ export default function QuickCreatePage() {
                 
                 sx={{ bottom: { xs: 65, sm: 65 } }}
             />
-        </div>
+        </Box>
     )
 }

@@ -24,6 +24,7 @@ export default function CreatePaymentModal(props = CreatePaymentModalProps) {
     const { handleSubmit, reset, setValue, setFocus, control } = useForm({
         defaultValues: {
             name: '',
+            weight: 100,
         }
     })
 
@@ -81,6 +82,30 @@ export default function CreatePaymentModal(props = CreatePaymentModalProps) {
                                         />
                                     )}
                                     name='name'
+                                    rules={{ required: true }}
+                                    control={control}
+                                />
+                            </Grid>
+
+                            <Grid xs={12}>
+                                <Controller
+                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                        <TextField
+                                            onBlur={onBlur}
+                                            onChange={onChange}
+                                            inputRef={ref}
+                                            value={value}
+                                            name={name}
+                                            disabled={disabled}
+                                            label='Weight'
+                                            inputProps={{ inputMode: 'numeric' }}
+                                            fullWidth
+                                            autoComplete="off"
+                                            inputMode={'numeric'}
+                                            type="number"
+                                        />
+                                    )}
+                                    name='weight'
                                     rules={{ required: true }}
                                     control={control}
                                 />

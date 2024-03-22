@@ -1,4 +1,9 @@
-import { Box, Button, Container, List, ListItem, Chip, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, TextField, InputLabel, Paper, Divider, Typography, ToggleButtonGroup, ToggleButton } from "@mui/material"
+import {
+    Box, Button, Container, List, ListItem, Chip, IconButton,
+    Dialog, DialogActions, DialogContent, DialogTitle, TextField,
+    InputLabel, Paper, Divider, Typography, ToggleButtonGroup,
+    ToggleButton, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails
+} from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import { useContext, useEffect, useState } from "react"
 import { PocketBaseContext } from "../../main"
@@ -6,16 +11,22 @@ import { SPENT_TYPE_COL } from "../../services/pocketbase"
 import { useForm, Controller } from "react-hook-form"
 import { SwatchesPicker, ChromePicker } from 'react-color'
 import CloseIcon from '@mui/icons-material/Close'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import AddIcon from '@mui/icons-material/Add'
+import HelpIcon from '@mui/icons-material/Help'
 import { useSelector, useDispatch } from 'react-redux'
 
 import RecordTypeCard from "../../components/record-type-card"
 import { addType, deleteType, fetchTypes, selectTypes, updateType } from "../../redux/typeSlice"
+import HelpMessageDialog from "../../components/help-message-dialog"
 
 export default function ConfigTypePage() {
     const pb = useContext(PocketBaseContext)
     const dispatch = useDispatch()
 
     const types = useSelector(selectTypes)
+    const enabledTypes = types.filter(x => x.enabled)
+    const disabledTypes = types.filter(x => !x.enabled)
     //const [types, setTypes] = useState([])
     const [selectedType, setSelectedType] = useState({})
 
@@ -29,7 +40,13 @@ export default function ConfigTypePage() {
         content: '',
     })
 
-    const { handleSubmit, reset, setValue, setFocus, watch, control } = useForm()
+    const [showHelp, setShowHelp] = useState(false)
+
+    const { handleSubmit, reset, setValue, setFocus, watch, control } = useForm({
+        defaultValues: {
+            weight: 100
+        }
+    })
     const watchName = watch('name')
     const watchColor = watch('color')
 
@@ -41,6 +58,8 @@ export default function ConfigTypePage() {
     const handleSelectType = (type) => {
         setValue('name', type.name)
         setValue('color', type.color || '#fff')
+        setValue('enabled', type.enabled)
+        setValue('weight', type.weight)
         setSelectedType(type)
         setModalType('edit')
         setShowModal(true)
@@ -74,6 +93,8 @@ export default function ConfigTypePage() {
             icon: selectedType.icon,
             name: data.name,
             color: data.color.hex,
+            enabled: data.enabled,
+            weight: data.weight,
         }
         dispatch(updateType({ id: selectedType.id, data: final }))
             .unwrap()
@@ -93,6 +114,8 @@ export default function ConfigTypePage() {
             icon: '',
             name: data.name,
             color: data.color.hex,
+            enabled: true,
+            weight: data.weight,
         }
         dispatch(addType({ data: final }))
             .unwrap()
@@ -121,21 +144,54 @@ export default function ConfigTypePage() {
 
     return (
         <Box>
-            <Button variant="outlined" onClick={handleCreateType}>Create New Type</Button>
-            <Divider>Existing Types</Divider>
-            <Box sx={{textAlign: 'center'}}>
-                <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
-                    {types.map((type) => (
-                        <Grid key={type.id} xs={2} sm={2} md={3}>
-                            <RecordTypeCard bg={type.color} onClick={() => handleSelectType(type)}>
-                                {type.name}
-                            </RecordTypeCard>
-                        </Grid>
-                        
-                    ))}
-                    
-                </Grid>
+            <Box mb={2} display='flex' justifyContent='space-between'>
+                <Button variant="outlined" onClick={handleCreateType} startIcon={<AddIcon />}>Create New Type</Button>
+                <IconButton onClick={() => setShowHelp(true)}><HelpIcon /></IconButton>
             </Box>
+            
+            <Accordion defaultExpanded>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    Active Types
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Box sx={{textAlign: 'center'}}>
+                        <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
+                            {enabledTypes.length ? enabledTypes.map((type) => (
+                                <Grid key={type.id} xs={2} sm={2} md={3}>
+                                    <RecordTypeCard bg={type.color} onClick={() => handleSelectType(type)} weight={type.weight}>
+                                        {type.name}
+                                    </RecordTypeCard>
+                                </Grid>
+                                
+                            )): (<Grid xs={12} fontStyle='italic' textAlign='center'>{'Go create new record type'}</Grid>)}
+                            
+                        </Grid>
+                    </Box>
+                </AccordionDetails>
+            </Accordion>
+            {/* <Divider>Existing Types</Divider> */}
+
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    Disabled Types
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Box sx={{textAlign: 'center'}}>
+                        <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
+                            {disabledTypes.length ? disabledTypes.map((type) => (
+                                <Grid key={type.id} xs={2} sm={2} md={3}>
+                                    <RecordTypeCard bg={type.color} onClick={() => handleSelectType(type)} weight={type.weight}>
+                                        {type.name}
+                                    </RecordTypeCard>
+                                </Grid>
+                                
+                            )) : (<Grid xs={12} fontStyle='italic' textAlign='center'>{'Nothing here :)'}</Grid>)}
+                            
+                        </Grid>
+                    </Box>
+                </AccordionDetails>
+            </Accordion>
+            
 
             <Dialog open={showModal}
                 onClose={() => setShowModal(false)}
@@ -167,8 +223,8 @@ export default function ConfigTypePage() {
                 
                 <DialogContent>
                     <Box sx={{pt: 1}}>
-                        <Grid container spacing={1} justifyContent='center'>
-                            <Grid xs={12}>
+                        <Grid container spacing={1}>
+                            <Grid xs={8}>
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                         <TextField
@@ -189,6 +245,54 @@ export default function ConfigTypePage() {
                                     control={control}
                                 />
                             </Grid>
+                            
+                            
+                            <Grid xs={4}>
+                                <Controller
+                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                        <TextField
+                                            onBlur={onBlur}
+                                            onChange={onChange}
+                                            inputRef={ref}
+                                            value={value}
+                                            name={name}
+                                            disabled={disabled}
+                                            label='Weight'
+                                            inputProps={{ inputMode: 'numeric' }}
+                                            fullWidth
+                                            autoComplete="off"
+                                            inputMode={'numeric'}
+                                            type="number"
+                                        />
+                                    )}
+                                    name='weight'
+                                    rules={{ required: true }}
+                                    control={control}
+                                />
+                            </Grid>
+                            {modalType === 'edit' && (
+                                <Grid xs={6}>
+                                    <Controller
+                                        render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                            <FormControlLabel
+                                                control={
+                                                    <Switch
+                                                        checked={value}
+                                                        inputRef={ref}
+                                                        name={name}
+                                                        disabled={disabled}
+                                                        onChange={onChange}
+                                                        onBlur={onBlur}
+                                                    />
+                                                }
+                                                label="Enabled"
+                                            />
+                                        )}
+                                        name='enabled'
+                                        control={control}
+                                    />
+                                </Grid>
+                            )}
                             <Grid xs={12}>
                                 <InputLabel>Color</InputLabel>
                                 <ToggleButtonGroup value={colorInputType} exclusive size="small" onChange={(e, v) => setColorInputType(v)}>
@@ -218,6 +322,8 @@ export default function ConfigTypePage() {
                                     </Box>
                                 )}
                             </Grid>
+                        </Grid>
+                        <Grid container spacing={1} justifyContent='center'>
                             <Grid xs={12}>
                                 <Divider><Typography variant="overline">Preview</Typography></Divider>
                             </Grid>
@@ -250,6 +356,15 @@ export default function ConfigTypePage() {
                     <Button variant="contained" color='error' onClick={onDelete}>Delete</Button>
                 </DialogActions>
             </Dialog>
+
+            <HelpMessageDialog open={showHelp} onClose={() => setShowHelp(false)}>
+                <Typography variant="h6">Active/Disabled Type</Typography>
+                <Typography variant="body">Active Type is visible in create record. Disabled Type is hidden in create record.</Typography>
+                <Typography variant="h6">Weight</Typography>
+                <Typography variant="body">Smaller weight value will have higher position.</Typography>
+                <Typography variant="h6">Delete</Typography>
+                <Typography variant="body">The type cannot be deleted if used. Disable the type instead.</Typography>
+            </HelpMessageDialog>
         </Box>
     )
 }

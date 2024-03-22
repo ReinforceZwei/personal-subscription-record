@@ -2,7 +2,7 @@ import { Card, CardActionArea, CardContent, Typography } from "@mui/material"
 import tinycolor from "tinycolor2"
 
 export default function RecordTypeCard(props) {
-    const { bg, children, onClick, colorTransition, ...other } = props
+    const { bg, children, onClick, colorTransition, weight, ...other } = props
 
     let style = {}
     if (bg) {
@@ -22,6 +22,9 @@ export default function RecordTypeCard(props) {
                     <Typography variant="h6">
                         {children}
                     </Typography>
+                    {weight != undefined && (
+                        <Typography variant="caption">Weight: {weight}</Typography>
+                    )}
                 </CardContent>
             </CardActionArea>
         </Card>

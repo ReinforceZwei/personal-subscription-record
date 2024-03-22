@@ -18,10 +18,7 @@ export default function UserDefaultPage() {
     const userSettings = useSelector(selectUserSettings)
     const defaultPage = userSettings == null ? 'spentRecord' : userSettings['default_page'] || 'loading'
 
-    useEffect(() => {
-        dispatch(fetchUserSettings())
-
-    }, [])
+    
 
     let page = <Navigate to='/spentRecord' />//<SpentRecordPage />
 
