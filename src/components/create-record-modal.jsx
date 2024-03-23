@@ -112,10 +112,10 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                             disabled={disabled}
                                             label='Price'
                                             InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
-                                            inputProps={{ inputMode: 'numeric' }}
+                                            inputProps={{ inputMode: 'decimal' }}
                                             fullWidth
                                             autoComplete="off"
-                                            inputMode={'numeric'}
+                                            inputMode={'decimal'}
                                             type="number"
                                             autoFocus
                                         />
