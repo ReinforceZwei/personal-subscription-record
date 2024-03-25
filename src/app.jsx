@@ -36,6 +36,7 @@ import UserDefaultPage from './routers/user-default-page.jsx';
 import ConfigPreferencePage from './pages/config-pages/config-preference-page.jsx';
 
 import { fetchUserSettings, selectUserSettings } from "./redux/userSettingsSlice";
+import SubscriptionRecordPage from './pages/subscription-record-page.jsx';
 
 export default function App() {
     const dispatch = useDispatch()
@@ -56,6 +57,7 @@ export default function App() {
 
                     <Route path="spentRecord" element={<SpentRecordPage />} />
                     <Route path="quickCreate" element={<QuickCreatePage />} />
+                    <Route path="subscriptionRecord" element={<SubscriptionRecordPage />} />
 
                     <Route path="config" element={<ConfigPage />}>
                         {/* <Route index element={<Navigate to="preference" replace />} /> */}

@@ -4,6 +4,7 @@ import RestoreIcon from '@mui/icons-material/Restore'
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import AddIcon from '@mui/icons-material/Add';
 import TuneIcon from '@mui/icons-material/Tune';
+import CreditScoreIcon from '@mui/icons-material/CreditScore';
 import { useEffect, useState } from "react";
 
 
@@ -18,10 +19,11 @@ export default function FooterLayout() {
             setValue('create')
         } else if (pathname.startsWith('/config')) {
             setValue('settings')
+        } else if (pathname.startsWith('/subscriptionRecord')) {
+            setValue('subscriptionRecord')
         }
     }, [pathname])
    
-    // FIXME: Bottom margin is not enough on iPhone (overlapped with the bar)
     return (
         <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, pb: 2 }} elevation={3}>
             <BottomNavigation showLabels value={value} onChange={(e, v) => setValue(v)} sx={{backgroundColor: 'initial'}}>
@@ -31,6 +33,13 @@ export default function FooterLayout() {
                     icon={<LocalMallIcon />}
                     LinkComponent={NavLink}
                     to='/spentRecord' />
+                
+                <BottomNavigationAction 
+                    label='Subscription'
+                    value='subscriptionRecord'
+                    icon={<CreditScoreIcon />}
+                    LinkComponent={NavLink}
+                    to='/subscriptionRecord' />
                 
                 <BottomNavigationAction 
                     label='Create'
