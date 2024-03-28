@@ -25,7 +25,7 @@ export default function FooterLayout() {
     }, [pathname])
    
     return (
-        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, pb: 2 }} elevation={3}>
+        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, pb: 'env(safe-area-inset-bottom, 20px)' }} elevation={3}>
             <BottomNavigation showLabels value={value} onChange={(e, v) => setValue(v)} sx={{backgroundColor: 'initial'}}>
                 <BottomNavigationAction 
                     label='Records'

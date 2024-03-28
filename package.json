@@ -19,6 +19,7 @@
     "@reduxjs/toolkit": "^2.2.1",
     "fast-sort": "^3.4.0",
     "localforage": "^1.10.0",
+    "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",
     "match-sorter": "^6.3.4",
     "pocketbase": "^0.21.1",

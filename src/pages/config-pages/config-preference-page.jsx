@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
+import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { createUserSettings, fetchUserSettings, selectUserSettings, updateUserSettings } from "../../redux/userSettingsSlice";
 import { useContext, useEffect, useState } from "react";
@@ -42,6 +42,8 @@ export default function ConfigPreferencePage() {
     const navigate = useNavigate()
 
     const userSettings = useSelector(selectUserSettings)
+    
+    const [inputBudget, setInputBudget] = useState(userSettings.budget_per_month || 0)
 
     const [showConfirmLogout, setShowConfirmLogout] = useState(false)
 
@@ -68,6 +70,14 @@ export default function ConfigPreferencePage() {
         const data = {
             ...removePbDefaultField(userSettings),
             color_mode: e.target.value,
+        }
+        dispatch(updateUserSettings({ id: userSettings.id, data }))
+    }
+
+    const handleSetBudget = () => {
+        const data = {
+            ...removePbDefaultField(userSettings),
+            budget_per_month: Number(inputBudget),
         }
         dispatch(updateUserSettings({ id: userSettings.id, data }))
     }
@@ -117,6 +127,24 @@ export default function ConfigPreferencePage() {
                                     ))}
                                 </Select>
                                 <FormHelperText>App color mode</FormHelperText>
+                            </FormControl>
+                        </Grid>
+
+                        <Grid xs={6}>
+                            <FormControl fullWidth>
+                                <TextField
+                                    fullWidth
+                                    label='Month Budget'
+                                    variant="outlined"
+                                    type="number"
+                                    inputMode="decimal"
+                                    inputProps={{ inputMode: 'decimal' }}
+                                    InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
+                                    value={inputBudget}
+                                    onChange={(e) => setInputBudget(e.target.value)}
+                                    onBlur={handleSetBudget}
+                                />
+                                <FormHelperText>Total budget for each month</FormHelperText>
                             </FormControl>
                         </Grid>
 

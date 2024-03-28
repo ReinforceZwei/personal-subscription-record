@@ -10,20 +10,41 @@ import { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase
 import RecordTypeChip from '../components/record-type-chip'
 import RecordDetailModal from '../components/record-detail-modal'
 import { selectAllRecord, fetchRecords, fetchMonthSum, setSelectedDate, selectSelectedDate, selectGroupedRecord } from '../redux/recordSlice'
+import _ from 'lodash-es'
+import { fetchUserSettings, selectUserSettings } from '../redux/userSettingsSlice'
 
 export default function SpentRecordPage() {
     const pb = useContext(PocketBaseContext)
     const dispatch = useDispatch()
 
-    const groupedRecords = useSelector(selectGroupedRecord)
-    const monthSum = useSelector((state) => state.record.monthSum)
+    const records = useSelector(selectAllRecord)
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
     const yearMonth = selectedDate.toFormat('yyyy-MM')
+    const userSettings = useSelector(selectUserSettings)
+
+    const monthSum = useMemo(() => {
+        return _.round(_.sumBy(records, x => x.price), 2)
+    }, [records])
+
+    const groupedRecords = useMemo(() => {
+        return _.chain(records)
+            .groupBy(x => DateTime.fromSQL(x.created).toLocaleString())
+            .map((v, k) => ({date: k, records: v}))
+            .value()
+    }, [records])
+
+    const balance = useMemo(() => {
+        return _.round(_.subtract(userSettings?.budget_per_month, monthSum), 2)
+    }, [userSettings, monthSum])
 
     useEffect(() => {
         dispatch(fetchRecords())
-        dispatch(fetchMonthSum())
+
     }, [dispatch, yearMonth])
+
+    useEffect(() => {
+        dispatch(fetchUserSettings())
+    }, [])
 
     const [detailModal, setDetailModal] = useState({
         record: null,
@@ -44,12 +65,10 @@ export default function SpentRecordPage() {
         })
     }
 
-    
-    console.log(groupedRecords)
 
     return (
         <Box sx={{mb: 10, mt: 1}}>
-            <Grid container justifyContent='center' spacing={1} columns={{ xs: 8, sm: 12 }} rowSpacing={2}>
+            <Grid container spacing={1} columns={{ xs: 8, sm: 12 }} rowSpacing={1}>
                 <Grid xs={8} sm={4}>
                     <DatePicker
                         label='Month'
@@ -64,15 +83,19 @@ export default function SpentRecordPage() {
                     <Card>
                         <CardContent>
                             <Typography>Total</Typography>
-                            <Typography variant='h5'>${monthSum[yearMonth] || '---'}</Typography>
+                            <Typography variant='h5'>${monthSum || '---'}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
                 <Grid xs={4}>
                     <Card>
                         <CardContent>
-                            <Typography>Allowance</Typography>
-                            <Typography variant='h5'>$---</Typography>
+                            <Typography>Balance</Typography>
+                            <Typography variant='h5'
+                                sx={{
+                                    color: balance < 0 ? 'error.main' : 'success.main',
+                                }}
+                            >${balance || '---'}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>

@@ -13,8 +13,6 @@ const recordDetailModalProps = {
 export default function RecordDetailModal(props = recordDetailModalProps) {
     const { record, open, onClose } = props
 
-    console.log(record)
-
     return (
         <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth='sm'>
             <DialogTitle>

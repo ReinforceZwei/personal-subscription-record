@@ -2,7 +2,8 @@ import {
     Box, Button, Container, List, ListItem, Chip, IconButton,
     Dialog, DialogActions, DialogContent, DialogTitle, TextField,
     InputLabel, Paper, Divider, Typography, ToggleButtonGroup,
-    ToggleButton, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails
+    ToggleButton, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails,
+    InputAdornment
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import { useContext, useEffect, useState } from "react"
@@ -44,7 +45,8 @@ export default function ConfigTypePage() {
 
     const { handleSubmit, reset, setValue, setFocus, watch, control } = useForm({
         defaultValues: {
-            weight: 100
+            weight: 100,
+            budget_per_month: 0,
         }
     })
     const watchName = watch('name')
@@ -60,6 +62,7 @@ export default function ConfigTypePage() {
         setValue('color', type.color || '#fff')
         setValue('enabled', type.enabled)
         setValue('weight', type.weight)
+        setValue('budget_per_month', type.budget_per_month)
         setSelectedType(type)
         setModalType('edit')
         setShowModal(true)
@@ -95,6 +98,7 @@ export default function ConfigTypePage() {
             color: data.color.hex,
             enabled: data.enabled,
             weight: data.weight,
+            budget_per_month: data.budget_per_month,
         }
         dispatch(updateType({ id: selectedType.id, data: final }))
             .unwrap()
@@ -116,6 +120,7 @@ export default function ConfigTypePage() {
             color: data.color.hex,
             enabled: true,
             weight: data.weight,
+            budget_per_month: data.budget_per_month,
         }
         dispatch(addType({ data: final }))
             .unwrap()
@@ -245,6 +250,31 @@ export default function ConfigTypePage() {
                                     control={control}
                                 />
                             </Grid>
+
+                            <Grid xs={4}>
+                                <Controller
+                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                        <TextField
+                                            onBlur={onBlur}
+                                            onChange={onChange}
+                                            inputRef={ref}
+                                            value={value}
+                                            name={name}
+                                            disabled={disabled}
+                                            label='Budget'
+                                            InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
+                                            inputProps={{ inputMode: 'decimal' }}
+                                            fullWidth
+                                            autoComplete="off"
+                                            inputMode={'decimal'}
+                                            type="number"
+                                        />
+                                    )}
+                                    name='budget_per_month'
+                                    rules={{ required: true }}
+                                    control={control}
+                                />
+                            </Grid>
                             
                             
                             <Grid xs={4}>
@@ -271,7 +301,8 @@ export default function ConfigTypePage() {
                                 />
                             </Grid>
                             {modalType === 'edit' && (
-                                <Grid xs={6}>
+                                <Grid xs={8}>
+                                    <Box display='flex' alignContent='center' height='100%' justifyContent='flex-end'>
                                     <Controller
                                         render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                             <FormControlLabel
@@ -291,6 +322,7 @@ export default function ConfigTypePage() {
                                         name='enabled'
                                         control={control}
                                     />
+                                    </Box>
                                 </Grid>
                             )}
                             <Grid xs={12}>
