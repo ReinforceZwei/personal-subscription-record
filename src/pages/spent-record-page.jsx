@@ -75,7 +75,7 @@ export default function SpentRecordPage() {
     }, [])
 
     useEffect(() => {
-        if (userSettings.budget_per_month) {
+        if (userSettings?.budget_per_month) {
             // Ensure budget record is created in backend
             dispatch(createBudget({ budget: userSettings.budget_per_month }))
         }
