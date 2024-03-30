@@ -4,7 +4,9 @@ import tinycolor from "tinycolor2"
 export default function RecordTypeCard(props) {
     const { bg, children, onClick, colorTransition, weight, ...other } = props
 
-    let style = {}
+    let style = {
+        textAlign: 'center'
+    }
     if (bg) {
         const bgColor = tinycolor(bg)
         style.backgroundColor = bgColor.toString()

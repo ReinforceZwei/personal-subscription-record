@@ -35,18 +35,18 @@ export default function FooterLayout() {
                     to='/spentRecord' />
                 
                 <BottomNavigationAction 
-                    label='Subscription'
-                    value='subscriptionRecord'
-                    icon={<CreditScoreIcon />}
-                    LinkComponent={NavLink}
-                    to='/subscriptionRecord' />
-                
-                <BottomNavigationAction 
                     label='Create'
                     value='create'
                     icon={<AddIcon />}
                     LinkComponent={NavLink}
                     to='/quickCreate' />
+                
+                <BottomNavigationAction 
+                    label='Subscription'
+                    value='subscriptionRecord'
+                    icon={<CreditScoreIcon />}
+                    LinkComponent={NavLink}
+                    to='/subscriptionRecord' />
                 
                 <BottomNavigationAction 
                     label='Settings'
