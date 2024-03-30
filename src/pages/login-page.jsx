@@ -55,6 +55,7 @@ export default function LoginPage() {
                 <Paper sx={{ margin: 2, padding: 2 }}>
                     <Box mb={1}>
                         <Typography variant="h4">SSRS</Typography>
+                        <Typography variant="subtitle1">訂閱與支出記錄</Typography>
                         <Typography variant="subtitle1">Subscription & Spending Record System</Typography>
                     </Box>
                     
@@ -70,7 +71,7 @@ export default function LoginPage() {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Username'
+                                            label='登入名稱'
                                             fullWidth
                                         />
                                     )}
@@ -89,7 +90,7 @@ export default function LoginPage() {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Password'
+                                            label='密碼'
                                             type='password'
                                             fullWidth
                                         />
@@ -100,20 +101,20 @@ export default function LoginPage() {
                                 />
                             </Grid>
                             <Grid xs={12} sx={{textAlign: 'center'}}>
-                                <Button type='submit' variant="outlined">Login</Button>
+                                <Button type='submit' variant="outlined">登入</Button>
                             </Grid>
                             {loginError && (
                                 <Grid xs={12}>
-                                    <Alert severity="error">Login failed: {loginError}</Alert>
+                                    <Alert severity="error">登入失敗: {loginError}</Alert>
                                 </Grid>
                             )}
                         </Grid>
                     </form>
                 </Paper>
-                <Divider>OR</Divider>
+                <Divider>或</Divider>
                 <Box textAlign='center' mt={1}>
                     <ButtonGroup orientation="vertical" variant="outlined" size="large">
-                        <Button variant="outlined" startIcon={<GitHubIcon />} onClick={handleGithub}>Signin with Github</Button>
+                        <Button variant="outlined" startIcon={<GitHubIcon />} onClick={handleGithub}>使用 Github 登入</Button>
                     </ButtonGroup>
                 </Box>
             </Container>

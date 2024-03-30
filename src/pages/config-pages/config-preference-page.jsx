@@ -14,14 +14,14 @@ const defaultSettings = {
 }
 
 const defaultPageOption = [
-    { name: 'Spent Record', value: 'spentRecord' },
-    { name: 'Quick Create', value: 'quickCreate' },
+    { name: '支出記錄', value: 'spentRecord' },
+    { name: '快速建立', value: 'quickCreate' },
 ]
 
 const colorModeOption = [
-    { name: 'Light Mode', value: 'light' },
-    { name: 'Dark Mode', value: 'dark' },
-    { name: 'Follow System Setting', value: 'system' },
+    { name: '淺色', value: 'light' },
+    { name: '深色', value: 'dark' },
+    { name: '跟隨系統設定', value: 'system' },
 ]
 
 function Loading() {
@@ -98,10 +98,10 @@ export default function ConfigPreferencePage() {
                     <Grid container spacing={3} columns={{ xs: 6, sm: 12}}>
                         <Grid xs={6}>
                             <FormControl fullWidth>
-                                <InputLabel>Startup Page</InputLabel>
+                                <InputLabel>起始頁面</InputLabel>
                                 <Select
                                     fullWidth
-                                    label='Startup Page'
+                                    label='起始頁面'
                                     value={userSettings.default_page}
                                     onChange={handleSetDefaultPage}
                                 >
@@ -109,16 +109,16 @@ export default function ConfigPreferencePage() {
                                         <MenuItem key={value} value={value} >{name}</MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText>Which page to show when app open</FormHelperText>
+                                <FormHelperText>開啟APP時預設顯示哪一個頁面</FormHelperText>
                             </FormControl>
                         </Grid>
 
                         <Grid xs={6}>
                             <FormControl fullWidth>
-                                <InputLabel>Color Mode</InputLabel>
+                                <InputLabel>顏色外觀</InputLabel>
                                 <Select
                                     fullWidth
-                                    label='Color Mode'
+                                    label='顏色外觀'
                                     value={userSettings.color_mode}
                                     onChange={handleSetColorMode}
                                 >
@@ -126,7 +126,7 @@ export default function ConfigPreferencePage() {
                                         <MenuItem key={value} value={value} >{name}</MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText>App color mode</FormHelperText>
+                                <FormHelperText>APP的顏色外觀</FormHelperText>
                             </FormControl>
                         </Grid>
 
@@ -134,7 +134,7 @@ export default function ConfigPreferencePage() {
                             <FormControl fullWidth>
                                 <TextField
                                     fullWidth
-                                    label='Month Budget'
+                                    label='每月預算'
                                     variant="outlined"
                                     type="number"
                                     inputMode="decimal"
@@ -144,17 +144,18 @@ export default function ConfigPreferencePage() {
                                     onChange={(e) => setInputBudget(e.target.value)}
                                     onBlur={handleSetBudget}
                                 />
-                                <FormHelperText>Total budget for each month</FormHelperText>
+                                <FormHelperText>每月總預算，不包括訂閱項目</FormHelperText>
                             </FormControl>
                         </Grid>
 
                         <Grid xs={6}>
-                            <Button variant="outlined" fullWidth onClick={() => handleConfirmLogout()}>Logout</Button>
+                            <Button variant="outlined" fullWidth onClick={() => handleConfirmLogout()}>登出</Button>
                             {showConfirmLogout && 
                                 <ConfirmDeleteDialog
                                     open={showConfirmLogout}
-                                    title="Confirm Logout?"
-                                    confirmActionText="Logout"
+                                    title="確定要登出嗎？"
+                                    confirmActionText="登出"
+                                    cancelActionText="取消"
                                     onConfirm={() => logout()}
                                     onClose={() => setShowConfirmLogout(false)}
                                 />

@@ -9,6 +9,7 @@ import { useEffect, useMemo } from 'react';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
+import { zhHK } from '@mui/x-date-pickers/locales';
 
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
@@ -101,7 +102,7 @@ export default function App() {
     return (
         <div>
         <PocketBaseContext.Provider value={pb}>
-            <LocalizationProvider dateAdapter={AdapterLuxon}>
+            <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale='zh-HK' localeText={zhHK.components.MuiLocalizationProvider.defaultProps.localeText}>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
                     <div>

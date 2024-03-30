@@ -9,12 +9,12 @@ import Grid from '@mui/material/Unstable_Grid2'
 
 const ConfirmDeleteDialogProps = {
     open: false,
-    title: 'Confirm Delete',
+    title: '確認刪除',
     content: '',
     onClose: () => {},
     onConfirm: () => {},
-    confirmActionText: 'Delete',
-    cancelActionText: 'Cancel',
+    confirmActionText: '刪除',
+    cancelActionText: '取消',
 }
 
 export default function ConfirmDeleteDialog(props = ConfirmDeleteDialogProps) {

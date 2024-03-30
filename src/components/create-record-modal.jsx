@@ -81,7 +81,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                         <RecordTypeChip label={selectedType.name} bg={selectedType.color} />
                     </Grid>
                     <Grid>
-                        Create record
+                        建立支出記錄
                     </Grid>
                 </Grid>
 
@@ -110,7 +110,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Price'
+                                            label='價錢'
                                             InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
                                             inputProps={{ inputMode: 'decimal' }}
                                             fullWidth
@@ -127,7 +127,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                             </Grid>
                             <Grid xs={6}>
                                 <FormControl fullWidth>
-                                    <InputLabel>Payment</InputLabel>
+                                    <InputLabel>支付方式</InputLabel>
                                     <Controller
                                         render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                             <Select
@@ -137,13 +137,13 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                                 value={value}
                                                 name={name}
                                                 disabled={disabled}
-                                                label="Payment"
+                                                label="支付方式"
                                                 fullWidth
                                             >
                                                 {payments.length ? payments.map((payment) => (
                                                     <MenuItem key={payment.id} value={payment.id}>{payment.name}</MenuItem>
                                                 )) : (
-                                                    <MenuItem key='none' value='' disabled><Box fontStyle='italic'>No Payment Config</Box></MenuItem>
+                                                    <MenuItem key='none' value='' disabled><Box fontStyle='italic'>未設定支付方式</Box></MenuItem>
                                                 )}
                                             </Select>
                                         )}
@@ -166,7 +166,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                             disabled={disabled}
                                             freeSolo
                                             options={suggestedName.map((name) => { return { id: name.id, label: name.name } })}
-                                            renderInput={(params) => <TextField {...params} label="Name" />}
+                                            renderInput={(params) => <TextField {...params} label="名稱" />}
                                         // getOptionLabel={(option) => option.name}
                                         // getOptionKey={(option) => option.id}
                                         />
@@ -191,7 +191,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Description'
+                                            label='描述'
                                             fullWidth
                                             autoComplete="off"
                                             multiline
@@ -207,8 +207,8 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setShowThisModal(false)}>Close</Button>
-                    <Button type="submit" variant="contained">Create</Button>
+                    <Button onClick={() => setShowThisModal(false)}>關閉</Button>
+                    <Button type="submit" variant="contained">建立</Button>
                 </DialogActions>
             </form>
         </Dialog>

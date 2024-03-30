@@ -33,9 +33,9 @@ export default function ConfigPage() {
         <div>
             <Box mb={2}>
                 <Tabs value={value} onChange={(e, v) => setValue(v)} role='navigation' variant="scrollable" scrollButtons="auto">
-                    <Tab LinkComponent={NavLink} to='preference' value='preference' label='Preference' />
-                    <Tab LinkComponent={NavLink} to='type' value='type' label='Type' />
-                    <Tab LinkComponent={NavLink} to='payment' value='payment' label='Payment' />
+                    <Tab LinkComponent={NavLink} to='preference' value='preference' label='喜好' />
+                    <Tab LinkComponent={NavLink} to='type' value='type' label='支出類別' />
+                    <Tab LinkComponent={NavLink} to='payment' value='payment' label='支付方式' />
                 </Tabs>
             </Box>
             <div>

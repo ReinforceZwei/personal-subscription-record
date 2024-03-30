@@ -12,7 +12,7 @@ import { useState } from "react"
 
 const HelpMessageDialogProps = {
     open: false,
-    title: 'Help',
+    title: '幫助',
     children: null,
     onClose: () => {},
 }
@@ -43,7 +43,7 @@ export default function HelpMessageDialog(props = HelpMessageDialogProps) {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>Close</Button>
+                <Button onClick={onClose}>關閉</Button>
             </DialogActions>
         </Dialog>
     )

@@ -19,7 +19,7 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
     return (
         <Dialog open={internalShow} onClose={() => setInternalShow(false)} fullWidth={true} maxWidth='sm' TransitionProps={{onExited: () => {onClose()}}}>
             <DialogTitle>
-                Details
+                詳細資料
 
                 <IconButton
                     onClick={() => setInternalShow(false)}
@@ -40,21 +40,21 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
 
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
-                            <Typography variant="subtitle1">Total</Typography>
+                            <Typography variant="subtitle1">總支出</Typography>
                             <Typography variant="h6">${typeSum || '---'}</Typography>
                         </Box>
                     </Grid>
 
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
-                            <Typography variant="subtitle1">Monthly Budget</Typography>
+                            <Typography variant="subtitle1">每月預算</Typography>
                             <Typography variant="h6">${type.budget_per_month || '---'}</Typography>
                         </Box>
                     </Grid>
 
                     <Grid xs={12}>
                         <Box sx={{padding: 2}}>
-                            <Typography variant="subtitle1">Balance</Typography>
+                            <Typography variant="subtitle1">餘額</Typography>
                             {type.budget_per_month ? (
                                 <Typography variant="h6"
                                     sx={{
@@ -72,7 +72,7 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={() => setInternalShow(false)}>Close</Button>
+                <Button onClick={() => setInternalShow(false)}>關閉</Button>
             </DialogActions>
         </Dialog>
     )

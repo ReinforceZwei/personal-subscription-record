@@ -50,7 +50,7 @@ export default function CreatePaymentModal(props = CreatePaymentModalProps) {
             }}
         >
             <DialogTitle>
-                Create Payment
+                建立支付方式
 
                 <IconButton
                     onClick={() => setShowThisModal(false)}
@@ -75,7 +75,7 @@ export default function CreatePaymentModal(props = CreatePaymentModalProps) {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Name'
+                                            label='名稱'
                                             fullWidth
                                             autoComplete="off"
                                             autoFocus
@@ -97,7 +97,7 @@ export default function CreatePaymentModal(props = CreatePaymentModalProps) {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Weight'
+                                            label='權重'
                                             inputProps={{ inputMode: 'numeric' }}
                                             fullWidth
                                             autoComplete="off"
@@ -115,8 +115,8 @@ export default function CreatePaymentModal(props = CreatePaymentModalProps) {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={() => setShowThisModal(false)}>Close</Button>
-                    <Button type="submit" variant="contained">Create</Button>
+                    <Button onClick={() => setShowThisModal(false)}>關閉</Button>
+                    <Button type="submit" variant="contained">建立</Button>
                 </DialogActions>
             </form>
         </Dialog>

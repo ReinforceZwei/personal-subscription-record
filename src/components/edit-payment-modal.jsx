@@ -65,7 +65,7 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
             }}
         >
             <DialogTitle>
-                Edit Payment
+                編輯支付方式
 
                 <IconButton
                     onClick={() => setShowThisModal(false)}
@@ -90,7 +90,7 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Name'
+                                            label='名稱'
                                             fullWidth
                                             autoComplete="off"
                                             autoFocus
@@ -111,7 +111,7 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Weight'
+                                            label='權重'
                                             inputProps={{ inputMode: 'numeric' }}
                                             fullWidth
                                             autoComplete="off"
@@ -138,7 +138,7 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
                                                     onBlur={onBlur}
                                                 />
                                             }
-                                            label="Enabled"
+                                            label="已啟用"
                                         />
                                     )}
                                     name='enabled'
@@ -150,9 +150,9 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button variant="outlined" color='error' sx={{mr: 'auto'}} onClick={popConfirmDialog}>Delete</Button>
-                    <Button onClick={() => setShowThisModal(false)}>Close</Button>
-                    <Button type="submit" variant="contained">Save</Button>
+                    <Button variant="outlined" color='error' sx={{mr: 'auto'}} onClick={popConfirmDialog}>刪除</Button>
+                    <Button onClick={() => setShowThisModal(false)}>關閉</Button>
+                    <Button type="submit" variant="contained">儲存</Button>
                 </DialogActions>
             </form>
         </Dialog>
@@ -161,7 +161,7 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
             open={showConfirmDialog}
             onClose={() => setShowConfirmDialog(false)}
             onConfirm={() => onDelete(payment)}
-            content="Payment cannot be deleted if the payment is in use."
+            content="如支付方式已被使用，則無法刪除"
         />
         </div>
     )

@@ -84,8 +84,8 @@ export default function ConfigTypePage() {
     const handleDeleteType = () => {
         setShowMsgModal({
             open: true,
-            title: 'Delete type?',
-            content: 'The type cannot be deleted if the type is in use.'
+            title: '刪除類別？',
+            content: '如類別已被使用，則無法刪除'
         })
     }
 
@@ -142,7 +142,7 @@ export default function ConfigTypePage() {
             })
             .catch((err) => {
                 //alert(err)
-                alert('Type is in use and cannot deleted.')
+                alert('類別已被使用，無法刪除')
                 console.log(err)
             })
     }
@@ -150,13 +150,13 @@ export default function ConfigTypePage() {
     return (
         <Box>
             <Box mb={2} display='flex' justifyContent='space-between'>
-                <Button variant="outlined" onClick={handleCreateType} startIcon={<AddIcon />}>Create New Type</Button>
+                <Button variant="outlined" onClick={handleCreateType} startIcon={<AddIcon />}>建立新支出類別</Button>
                 <IconButton onClick={() => setShowHelp(true)}><HelpIcon /></IconButton>
             </Box>
             
             <Accordion defaultExpanded>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    Active Types
+                    已啟用的類別
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box sx={{textAlign: 'center'}}>
@@ -168,7 +168,7 @@ export default function ConfigTypePage() {
                                     </RecordTypeCard>
                                 </Grid>
                                 
-                            )): (<Grid xs={12} fontStyle='italic' textAlign='center'>{'Go create new record type'}</Grid>)}
+                            )): (<Grid xs={12} fontStyle='italic' textAlign='center'>{'先建立新的類別'}</Grid>)}
                             
                         </Grid>
                     </Box>
@@ -178,7 +178,7 @@ export default function ConfigTypePage() {
 
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    Disabled Types
+                    已停用的類別
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box sx={{textAlign: 'center'}}>
@@ -190,7 +190,7 @@ export default function ConfigTypePage() {
                                     </RecordTypeCard>
                                 </Grid>
                                 
-                            )) : (<Grid xs={12} fontStyle='italic' textAlign='center'>{'Nothing here :)'}</Grid>)}
+                            )) : (<Grid xs={12} fontStyle='italic' textAlign='center'>{'這裡沒有東西 :)'}</Grid>)}
                             
                         </Grid>
                     </Box>
@@ -210,8 +210,8 @@ export default function ConfigTypePage() {
                 <DialogTitle>
                     <Grid container spacing={1}>
                         <Grid>
-                            {modalType === 'edit' && 'Edit Type'}
-                            {modalType === 'create' && 'Create Type'}
+                            {modalType === 'edit' && '編輯類別'}
+                            {modalType === 'create' && '建立新類別'}
                         </Grid>
                     </Grid>
                     
@@ -239,7 +239,7 @@ export default function ConfigTypePage() {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Name'
+                                            label='名稱'
                                             fullWidth
                                             autoComplete="off"
                                             autoFocus
@@ -261,7 +261,7 @@ export default function ConfigTypePage() {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Budget'
+                                            label='預算'
                                             InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
                                             inputProps={{ inputMode: 'decimal' }}
                                             fullWidth
@@ -287,7 +287,7 @@ export default function ConfigTypePage() {
                                             value={value}
                                             name={name}
                                             disabled={disabled}
-                                            label='Weight'
+                                            label='權重'
                                             inputProps={{ inputMode: 'numeric' }}
                                             fullWidth
                                             autoComplete="off"
@@ -316,7 +316,7 @@ export default function ConfigTypePage() {
                                                         onBlur={onBlur}
                                                     />
                                                 }
-                                                label="Enabled"
+                                                label="已啟用"
                                             />
                                         )}
                                         name='enabled'
@@ -326,10 +326,10 @@ export default function ConfigTypePage() {
                                 </Grid>
                             )}
                             <Grid xs={12}>
-                                <InputLabel>Color</InputLabel>
+                                <InputLabel>顏色</InputLabel>
                                 <ToggleButtonGroup value={colorInputType} exclusive size="small" onChange={(e, v) => setColorInputType(v)}>
-                                    <ToggleButton value='palette'>Palette</ToggleButton>
-                                    <ToggleButton value='custom'>Custom</ToggleButton>
+                                    <ToggleButton value='palette'>調色盤</ToggleButton>
+                                    <ToggleButton value='custom'>自定義</ToggleButton>
                                 </ToggleButtonGroup>
                             </Grid>
                             <Grid xs={12}>
@@ -357,7 +357,7 @@ export default function ConfigTypePage() {
                         </Grid>
                         <Grid container spacing={1} justifyContent='center'>
                             <Grid xs={12}>
-                                <Divider><Typography variant="overline">Preview</Typography></Divider>
+                                <Divider><Typography variant="overline">預覽</Typography></Divider>
                             </Grid>
                             <Grid xs={6}>
                             
@@ -371,9 +371,9 @@ export default function ConfigTypePage() {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    {modalType === 'edit' && (<Button variant="outlined" color='error' sx={{mr: 'auto'}} onClick={handleDeleteType}>Delete</Button>)}
-                    <Button onClick={() => setShowModal(false)}>Close</Button>
-                    <Button type="submit" variant="contained">{modalType === 'edit' ? 'Save' : 'Create'}</Button>
+                    {modalType === 'edit' && (<Button variant="outlined" color='error' sx={{mr: 'auto'}} onClick={handleDeleteType}>刪除</Button>)}
+                    <Button onClick={() => setShowModal(false)}>關閉</Button>
+                    <Button type="submit" variant="contained">{modalType === 'edit' ? '儲存' : '建立'}</Button>
                 </DialogActions>
                 </form>
             </Dialog>
@@ -384,18 +384,18 @@ export default function ConfigTypePage() {
                     <DialogContent>{showMsgModal.content}</DialogContent>
                 )}
                 <DialogActions>
-                    <Button onClick={() => setShowMsgModal({ open: false })}>Cancel</Button>
-                    <Button variant="contained" color='error' onClick={onDelete}>Delete</Button>
+                    <Button onClick={() => setShowMsgModal({ open: false })}>取消</Button>
+                    <Button variant="contained" color='error' onClick={onDelete}>刪除</Button>
                 </DialogActions>
             </Dialog>
 
             <HelpMessageDialog open={showHelp} onClose={() => setShowHelp(false)}>
-                <Typography variant="h6">Active/Disabled Type</Typography>
-                <Typography variant="body">Active Type is visible in create record. Disabled Type is hidden in create record.</Typography>
-                <Typography variant="h6">Weight</Typography>
-                <Typography variant="body">Smaller weight value will have higher position.</Typography>
-                <Typography variant="h6">Delete</Typography>
-                <Typography variant="body">The type cannot be deleted if used. Disable the type instead.</Typography>
+                <Typography variant="h6">已啟用/停用的類別</Typography>
+                <Typography variant="body">已啟用的類別可在建立支出記錄時選擇。已停用的類別會被隱藏。</Typography>
+                <Typography variant="h6">權重</Typography>
+                <Typography variant="body">權重數字越小，排列順序會越優先。</Typography>
+                <Typography variant="h6">刪除</Typography>
+                <Typography variant="body">已被使用的類別無法刪除。請停用來代替刪除。</Typography>
             </HelpMessageDialog>
         </Box>
     )

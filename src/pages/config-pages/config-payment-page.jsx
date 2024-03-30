@@ -98,20 +98,20 @@ export default function ConfigPaymentPage() {
             })
             .catch((err) => {
                 console.log(err)
-                alert('Cannot delete payment method because it is in use.')
+                alert('支付方式已被使用，無法刪除')
             })
     }
 
     return (
         <Box>
             <Box mb={2} display='flex' justifyContent='space-between'>
-                <Button variant="outlined" onClick={handleCreatePayment} startIcon={<AddIcon />} >Create New Payment</Button>
+                <Button variant="outlined" onClick={handleCreatePayment} startIcon={<AddIcon />} >建立新的支付方式</Button>
                 <IconButton onClick={() => setShowHelp(true)}><HelpIcon /></IconButton>
             </Box>
 
             <Accordion defaultExpanded>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    Active Payment Methods
+                    已啟用的支付方式
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box>
@@ -119,10 +119,10 @@ export default function ConfigPaymentPage() {
                             {enabledPayments.length ? enabledPayments.map((payment) => (
                                 <ListItem key={payment.id} sx={{ p: 0 }}>
                                     <ListItemButton onClick={() => handleEditPayment(payment)}>
-                                        <ListItemText primary={payment.name} secondary={`Weight: ${payment.weight}`} />
+                                        <ListItemText primary={payment.name} secondary={`權重: ${payment.weight}`} />
                                     </ListItemButton>
                                 </ListItem>
-                            )) : (<ListItem><Box fontStyle='italic'>Go create new payment method</Box></ListItem>)}
+                            )) : (<ListItem><Box fontStyle='italic'>先建立支付方式</Box></ListItem>)}
                         </List>
                     </Box>
                 </AccordionDetails>
@@ -130,7 +130,7 @@ export default function ConfigPaymentPage() {
             
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    Disabled Payment Methods
+                    已停用的支付方式
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box>
@@ -138,10 +138,10 @@ export default function ConfigPaymentPage() {
                             {disabledPayments.length ? disabledPayments.map((payment) => (
                                 <ListItem key={payment.id} sx={{ p: 0 }}>
                                     <ListItemButton onClick={() => handleEditPayment(payment)}>
-                                        <ListItemText primary={payment.name} secondary={`Weight: ${payment.weight}`} />
+                                        <ListItemText primary={payment.name} secondary={`權重: ${payment.weight}`} />
                                     </ListItemButton>
                                 </ListItem>
-                            )) : (<ListItem><Box fontStyle='italic'>{'Nothing here :)'}</Box></ListItem>)}
+                            )) : (<ListItem><Box fontStyle='italic'>{'這裡沒有東西 :)'}</Box></ListItem>)}
                         </List>
                     </Box>
                 </AccordionDetails>
@@ -160,12 +160,12 @@ export default function ConfigPaymentPage() {
             />)}
 
             <HelpMessageDialog open={showHelp} onClose={() => setShowHelp(false)}>
-                <Typography variant="h6">Active/Disabled Payment</Typography>
-                <Typography variant="body">Active Payment is visible in create record. Disabled Payment is hidden in create record.</Typography>
-                <Typography variant="h6">Weight</Typography>
-                <Typography variant="body">Smaller weight value will have higher position.</Typography>
-                <Typography variant="h6">Delete</Typography>
-                <Typography variant="body">The payment cannot be deleted if used. Disable the payment instead.</Typography>
+                <Typography variant="h6">已啟用/停用的支付方式</Typography>
+                <Typography variant="body">已啟用的支付方式可以在建立支出記錄時選擇。已停用的支付方式會被隱藏。</Typography>
+                <Typography variant="h6">權重</Typography>
+                <Typography variant="body">權重數字越小，排列順序會越優先。</Typography>
+                <Typography variant="h6">刪除</Typography>
+                <Typography variant="body">已被使用的支付方式無法刪除。請停用來代替刪除。</Typography>
             </HelpMessageDialog>
         </Box>
     )

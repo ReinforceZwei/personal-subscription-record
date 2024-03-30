@@ -104,7 +104,7 @@ export default function SpentRecordPage() {
             <Grid container spacing={1} columns={{ xs: 8, sm: 12 }} rowSpacing={1}>
                 <Grid xs={8} sm={4}>
                     <DatePicker
-                        label='Month'
+                        label='月份'
                         views={['year', 'month']}
                         openTo='month'
                         value={selectedDate}
@@ -115,7 +115,7 @@ export default function SpentRecordPage() {
                 <Grid xs={4}>
                     <Card>
                         <CardContent>
-                            <Typography>Total</Typography>
+                            <Typography>支出</Typography>
                             <Typography variant='h5'>${monthSum || '---'}</Typography>
                         </CardContent>
                     </Card>
@@ -123,7 +123,7 @@ export default function SpentRecordPage() {
                 <Grid xs={4}>
                     <Card>
                         <CardContent>
-                            <Typography>Balance</Typography>
+                            <Typography>餘額</Typography>
                             <Typography variant='h5'
                                 sx={{
                                     color: balance < 0 ? 'error.main' : 'success.main',
@@ -136,7 +136,7 @@ export default function SpentRecordPage() {
             </Grid>
 
             <Accordion disableGutters sx={{ mt: 1}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>More Details</AccordionSummary>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>詳細分類</AccordionSummary>
 
                 <AccordionDetails>
                     <Grid container spacing={1} columns={{ xs: 8, sm: 12 }}>
@@ -184,7 +184,7 @@ export default function SpentRecordPage() {
                         <Typography sx={{
                             textAlign: 'center',
                             fontStyle: 'italic'
-                        }}>No records </Typography>
+                        }}>沒有記錄 </Typography>
                     </Stack>
                     
                 )}

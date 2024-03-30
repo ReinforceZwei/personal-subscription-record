@@ -28,28 +28,28 @@ export default function FooterLayout() {
         <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, pb: 'env(safe-area-inset-bottom, 20px)' }} elevation={3}>
             <BottomNavigation showLabels value={value} onChange={(e, v) => setValue(v)} sx={{backgroundColor: 'initial'}}>
                 <BottomNavigationAction 
-                    label='Records'
+                    label='記錄'
                     value='records'
                     icon={<LocalMallIcon />}
                     LinkComponent={NavLink}
                     to='/spentRecord' />
                 
                 <BottomNavigationAction 
-                    label='Create'
+                    label='建立'
                     value='create'
                     icon={<AddIcon />}
                     LinkComponent={NavLink}
                     to='/quickCreate' />
                 
-                <BottomNavigationAction 
-                    label='Subscription'
+                {/* <BottomNavigationAction 
+                    label='訂閱'
                     value='subscriptionRecord'
                     icon={<CreditScoreIcon />}
                     LinkComponent={NavLink}
-                    to='/subscriptionRecord' />
+                    to='/subscriptionRecord' /> */}
                 
                 <BottomNavigationAction 
-                    label='Settings'
+                    label='設定'
                     value='settings'
                     icon={<TuneIcon />}
                     LinkComponent={NavLink}

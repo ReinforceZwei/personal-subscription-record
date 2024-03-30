@@ -61,7 +61,7 @@ export default function QuickCreatePage() {
 
     return (
         <Box sx={{ mt: 2 }}>
-            <Typography variant="h5">Select Type and Create Record</Typography>
+            <Typography variant="h5">選擇一個類別來記錄支出</Typography>
             <Box sx={{textAlign: 'center', mt: 2}}>
                 <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
                 {enabledTypes.length ? enabledTypes.map((type) => (
@@ -71,7 +71,7 @@ export default function QuickCreatePage() {
                         </RecordTypeCard>
                     </Grid>
                     
-                )) : (<Grid xs={12} mt={12}><Link to='/config/type'>Create new type</Link>{' to get started'}</Grid>)}
+                )) : (<Grid xs={12} mt={12}><Link to='/config/type'>建立支出類別</Link>{'來開始'}</Grid>)}
                 
                 </Grid>
                 
@@ -91,7 +91,7 @@ export default function QuickCreatePage() {
                 open={showSnackbar}
                 onClose={() => setShowSnackbar(false)}
                 autoHideDuration={4000}
-                message="Record Created"
+                message="記錄已建立"
                 
                 sx={{ bottom: { xs: 65, sm: 65 } }}
             />

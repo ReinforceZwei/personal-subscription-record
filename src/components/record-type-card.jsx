@@ -25,7 +25,7 @@ export default function RecordTypeCard(props) {
                         {children}
                     </Typography>
                     {weight != undefined && (
-                        <Typography variant="caption">Weight: {weight}</Typography>
+                        <Typography variant="caption">權重: {weight}</Typography>
                     )}
                 </CardContent>
             </CardActionArea>

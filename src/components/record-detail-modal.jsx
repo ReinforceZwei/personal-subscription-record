@@ -16,7 +16,7 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
     return (
         <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth='sm'>
             <DialogTitle>
-                Record Details
+                支出詳情
 
                 <IconButton
                     onClick={onClose}
@@ -42,21 +42,21 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
 
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
-                            <Typography variant="subtitle1">Price</Typography>
+                            <Typography variant="subtitle1">價錢</Typography>
                             <Typography variant="h6">${record.price}</Typography>
                         </Box>
                     </Grid>
 
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
-                            <Typography variant="subtitle1">Payment</Typography>
+                            <Typography variant="subtitle1">支付方式</Typography>
                             <Typography variant="h6">{record.expand.payment?.name || '---'}</Typography>
                         </Box>
                     </Grid>
 
                     <Grid xs={12}>
                         <Box sx={{padding: 2}}>
-                            Description
+                            描述
                             <Typography variant="subtitle1">{record.description || '---'}</Typography>
                         </Box>
                     </Grid>
@@ -65,7 +65,7 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={onClose}>Close</Button>
+                <Button onClick={onClose}>關閉</Button>
             </DialogActions>
         </Dialog>
     )
