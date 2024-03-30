@@ -4,12 +4,13 @@ import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocket
 
 export const fetchRecords = createAsyncThunk('record/fetchRecords', async (args, { getState }) => {
     const selectedDate = DateTime.fromISO(getState().record.selectedDate)
-    const startDate = selectedDate.set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 })
-    const endDate = selectedDate.plus({ month: 1 }).set({ day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 })
+    console.log(selectedDate)
+    const startDate = selectedDate.startOf('month').toString()
+    const endDate = selectedDate.endOf('month').toString()
     const records = await pb.collection(SPENT_RECORD_COL).getFullList({
         sort: '-created',
         expand: 'type,payment',
-        filter: `created >= '${startDate}' && created < '${endDate}'`
+        filter: `created >= '${startDate}' && created <= '${endDate}'`
     })
 
     let a = records.reduce((prev, curr) => {

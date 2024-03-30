@@ -16,16 +16,23 @@ import { fetchUserSettings, selectUserSettings } from '../redux/userSettingsSlic
 import { fetchTypes, selectTypes } from '../redux/typeSlice'
 import RecordTypeCard from '../components/record-type-card'
 import TypeSumDetailModal from '../components/type-sum-detail-modal'
+import { createBudget, fetchBudget, selectBudget } from '../redux/budgetSlice'
 
 export default function SpentRecordPage() {
     const pb = useContext(PocketBaseContext)
     const dispatch = useDispatch()
+
+    const now = DateTime.now()
 
     const records = useSelector(selectAllRecord)
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
     const yearMonth = selectedDate.toFormat('yyyy-MM')
     const userSettings = useSelector(selectUserSettings)
     const types = useSelector(selectTypes)
+    const historyBudget = useSelector(selectBudget)
+    const budget = (selectedDate.hasSame(now, 'year') && selectedDate.hasSame(now, 'month'))
+        ? userSettings?.budget_per_month
+        : historyBudget?.budget
 
     const monthSum = useMemo(() => {
         return _.round(_.sumBy(records, x => x.price), 2)
@@ -51,11 +58,14 @@ export default function SpentRecordPage() {
     }, [records, types])
 
     const balance = useMemo(() => {
-        return _.round(_.subtract(userSettings?.budget_per_month, monthSum), 2)
-    }, [userSettings, monthSum])
+        return _.round(_.subtract(budget, monthSum), 2)
+    }, [budget, monthSum])
 
     useEffect(() => {
         dispatch(fetchRecords())
+        if (!(selectedDate.hasSame(now, 'year') && selectedDate.hasSame(now, 'month'))) {
+            dispatch(fetchBudget({ year: selectedDate.year, month: selectedDate.month }))
+        }
 
     }, [dispatch, yearMonth])
 
@@ -63,6 +73,13 @@ export default function SpentRecordPage() {
         dispatch(fetchUserSettings())
         dispatch(fetchTypes())
     }, [])
+
+    useEffect(() => {
+        if (userSettings.budget_per_month) {
+            // Ensure budget record is created in backend
+            dispatch(createBudget({ budget: userSettings.budget_per_month }))
+        }
+    }, [userSettings])
 
     const [detailModal, setDetailModal] = useState({
         record: null,
@@ -110,6 +127,8 @@ export default function SpentRecordPage() {
                         value={selectedDate}
                         onChange={(value) => dispatch(setSelectedDate(value.toISO()))}
                         sx={{width: '100%'}}
+                        disableFuture
+                        closeOnSelect
                     />
                 </Grid>
                 <Grid xs={4}>

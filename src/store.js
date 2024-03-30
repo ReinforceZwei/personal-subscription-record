@@ -4,6 +4,7 @@ import typeReducer from './redux/typeSlice'
 import paymentReducer from './redux/paymentSlice'
 import userSettingsReducer from './redux/userSettingsSlice'
 import routingReducer from './redux/routingSlice'
+import budgetReducer from './redux/budgetSlice'
 
 export default configureStore({
     reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
         payment: paymentReducer,
         userSettings: userSettingsReducer,
         routing: routingReducer,
+        budget: budgetReducer,
     }
 })

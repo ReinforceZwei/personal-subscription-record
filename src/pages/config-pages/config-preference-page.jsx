@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { PocketBaseContext } from "../../main";
 import { removePbDefaultField } from "../../vendors/pocketbaseUtils"
 import ConfirmDeleteDialog from "../../components/confirm-delete-dialog";
+import { updateOrCreateBudget } from "../../redux/budgetSlice";
 
 const defaultSettings = {
     'default_page': 'spentRecord',
@@ -80,6 +81,7 @@ export default function ConfigPreferencePage() {
             budget_per_month: Number(inputBudget),
         }
         dispatch(updateUserSettings({ id: userSettings.id, data }))
+        dispatch(updateOrCreateBudget({ budget: inputBudget }))
     }
 
     const handleConfirmLogout = (e) => {
