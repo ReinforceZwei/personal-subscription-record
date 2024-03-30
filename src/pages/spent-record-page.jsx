@@ -24,27 +24,32 @@ export default function SpentRecordPage() {
 
     const now = DateTime.now()
 
+    // Raw records
     const records = useSelector(selectAllRecord)
+    // User selected year-month
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
     const yearMonth = selectedDate.toFormat('yyyy-MM')
     const userSettings = useSelector(selectUserSettings)
     const types = useSelector(selectTypes)
+    // History budget, only used if selected date is old date
     const historyBudget = useSelector(selectBudget)
     const budget = (selectedDate.hasSame(now, 'year') && selectedDate.hasSame(now, 'month'))
-        ? userSettings?.budget_per_month
-        : historyBudget?.budget
+        ? userSettings?.budget_per_month // current budget setting
+        : historyBudget?.budget // history budget setting
 
     const monthSum = useMemo(() => {
         return _.round(_.sumBy(records, x => x.price), 2)
     }, [records])
 
+    // Group raw records by date (year-month-day)
     const groupedRecords = useMemo(() => {
         return _.chain(records)
             .groupBy(x => DateTime.fromSQL(x.created).toLocaleString())
-            .map((v, k) => ({date: k, records: v}))
+            .map((v, k) => ({ date: k, records: v }))
             .value()
     }, [records])
 
+    // Get spending sum for each type
     const typeMonthSum = useMemo(() => {
         if (types.length && records.length) {
             return _.chain(records)
@@ -61,6 +66,7 @@ export default function SpentRecordPage() {
         return _.round(_.subtract(budget, monthSum), 2)
     }, [budget, monthSum])
 
+    // Fetch record on selected date changed
     useEffect(() => {
         dispatch(fetchRecords())
         if (!(selectedDate.hasSame(now, 'year') && selectedDate.hasSame(now, 'month'))) {
@@ -69,15 +75,18 @@ export default function SpentRecordPage() {
 
     }, [dispatch, yearMonth])
 
+    // Fetch on first load
     useEffect(() => {
         dispatch(fetchUserSettings())
         dispatch(fetchTypes())
     }, [])
 
+    const [budgetHistoryInit, setBudgetHistoryInit] = useState(false)
     useEffect(() => {
-        if (userSettings?.budget_per_month) {
+        if (!budgetHistoryInit && userSettings?.budget_per_month) {
             // Ensure budget record is created in backend
             dispatch(createBudget({ budget: userSettings.budget_per_month }))
+            setBudgetHistoryInit(true)
         }
     }, [userSettings])
 
