@@ -1,6 +1,35 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { DateTime } from 'luxon'
 import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase'
+import { pocketbaseApi } from './api'
+
+const recordApi = pocketbaseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        getRecords: builder.query({
+            providesTags: ['records'],
+            queryFn: async (selectedDate) => {
+                const _selectedDate = DateTime.fromISO(selectedDate.toString())
+                const startDate = _selectedDate.startOf('month').toString()
+                const endDate = _selectedDate.endOf('month').toString()
+                try {
+                    const data = await pb.collection(SPENT_RECORD_COL).getFullList({
+                        sort: '-created',
+                        expand: 'type,payment',
+                        filter: `created >= '${startDate}' && created <= '${endDate}'`
+                    })
+                    console.log('in RTK, data', data)
+                    return { data }
+                } catch (error) {
+                    console.log('in RTK, error', error)
+                    return { error: error.error }
+                }
+            }
+        })
+    })
+})
+
+export const { useGetRecordsQuery } = recordApi
+
 
 export const fetchRecords = createAsyncThunk('record/fetchRecords', async (args, { getState }) => {
     const selectedDate = DateTime.fromISO(getState().record.selectedDate)
@@ -47,7 +76,7 @@ export const recordSlice = createSlice({
         records: [],
         groupedRecords: [],
         monthSum: {},
-        selectedDate: DateTime.now().toISO(),
+        selectedDate: DateTime.now().startOf('month').toISO(),
     },
     reducers: {
         setSelectedDate: (state, action) => {

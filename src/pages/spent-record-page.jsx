@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useMemo } from 'react'
+import { useEffect, useState, useContext, useMemo, Fragment } from 'react'
 import { PocketBaseContext } from '../main'
 import { DateTime } from 'luxon'
 import { Accordion, AccordionDetails, AccordionSummary, AppBar, Box, Card, CardActionArea, CardActions, CardContent, Chip, Divider, InputLabel, List, ListItem, ListItemButton, ListItemText, Paper, Stack, Toolbar, Typography } from '@mui/material'
@@ -17,6 +17,7 @@ import { fetchTypes, selectTypes } from '../redux/typeSlice'
 import RecordTypeCard from '../components/record-type-card'
 import TypeSumDetailModal from '../components/type-sum-detail-modal'
 import { createBudget, fetchBudget, selectBudget } from '../redux/budgetSlice'
+import { useGetRecordsQuery } from '../redux/recordSlice'
 
 export default function SpentRecordPage() {
     const pb = useContext(PocketBaseContext)
@@ -25,7 +26,7 @@ export default function SpentRecordPage() {
     const now = DateTime.now()
 
     // Raw records
-    const records = useSelector(selectAllRecord)
+    //const records = useSelector(selectAllRecord)
     // User selected year-month
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
     const yearMonth = selectedDate.toFormat('yyyy-MM')
@@ -36,6 +37,8 @@ export default function SpentRecordPage() {
     const budget = (selectedDate.hasSame(now, 'year') && selectedDate.hasSame(now, 'month'))
         ? userSettings?.budget_per_month // current budget setting
         : historyBudget?.budget // history budget setting
+    
+    const { data: records, error, isLoading } = useGetRecordsQuery(selectedDate.toISO())
 
     const monthSum = useMemo(() => {
         return _.round(_.sumBy(records, x => x.price), 2)
@@ -51,7 +54,7 @@ export default function SpentRecordPage() {
 
     // Get spending sum for each type
     const typeMonthSum = useMemo(() => {
-        if (types.length && records.length) {
+        if (types && records) {
             return _.chain(records)
                 .groupBy(x => x.type)
                 .map((v, k) => {
@@ -68,7 +71,7 @@ export default function SpentRecordPage() {
 
     // Fetch record on selected date changed
     useEffect(() => {
-        dispatch(fetchRecords())
+        //dispatch(fetchRecords())
         if (!(selectedDate.hasSame(now, 'year') && selectedDate.hasSame(now, 'month'))) {
             dispatch(fetchBudget({ year: selectedDate.year, month: selectedDate.month }))
         }
@@ -134,7 +137,7 @@ export default function SpentRecordPage() {
                         views={['year', 'month']}
                         openTo='month'
                         value={selectedDate}
-                        onChange={(value) => dispatch(setSelectedDate(value.toISO()))}
+                        onChange={(value) => dispatch(setSelectedDate(value.startOf('month').toISO()))}
                         sx={{width: '100%'}}
                         disableFuture
                         closeOnSelect
@@ -169,7 +172,7 @@ export default function SpentRecordPage() {
                 <AccordionDetails>
                     <Grid container spacing={1} columns={{ xs: 8, sm: 12 }}>
                         {typeMonthSum.map((details) => (
-                            <Grid xs={4}>
+                            <Grid xs={4} key={details.type.id}>
                                 <Card elevation={2}>
                                     <CardActionArea onClick={() => {handleTypeSumDetail(details.type, details.sum)}}>
                                         <CardContent>
@@ -217,21 +220,21 @@ export default function SpentRecordPage() {
                     
                 )}
                 {groupedRecords.map(({ date, records }) => (
-                    <div key={date}>
+                    <Box key={date}>
                         <Divider><Chip label={date} size='small' /></Divider>
-                        <List key={date}>
+                        <List>
                             {records.map((record, i, { length }) => (
-                                <>
+                                <Fragment key={record.id} >
                                 <ListItemButton key={record.id} onClick={() => handleRecordClick(record)}>
                                     <RecordTypeChip label={record.expand.type.name} bg={record.expand.type.color} sx={{mr: 1}} />
                                     <ListItemText primary={record.name} secondary={DateTime.fromSQL(record.created).toLocaleString(DateTime.TIME_SIMPLE)} />
                                     <span>${record.price}</span>
                                 </ListItemButton>
-                                { (length - 1 !== i)&&<Divider variant='inset'></Divider>}
-                                </>
+                                { (length - 1 !== i)&&<Divider variant='inset' key={record.id + '_Divider'}></Divider>}
+                                </Fragment>
                             ))}
                         </List>
-                    </div>
+                    </Box>
                 ))}
             </Box>
 
