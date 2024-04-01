@@ -129,7 +129,7 @@ export default function SpentRecordPage() {
 
 
     return (
-        <Box sx={{mb: 10, mt: 1}}>
+        <Box sx={{mt: 1}}>
             <Grid container spacing={1} columns={{ xs: 8, sm: 12 }} rowSpacing={1}>
                 <Grid xs={8} sm={4}>
                     <DatePicker

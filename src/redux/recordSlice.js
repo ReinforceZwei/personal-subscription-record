@@ -9,8 +9,8 @@ const recordApi = pocketbaseApi.injectEndpoints({
             providesTags: ['records'],
             queryFn: async (selectedDate) => {
                 const _selectedDate = DateTime.fromISO(selectedDate.toString())
-                const startDate = _selectedDate.startOf('month').toString()
-                const endDate = _selectedDate.endOf('month').toString()
+                const startDate = _selectedDate.startOf('month').toUTC().toString()
+                const endDate = _selectedDate.endOf('month').toUTC().toString()
                 try {
                     const data = await pb.collection(SPENT_RECORD_COL).getFullList({
                         sort: '-created',

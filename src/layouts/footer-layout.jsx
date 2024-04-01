@@ -1,4 +1,4 @@
-import { BottomNavigation, BottomNavigationAction, Paper } from "@mui/material";
+import { BottomNavigation, BottomNavigationAction, Box, Paper } from "@mui/material";
 import { NavLink, useLocation } from "react-router-dom"
 import RestoreIcon from '@mui/icons-material/Restore'
 import LocalMallIcon from '@mui/icons-material/LocalMall';
@@ -25,36 +25,38 @@ export default function FooterLayout() {
     }, [pathname])
    
     return (
-        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, pb: 'env(safe-area-inset-bottom, 20px)' }} elevation={3}>
-            <BottomNavigation showLabels value={value} onChange={(e, v) => setValue(v)} sx={{backgroundColor: 'initial'}}>
-                <BottomNavigationAction 
-                    label='記錄'
-                    value='records'
-                    icon={<LocalMallIcon />}
-                    LinkComponent={NavLink}
-                    to='/spentRecord' />
-                
-                <BottomNavigationAction 
-                    label='建立'
-                    value='create'
-                    icon={<AddIcon />}
-                    LinkComponent={NavLink}
-                    to='/quickCreate' />
-                
-                {/* <BottomNavigationAction 
-                    label='訂閱'
-                    value='subscriptionRecord'
-                    icon={<CreditScoreIcon />}
-                    LinkComponent={NavLink}
-                    to='/subscriptionRecord' /> */}
-                
-                <BottomNavigationAction 
-                    label='設定'
-                    value='settings'
-                    icon={<TuneIcon />}
-                    LinkComponent={NavLink}
-                    to='/config' />
-            </BottomNavigation>
-        </Paper>
+        <Box mt={10}>
+            <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0, pb: 'env(safe-area-inset-bottom, 20px)' }} elevation={3}>
+                <BottomNavigation showLabels value={value} onChange={(e, v) => setValue(v)} sx={{backgroundColor: 'initial'}}>
+                    <BottomNavigationAction 
+                        label='記錄'
+                        value='records'
+                        icon={<LocalMallIcon />}
+                        LinkComponent={NavLink}
+                        to='/spentRecord' />
+                    
+                    <BottomNavigationAction 
+                        label='建立'
+                        value='create'
+                        icon={<AddIcon />}
+                        LinkComponent={NavLink}
+                        to='/quickCreate' />
+                    
+                    {/* <BottomNavigationAction 
+                        label='訂閱'
+                        value='subscriptionRecord'
+                        icon={<CreditScoreIcon />}
+                        LinkComponent={NavLink}
+                        to='/subscriptionRecord' /> */}
+                    
+                    <BottomNavigationAction 
+                        label='設定'
+                        value='settings'
+                        icon={<TuneIcon />}
+                        LinkComponent={NavLink}
+                        to='/config' />
+                </BottomNavigation>
+            </Paper>
+        </Box>
     )
 }
