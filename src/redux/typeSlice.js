@@ -69,6 +69,14 @@ export const typeApi = pocketbaseApi.injectEndpoints({
     })
 })
 
+export const {
+    useGetTypesQuery,
+    useAddTypeMutation,
+    useUpdateTypeMutation,
+    useDeleteTypeMutation,
+    useGetSuggestedNameQuery,
+} = typeApi
+
 export const fetchTypes = createAsyncThunk('type/fetchTypes', async () => {
     const types = await pb.collection(SPENT_TYPE_COL).getFullList({
         sort: '+weight,+name'

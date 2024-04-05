@@ -132,7 +132,7 @@ export default function ConfigPreferencePage() {
                             </FormControl>
                         </Grid>
 
-                        <Grid xs={6}>
+                        {/* <Grid xs={6}>
                             <FormControl fullWidth>
                                 <TextField
                                     fullWidth
@@ -148,7 +148,7 @@ export default function ConfigPreferencePage() {
                                 />
                                 <FormHelperText>每月總預算，不包括訂閱項目</FormHelperText>
                             </FormControl>
-                        </Grid>
+                        </Grid> */}
 
                         <Grid xs={6}>
                             <Button variant="outlined" fullWidth onClick={() => handleConfirmLogout()}>登出</Button>

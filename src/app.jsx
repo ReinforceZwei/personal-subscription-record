@@ -38,6 +38,7 @@ import ConfigPreferencePage from './pages/config-pages/config-preference-page.js
 
 import { fetchUserSettings, selectUserSettings } from "./redux/userSettingsSlice";
 import SubscriptionRecordPage from './pages/subscription-record-page.jsx';
+import ConfigBudgetPage from './pages/config-pages/config-budget-page.jsx';
 
 export default function App() {
     const dispatch = useDispatch()
@@ -64,6 +65,7 @@ export default function App() {
                         {/* <Route index element={<Navigate to="preference" replace />} /> */}
 
                         <Route path="preference" element={<ConfigPreferencePage />} />
+                        <Route path="budget" element={<ConfigBudgetPage />} />
                         <Route path="type" element={<ConfigTypePage />} />
                         <Route path="payment" element={<ConfigPaymentPage />} />
                     </Route>

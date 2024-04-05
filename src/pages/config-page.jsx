@@ -20,6 +20,8 @@ export default function ConfigPage() {
             setValue('payment')
         } else if (pathname.includes('/preference')) {
             setValue('preference')
+        } else if (pathname.includes('/budget')) {
+            setValue('budget')
         } else {
             navigate(lastPage)
         }
@@ -34,6 +36,7 @@ export default function ConfigPage() {
             <Box mb={2}>
                 <Tabs value={value} onChange={(e, v) => setValue(v)} role='navigation' variant="scrollable" scrollButtons="auto">
                     <Tab LinkComponent={NavLink} to='preference' value='preference' label='喜好' />
+                    <Tab LinkComponent={NavLink} to='budget' value='budget' label='預算' />
                     <Tab LinkComponent={NavLink} to='type' value='type' label='支出類別' />
                     <Tab LinkComponent={NavLink} to='payment' value='payment' label='支付方式' />
                 </Tabs>

@@ -18,6 +18,16 @@ export default function ErrorPage() {
                     </pre>
                 </Box>
             )}
+            {error.message && (
+                <Box>
+                    <Typography>{error.message}</Typography>
+                    <pre>
+                        <code>
+                            {error.stack}
+                        </code>
+                    </pre>
+                </Box>
+            )}
             <pre>
                 <code>
                     {JSON.stringify(error, null, 4)}

@@ -2,6 +2,44 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import pb, { BUDGET_HISTORY_COL } from '../services/pocketbase'
 import { DateTime } from 'luxon'
 import { removePbDefaultField } from '../vendors/pocketbaseUtils'
+import { pocketbaseApi } from './api'
+
+export const budgetApi = pocketbaseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        getBudget: builder.query({
+            providesTags: [{ type: 'budget', id: '*' }],
+            queryFn: async (date) => {
+                const _date = DateTime.fromISO(date.toString()).endOf('month').toUTC()
+                const filter = `created <= '${_date}'`
+                try {
+                    const data = await pb.collection(BUDGET_HISTORY_COL).getFirstListItem(filter, { sort: '-created' })
+                    return { data }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        }),
+        updateBudget: builder.mutation({
+            invalidatesTags: [{ type: 'budget', id: '*' }],
+            queryFn: async (budget) => {
+                try {
+                    const data = await pb.collection(BUDGET_HISTORY_COL).create({
+                        budget,
+                        owned_by: pb.authStore.model.id,
+                    })
+                    return { data }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        })
+    })
+})
+
+export const {
+    useGetBudgetQuery,
+    useUpdateBudgetMutation,
+} = budgetApi
 
 export const fetchBudget = createAsyncThunk('budget/fetchBudget', async (args) => {
     const { year, month } = args

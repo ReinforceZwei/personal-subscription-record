@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext, useMemo, Fragment } from 'react'
-import { PocketBaseContext } from '../main'
 import { DateTime } from 'luxon'
 import { Accordion, AccordionDetails, AccordionSummary, AppBar, Box, Card, CardActionArea, CardActions, CardContent, Chip, Divider, InputLabel, List, ListItem, ListItemButton, ListItemText, Paper, Stack, Toolbar, Typography } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
@@ -7,37 +6,24 @@ import { DatePicker } from '@mui/x-date-pickers'
 import AirIcon from '@mui/icons-material/Air';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useSelector, useDispatch } from 'react-redux'
-import { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase'
 import RecordTypeChip from '../components/record-type-chip'
 import RecordDetailModal from '../components/record-detail-modal'
-import { selectAllRecord, fetchRecords, fetchMonthSum, setSelectedDate, selectSelectedDate, selectGroupedRecord } from '../redux/recordSlice'
+import { setSelectedDate, selectSelectedDate } from '../redux/recordSlice'
 import _ from 'lodash-es'
 import { fetchUserSettings, selectUserSettings } from '../redux/userSettingsSlice'
-import { fetchTypes, selectTypes } from '../redux/typeSlice'
-import RecordTypeCard from '../components/record-type-card'
+import { useGetTypesQuery } from '../redux/typeSlice'
 import TypeSumDetailModal from '../components/type-sum-detail-modal'
-import { createBudget, fetchBudget, selectBudget } from '../redux/budgetSlice'
+import { useGetBudgetQuery } from '../redux/budgetSlice'
 import { useGetRecordsQuery } from '../redux/recordSlice'
 
 export default function SpentRecordPage() {
-    const pb = useContext(PocketBaseContext)
     const dispatch = useDispatch()
 
-    const now = DateTime.now()
-
-    // Raw records
-    //const records = useSelector(selectAllRecord)
     // User selected year-month
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
-    const yearMonth = selectedDate.toFormat('yyyy-MM')
-    const userSettings = useSelector(selectUserSettings)
-    const types = useSelector(selectTypes)
-    // History budget, only used if selected date is old date
-    const historyBudget = useSelector(selectBudget)
-    const budget = (selectedDate.hasSame(now, 'year') && selectedDate.hasSame(now, 'month'))
-        ? userSettings?.budget_per_month // current budget setting
-        : historyBudget?.budget // history budget setting
-    
+
+    const { data: types } = useGetTypesQuery()
+    const { data: budget } = useGetBudgetQuery(selectedDate.toISO())
     const { data: records, error, isLoading } = useGetRecordsQuery(selectedDate.toISO())
 
     const monthSum = useMemo(() => {
@@ -66,32 +52,8 @@ export default function SpentRecordPage() {
     }, [records, types])
 
     const balance = useMemo(() => {
-        return _.round(_.subtract(budget, monthSum), 2)
+        return budget?.budget ? _.round(_.subtract(budget.budget, monthSum), 2) : null
     }, [budget, monthSum])
-
-    // Fetch record on selected date changed
-    useEffect(() => {
-        //dispatch(fetchRecords())
-        if (!(selectedDate.hasSame(now, 'year') && selectedDate.hasSame(now, 'month'))) {
-            dispatch(fetchBudget({ year: selectedDate.year, month: selectedDate.month }))
-        }
-
-    }, [dispatch, yearMonth])
-
-    // Fetch on first load
-    useEffect(() => {
-        dispatch(fetchUserSettings())
-        dispatch(fetchTypes())
-    }, [])
-
-    const [budgetHistoryInit, setBudgetHistoryInit] = useState(false)
-    useEffect(() => {
-        if (!budgetHistoryInit && userSettings?.budget_per_month) {
-            // Ensure budget record is created in backend
-            dispatch(createBudget({ budget: userSettings.budget_per_month }))
-            setBudgetHistoryInit(true)
-        }
-    }, [userSettings])
 
     const [detailModal, setDetailModal] = useState({
         record: null,
@@ -172,16 +134,16 @@ export default function SpentRecordPage() {
                 <AccordionDetails>
                     <Grid container spacing={1} columns={{ xs: 8, sm: 12 }}>
                         {typeMonthSum.map((details) => (
-                            <Grid xs={4} key={details.type.id}>
+                            <Grid xs={4} key={details.type?.id}>
                                 <Card elevation={2}>
                                     <CardActionArea onClick={() => {handleTypeSumDetail(details.type, details.sum)}}>
                                         <CardContent>
-                                            <Typography component='div'><RecordTypeChip label={details.type.name} bg={details.type.color} /></Typography>
+                                            <Typography component='div'><RecordTypeChip label={details.type?.name} bg={details.type?.color} /></Typography>
                                             <Typography variant='h5'>
                                                 ${details.sum || '---'}
                                                 
                                                 {' '}
-                                                { details.type.budget_per_month > 0 && (
+                                                { details.type?.budget_per_month > 0 && (
                                                     <Typography
                                                         sx={{
                                                             color: (details.type.budget_per_month - details.sum) < 0 ? 'error.main' : 'success.main',
