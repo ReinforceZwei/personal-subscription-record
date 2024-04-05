@@ -43,8 +43,6 @@ export default function ConfigPreferencePage() {
     const navigate = useNavigate()
 
     const userSettings = useSelector(selectUserSettings)
-    
-    const [inputBudget, setInputBudget] = useState(userSettings.budget_per_month || 0)
 
     const [showConfirmLogout, setShowConfirmLogout] = useState(false)
 
