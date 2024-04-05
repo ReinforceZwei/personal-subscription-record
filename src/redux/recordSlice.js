@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { DateTime } from 'luxon'
-import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase'
+import pb, { PAYMENT_METHOD_COL, SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL, SPENT_TYPE_COL } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
+import { generateCacheTagList } from '../vendors/rtkQueryUtils'
 
 const recordApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
         getRecords: builder.query({
-            providesTags: ['records'],
+            providesTags: (result) => generateCacheTagList(result, 'records'),
             queryFn: async (selectedDate) => {
                 const _selectedDate = DateTime.fromISO(selectedDate.toString())
                 const startDate = _selectedDate.startOf('month').toUTC().toString()
@@ -15,12 +16,36 @@ const recordApi = pocketbaseApi.injectEndpoints({
                     const data = await pb.collection(SPENT_RECORD_COL).getFullList({
                         sort: '-created',
                         expand: 'type,payment',
+                        fields: '*,expand.type.name,expand.type.color,expand.payment.name',
                         filter: `created >= '${startDate}' && created <= '${endDate}'`
                     })
-                    console.log('in RTK, data', data)
                     return { data }
                 } catch (error) {
-                    console.log('in RTK, error', error)
+                    console.log(error)
+                    return { error: error.error }
+                }
+            }
+        }),
+        addRecord: builder.mutation({
+            invalidatesTags: [{ type: 'records', id: '*' }],
+            queryFn: async (data) => {
+                try {
+                    const result = pb.collection(SPENT_RECORD_COL).create(data)
+                    return { data: result }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        }),
+        getMonthSum: builder.query({
+            providesTags: ['monthSum'],
+            queryFn: async (date) => {
+                const _date = DateTime.fromISO(date.toString())
+                try {
+                    const data = await pb.collection(SPENT_SUM_BY_MONTH_COL)
+                        .getFirstListItem(`year_month = '${_date.toFormat('yyyy-MM')}'`)
+                    return { data }
+                } catch (error) {
                     return { error: error.error }
                 }
             }
@@ -28,7 +53,11 @@ const recordApi = pocketbaseApi.injectEndpoints({
     })
 })
 
-export const { useGetRecordsQuery } = recordApi
+export const {
+    useGetRecordsQuery,
+    useGetMonthSumQuery,
+    useAddRecordMutation,
+} = recordApi
 
 
 export const fetchRecords = createAsyncThunk('record/fetchRecords', async (args, { getState }) => {

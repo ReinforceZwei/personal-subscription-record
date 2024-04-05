@@ -10,6 +10,7 @@ import RecordTypeCard from "../components/record-type-card"
 import CreateRecordModal from "../components/create-record-modal"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchTypes, selectTypes } from "../redux/typeSlice"
+import { useAddRecordMutation } from "../redux/recordSlice"
 
 
 export default function QuickCreatePage() {
@@ -41,6 +42,7 @@ export default function QuickCreatePage() {
         setShowModal(false)
     }
 
+    const [addRecord, { isLoading: isAdding }] = useAddRecordMutation()
     const onCreate = (data) => {
         console.log(data)
         let final = {
@@ -49,7 +51,8 @@ export default function QuickCreatePage() {
             owned_by: pb.authStore.model.id,
         }
         console.log('final', final)
-        pb.collection(SPENT_RECORD_COL).create(final).then(() => {
+        addRecord(final).unwrap().then(() => {
+        //pb.collection(SPENT_RECORD_COL).create(final).then(() => {
             setShowModal(false)
             setShowSnackbar(true)
         })

@@ -1,6 +1,73 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import pb, { SPENT_RECORD_NAME_COL, SPENT_TYPE_COL } from '../services/pocketbase'
 import { sort } from 'fast-sort'
+import { pocketbaseApi } from './api'
+import { generateCacheTagList } from '../vendors/rtkQueryUtils'
+
+export const typeApi = pocketbaseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        getTypes: builder.query({
+            providesTags: (result) => generateCacheTagList(result, 'types'),
+            queryFn: async () => {
+                try {
+                    const data = await pb.collection(SPENT_TYPE_COL).getFullList({
+                        sort: '+weight,+name'
+                    })
+                    return { data }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        }),
+        addType: builder.mutation({
+            invalidatesTags: [{ type: 'types', id: '*' }],
+            queryFn: async (data) => {
+                try {
+                    const result = await pb.collection(SPENT_TYPE_COL).create(data)
+                    return { data: result }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        }),
+        updateType: builder.mutation({
+            invalidatesTags: (result, error, { id }) => [{ type: 'types', id }],
+            queryFn: async ({ id, data }) => {
+                try {
+                    const result = await pb.collection(SPENT_TYPE_COL).update(id, data)
+                    return { data: result }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        }),
+        deleteType: builder.mutation({
+            invalidatesTags: [{ type: 'types', id: '*' }],
+            queryFn: async (id) => {
+                try {
+                    await pb.collection(SPENT_TYPE_COL).delete(id)
+                    return { data: null }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        }),
+        getSuggestedName: builder.query({
+            providesTags: [{ type: 'suggestedName', id: '*' }],
+            queryFn: async (id) => {
+                try {
+                    const data = await pb.collection(SPENT_RECORD_NAME_COL).getFullList({
+                        sort: '+name',
+                        filter: `type = '${id}'`
+                    })
+                    return { data }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        })
+    })
+})
 
 export const fetchTypes = createAsyncThunk('type/fetchTypes', async () => {
     const types = await pb.collection(SPENT_TYPE_COL).getFullList({
