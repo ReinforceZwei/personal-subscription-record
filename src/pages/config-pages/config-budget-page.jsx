@@ -1,21 +1,16 @@
 import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment, IconButton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { createUserSettings, fetchUserSettings, selectUserSettings, updateUserSettings } from "../../redux/userSettingsSlice";
 import { useContext, useEffect, useState } from "react";
 import Grid from '@mui/material/Unstable_Grid2'
 import { Link, useNavigate } from 'react-router-dom'
-import { PocketBaseContext } from "../../main";
-import { removePbDefaultField } from "../../vendors/pocketbaseUtils"
-import ConfirmDeleteDialog from "../../components/confirm-delete-dialog";
-import { updateOrCreateBudget, useGetBudgetQuery, useUpdateBudgetMutation } from "../../redux/budgetSlice";
+import { PocketBaseContext } from "../../app";
+import { useGetBudgetQuery, useUpdateBudgetMutation } from "../../redux/budgetSlice";
 import { DateTime } from "luxon";
 import { useForm, Controller } from "react-hook-form";
 
 
 export default function ConfigBudgetPage() {
     const pb = useContext(PocketBaseContext)
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
 
     const { data: currentBudget } = useGetBudgetQuery(DateTime.now().endOf('month').toISO())
     const [updateBudget] = useUpdateBudgetMutation()

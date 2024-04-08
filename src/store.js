@@ -5,6 +5,7 @@ import paymentReducer from './redux/paymentSlice'
 import userSettingsReducer from './redux/userSettingsSlice'
 import routingReducer from './redux/routingSlice'
 import budgetReducer from './redux/budgetSlice'
+import uiReducer from './redux/uiSlice'
 
 import { pocketbaseApi } from './redux/api'
 
@@ -17,6 +18,7 @@ export default configureStore({
         userSettings: userSettingsReducer,
         routing: routingReducer,
         budget: budgetReducer,
+        ui: uiReducer,
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware().concat(pocketbaseApi.middleware)

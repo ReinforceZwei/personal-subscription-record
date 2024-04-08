@@ -1,8 +1,6 @@
 import {
-    Box, Button, Container, List, ListItem, Chip, IconButton,
-    Dialog, DialogActions, DialogContent, DialogTitle, TextField,
-    InputLabel, Paper, Divider, Typography, ToggleButtonGroup,
-    ToggleButton,
+    Box, Button, List, ListItem, IconButton,
+    Typography,
     ListItemButton,
     Accordion,
     AccordionSummary,
@@ -13,30 +11,29 @@ import Grid from '@mui/material/Unstable_Grid2'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AddIcon from '@mui/icons-material/Add'
 import HelpIcon from '@mui/icons-material/Help'
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { useSelector, useDispatch } from 'react-redux'
-import { addPayment, deletePayment, fetchPayments, selectPayments, updatePayment } from "../../redux/paymentSlice"
+import { useAddPaymentMutation, useDeletePaymentMutation, useGetPaymentsQuery, useUpdatePaymentMutation } from "../../redux/paymentSlice"
 import CreatePaymentModal from "../../components/create-payment-modal"
 import EditPaymentModal from "../../components/edit-payment-modal"
-import { PocketBaseContext } from "../../main"
+import { PocketBaseContext } from "../../app"
 import HelpMessageDialog from "../../components/help-message-dialog"
 
 export default function ConfigPaymentPage() {
     const pb = useContext(PocketBaseContext)
-    const dispatch = useDispatch()
 
-    const payments = useSelector(selectPayments)
-    const enabledPayments = payments.filter(x => x.enabled)
-    const disabledPayments = payments.filter(x => !x.enabled)
+    const { data: payments } = useGetPaymentsQuery()
+    const [addPayment] = useAddPaymentMutation()
+    const [updatePayment] = useUpdatePaymentMutation()
+    const [deletePayment] = useDeletePaymentMutation()
+
+    const enabledPayments = useMemo(() => payments ? payments.filter(x => x.enabled) : [], [payments])
+    const disabledPayments = useMemo(() => payments ? payments.filter(x => !x.enabled) : [], [payments])
     const [selectedPayment, setSelectedPayment] = useState({})
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [showEditModal, setShowEditModal] = useState(false)
     const [showHelp, setShowHelp] = useState(false)
 
-    useEffect(() => {
-        dispatch(fetchPayments())
-
-    }, [])
 
     const handleCreatePayment = () => {
         setShowCreateModal(true)
@@ -57,7 +54,7 @@ export default function ConfigPaymentPage() {
             enabled: true,
             weight: data.weight,
         }
-        dispatch(addPayment({ data: final }))
+        addPayment(final)
             .unwrap()
             .then(() => {
                 setShowCreateModal(false)
@@ -78,7 +75,7 @@ export default function ConfigPaymentPage() {
             enabled: data.enabled,
             weight: data.weight,
         }
-        dispatch(updatePayment({ id: selectedPayment.id, data: final }))
+        updatePayment({ id: selectedPayment.id, data: final })
             .unwrap()
             .then(() => {
                 setShowEditModal(false)
@@ -91,7 +88,7 @@ export default function ConfigPaymentPage() {
 
     const onDelete = (data) => {
         console.log('onDelete', data)
-        dispatch(deletePayment({ id: data.id }))
+        deletePayment(data.id)
             .unwrap()
             .then(() => {
                 setShowEditModal(false)

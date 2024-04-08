@@ -1,27 +1,15 @@
-import { NavLink } from "react-router-dom"
+import { Box, LinearProgress } from "@mui/material"
+import { useSelector } from "react-redux"
+import { selectLinearProgress } from "../redux/uiSlice"
 
 export default function HeaderLayout() {
+    const showLinearProgress = useSelector(selectLinearProgress)
     return (
-        // <Navbar className='bg-body-tertiary' expand="md" collapseOnSelect sticky="top">
-        //     <Container>
-        //         <Navbar.Brand>
-        //             <Stack direction='horizontal' gap={1}><BsCoin className='fs-1' /> Subscription Record</Stack>
-                    
-        //         </Navbar.Brand>
-        //         <Navbar.Toggle />
-
-        //         <Navbar.Collapse>
-        //             <Nav className="me-auto">
-        //                 <Nav.Link href="/spentRecord" as={NavLink} to="/spentRecord">Records</Nav.Link>
-        //                 <Nav.Link href="/quickCreate" as={NavLink} to="/quickCreate">Create</Nav.Link>
-        //                 <Nav.Link href="/config" as={NavLink} to="/config">Config</Nav.Link>
-        //             </Nav>
-        //             <Nav>
-        //                 <Nav.Link href="/logout" as={NavLink} to="/logout">Logout</Nav.Link>
-        //             </Nav>
-        //         </Navbar.Collapse>
-        //     </Container>
-        // </Navbar>
-        <div></div>
+        <Box pb='4px'>
+            <Box position='absolute' top={0} left={0} width='100%'>
+                { showLinearProgress && <LinearProgress /> }
+            </Box>
+        </Box>
+        
     )
 }

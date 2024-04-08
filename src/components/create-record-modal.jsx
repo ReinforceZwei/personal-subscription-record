@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react"
-import { PocketBaseContext } from "../main"
+import { useContext, useEffect, useMemo, useState } from "react"
 import {
     Autocomplete, Box, Button, Dialog, DialogActions,
     DialogContent, DialogTitle, FormControl, IconButton,
@@ -9,11 +8,9 @@ import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { Controller, useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
-import { fetchSuggestedName, fetchTypes, selectSuggestedNames, selectTypes } from "../redux/typeSlice"
-
-import { PAYMENT_METHOD_COL, SPENT_RECORD_NAME_COL } from "../services/pocketbase"
 import RecordTypeChip from "../components/record-type-chip"
-import { fetchPayments, selectPayments } from "../redux/paymentSlice"
+import { useGetSuggestedNameQuery } from "../redux/typeSlice"
+import { useGetPaymentsQuery } from "../redux/paymentSlice"
 
 const CreateRecordModalProps = {
     selectedType: null,
@@ -25,13 +22,11 @@ const CreateRecordModalProps = {
 export default function CreateRecordModal(props = CreateRecordModalProps) {
     const { selectedType, open, onClose, onCreate, ...other } = props
 
-    const pb = useContext(PocketBaseContext)
-    const dispatch = useDispatch()
-
     const [showThisModal, setShowThisModal] = useState(open)
 
-    const suggestedName = useSelector(selectSuggestedNames)
-    const payments = useSelector(selectPayments).filter(x => x.enabled)
+    const { data: suggestedName } = useGetSuggestedNameQuery(selectedType?.id)
+    const { data: allPayments } = useGetPaymentsQuery()
+    const payments = useMemo(() => allPayments ? allPayments.filter(x => x.enabled) : [], [allPayments])
 
     const { handleSubmit, reset, setValue, setFocus, control } = useForm({
         defaultValues: {
@@ -40,16 +35,6 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
             price: '',
         }
     })
-
-    useEffect(() => {
-        dispatch(fetchSuggestedName({ selectedType }))
-
-    }, [selectedType])
-
-    useEffect(() => {
-        dispatch(fetchPayments())
-
-    }, [])
 
     useEffect(() => {
         if (payments.length) {
@@ -165,7 +150,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                                             name={name}
                                             disabled={disabled}
                                             freeSolo
-                                            options={suggestedName.map((name) => { return { id: name.id, label: name.name } })}
+                                            options={suggestedName?.map((name) => { return { id: name.id, label: name.name } }) || []}
                                             renderInput={(params) => <TextField {...params} label="名稱" />}
                                         // getOptionLabel={(option) => option.name}
                                         // getOptionKey={(option) => option.id}

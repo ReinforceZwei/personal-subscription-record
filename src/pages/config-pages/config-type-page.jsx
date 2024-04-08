@@ -6,9 +6,8 @@ import {
     InputAdornment
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
-import { useContext, useEffect, useState } from "react"
-import { PocketBaseContext } from "../../main"
-import { SPENT_TYPE_COL } from "../../services/pocketbase"
+import { useContext, useEffect, useMemo, useState } from "react"
+import { PocketBaseContext } from "../../app"
 import { useForm, Controller } from "react-hook-form"
 import { SwatchesPicker, ChromePicker } from 'react-color'
 import CloseIcon from '@mui/icons-material/Close'
@@ -18,17 +17,20 @@ import HelpIcon from '@mui/icons-material/Help'
 import { useSelector, useDispatch } from 'react-redux'
 
 import RecordTypeCard from "../../components/record-type-card"
-import { addType, deleteType, fetchTypes, selectTypes, updateType } from "../../redux/typeSlice"
+import { useAddTypeMutation, useDeleteTypeMutation, useGetTypesQuery, useUpdateTypeMutation } from "../../redux/typeSlice"
 import HelpMessageDialog from "../../components/help-message-dialog"
 
 export default function ConfigTypePage() {
     const pb = useContext(PocketBaseContext)
-    const dispatch = useDispatch()
 
-    const types = useSelector(selectTypes)
-    const enabledTypes = types.filter(x => x.enabled)
-    const disabledTypes = types.filter(x => !x.enabled)
-    //const [types, setTypes] = useState([])
+    const { data: types } = useGetTypesQuery()
+    const [addType] = useAddTypeMutation()
+    const [updateType] = useUpdateTypeMutation()
+    const [deleteType] = useDeleteTypeMutation()
+    
+    const enabledTypes = useMemo(() => types ? types.filter(x => x.enabled) : [], [types])
+    const disabledTypes = useMemo(() => types ? types.filter(x => !x.enabled) : [], [types])
+    
     const [selectedType, setSelectedType] = useState({})
 
     const [showModal, setShowModal] = useState(false)
@@ -51,11 +53,6 @@ export default function ConfigTypePage() {
     })
     const watchName = watch('name')
     const watchColor = watch('color')
-
-    useEffect(() => {
-        dispatch(fetchTypes())
-
-    }, [])
 
     const handleSelectType = (type) => {
         setValue('name', type.name)
@@ -100,7 +97,7 @@ export default function ConfigTypePage() {
             weight: data.weight,
             budget_per_month: data.budget_per_month,
         }
-        dispatch(updateType({ id: selectedType.id, data: final }))
+        updateType({ id: selectedType.id, data: final })
             .unwrap()
             .then(() => {
                 setShowModal(false)
@@ -122,7 +119,7 @@ export default function ConfigTypePage() {
             weight: data.weight,
             budget_per_month: data.budget_per_month,
         }
-        dispatch(addType({ data: final }))
+        addType(final)
             .unwrap()
             .then(() => {
                 setShowModal(false)
@@ -134,7 +131,7 @@ export default function ConfigTypePage() {
     }
 
     const onDelete = () => {
-        dispatch(deleteType({ id: selectedType.id }))
+        deleteType(selectedType.id)
             .unwrap()
             .then(() => {
                 setShowMsgModal({ open: false })

@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react"
-import { PocketBaseContext } from "../main"
-import { SPENT_RECORD_COL, SPENT_TYPE_COL } from "../services/pocketbase"
+import { useContext, useEffect, useMemo, useState } from "react"
+import { PocketBaseContext } from "../app"
 import Grid from '@mui/material/Unstable_Grid2'
 import {
     Snackbar, Box, Typography
@@ -9,8 +8,8 @@ import { Link } from "react-router-dom"
 import RecordTypeCard from "../components/record-type-card"
 import CreateRecordModal from "../components/create-record-modal"
 import { useDispatch, useSelector } from "react-redux"
-import { fetchTypes, selectTypes } from "../redux/typeSlice"
 import { useAddRecordMutation } from "../redux/recordSlice"
+import { useGetTypesQuery } from '../redux/typeSlice'
 
 
 export default function QuickCreatePage() {
@@ -18,19 +17,13 @@ export default function QuickCreatePage() {
 
     const dispatch = useDispatch()
 
-    const types = useSelector(selectTypes)
-    const enabledTypes = types.filter(x => x.enabled)
+    const { data: types, isLoading: isTypeLoading } = useGetTypesQuery()
+    const enabledTypes = useMemo(() => types ? types.filter(x => x.enabled) : [], [types])
 
-    //const [types, setTypes] = useState([])
     const [selectedType, setSelectedType] = useState({})
 
     const [showModal, setShowModal] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
-
-    useEffect(() => {
-        dispatch(fetchTypes())
-        
-    }, [])
 
     const handleSelectType = (type) => {
         setShowModal(true)
@@ -52,7 +45,6 @@ export default function QuickCreatePage() {
         }
         console.log('final', final)
         addRecord(final).unwrap().then(() => {
-        //pb.collection(SPENT_RECORD_COL).create(final).then(() => {
             setShowModal(false)
             setShowSnackbar(true)
         })

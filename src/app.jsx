@@ -1,3 +1,4 @@
+import React from 'react'
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -29,7 +30,6 @@ import ConfigPage from './pages/config-page.jsx'
 import ConfigTypePage from './pages/config-pages/config-type-page.jsx'
 import ConfigPaymentPage from './pages/config-pages/config-payment-page.jsx'
 
-import { PocketBaseContext } from './main.jsx'
 import { themeOptions } from './themes.js';
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -39,6 +39,8 @@ import ConfigPreferencePage from './pages/config-pages/config-preference-page.js
 import { fetchUserSettings, selectUserSettings } from "./redux/userSettingsSlice";
 import SubscriptionRecordPage from './pages/subscription-record-page.jsx';
 import ConfigBudgetPage from './pages/config-pages/config-budget-page.jsx';
+
+export const PocketBaseContext = React.createContext({})
 
 export default function App() {
     const dispatch = useDispatch()

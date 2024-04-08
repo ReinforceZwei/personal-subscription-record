@@ -8,7 +8,6 @@ import store from './store.js'
 import { Provider } from 'react-redux'
 import App from './app.jsx'
 
-export const PocketBaseContext = React.createContext({})
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

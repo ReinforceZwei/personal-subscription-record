@@ -1,13 +1,10 @@
 import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { createUserSettings, fetchUserSettings, selectUserSettings, updateUserSettings } from "../../redux/userSettingsSlice";
+import { useGetUserSettingsQuery, useUpdateUserSettingsMutation } from "../../redux/userSettingsSlice";
 import { useContext, useEffect, useState } from "react";
 import Grid from '@mui/material/Unstable_Grid2'
 import { Link, useNavigate } from 'react-router-dom'
-import { PocketBaseContext } from "../../main";
 import { removePbDefaultField } from "../../vendors/pocketbaseUtils"
 import ConfirmDeleteDialog from "../../components/confirm-delete-dialog";
-import { updateOrCreateBudget } from "../../redux/budgetSlice";
 
 const defaultSettings = {
     'default_page': 'spentRecord',
@@ -38,31 +35,20 @@ function Loading() {
 }
 
 export default function ConfigPreferencePage() {
-    const pb = useContext(PocketBaseContext)
-    const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const userSettings = useSelector(selectUserSettings)
+    const { data: userSettings } = useGetUserSettingsQuery(defaultSettings)
+    const [updateUserSettings] = useUpdateUserSettingsMutation()
 
     const [showConfirmLogout, setShowConfirmLogout] = useState(false)
 
-    useEffect(() => {
-        dispatch(fetchUserSettings())
-
-    }, [])
-
-    useEffect(() => {
-        if (userSettings === null) {
-            dispatch(createUserSettings({ defaultSettings, id: pb.authStore.model.id }))
-        }
-    }, [userSettings])
 
     const handleSetDefaultPage = (e) => {
         const data = {
             ...removePbDefaultField(userSettings),
             default_page: e.target.value,
         }
-        dispatch(updateUserSettings({ id: userSettings.id, data }))
+        updateUserSettings({ id: userSettings.id, data })
     }
 
     const handleSetColorMode = (e) => {
@@ -70,16 +56,7 @@ export default function ConfigPreferencePage() {
             ...removePbDefaultField(userSettings),
             color_mode: e.target.value,
         }
-        dispatch(updateUserSettings({ id: userSettings.id, data }))
-    }
-
-    const handleSetBudget = () => {
-        const data = {
-            ...removePbDefaultField(userSettings),
-            budget_per_month: Number(inputBudget),
-        }
-        dispatch(updateUserSettings({ id: userSettings.id, data }))
-        dispatch(updateOrCreateBudget({ budget: inputBudget }))
+        updateUserSettings({ id: userSettings.id, data })
     }
 
     const handleConfirmLogout = (e) => {
@@ -129,24 +106,6 @@ export default function ConfigPreferencePage() {
                                 <FormHelperText>APP的顏色外觀</FormHelperText>
                             </FormControl>
                         </Grid>
-
-                        {/* <Grid xs={6}>
-                            <FormControl fullWidth>
-                                <TextField
-                                    fullWidth
-                                    label='每月預算'
-                                    variant="outlined"
-                                    type="number"
-                                    inputMode="decimal"
-                                    inputProps={{ inputMode: 'decimal' }}
-                                    InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
-                                    value={inputBudget}
-                                    onChange={(e) => setInputBudget(e.target.value)}
-                                    onBlur={handleSetBudget}
-                                />
-                                <FormHelperText>每月總預算，不包括訂閱項目</FormHelperText>
-                            </FormControl>
-                        </Grid> */}
 
                         <Grid xs={6}>
                             <Button variant="outlined" fullWidth onClick={() => handleConfirmLogout()}>登出</Button>

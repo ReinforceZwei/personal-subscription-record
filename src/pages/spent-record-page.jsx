@@ -10,11 +10,11 @@ import RecordTypeChip from '../components/record-type-chip'
 import RecordDetailModal from '../components/record-detail-modal'
 import { setSelectedDate, selectSelectedDate } from '../redux/recordSlice'
 import _ from 'lodash-es'
-import { fetchUserSettings, selectUserSettings } from '../redux/userSettingsSlice'
 import { useGetTypesQuery } from '../redux/typeSlice'
 import TypeSumDetailModal from '../components/type-sum-detail-modal'
 import { useGetBudgetQuery } from '../redux/budgetSlice'
 import { useGetRecordsQuery } from '../redux/recordSlice'
+import { hideLinearProgress, showLinearProgress } from '../redux/uiSlice'
 
 export default function SpentRecordPage() {
     const dispatch = useDispatch()
@@ -22,9 +22,17 @@ export default function SpentRecordPage() {
     // User selected year-month
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
 
-    const { data: types } = useGetTypesQuery()
-    const { data: budget } = useGetBudgetQuery(selectedDate.toISO())
-    const { data: records, error, isLoading } = useGetRecordsQuery(selectedDate.toISO())
+    const { data: types, isLoading: isTypeLoading } = useGetTypesQuery()
+    const { data: budget, isLoading: isBudgetLoading } = useGetBudgetQuery(selectedDate.toISO())
+    const { data: records, error, isLoading: isRecordLoading } = useGetRecordsQuery(selectedDate.toISO())
+
+    useEffect(() => {
+        if (isTypeLoading || isBudgetLoading || isRecordLoading) {
+            dispatch(showLinearProgress())
+        } else {
+            dispatch(hideLinearProgress())
+        }
+    }, [isTypeLoading, isBudgetLoading, isRecordLoading])
 
     const monthSum = useMemo(() => {
         return _.round(_.sumBy(records, x => x.price), 2)
