@@ -387,11 +387,11 @@ export default function ConfigTypePage() {
             </Dialog>
 
             <HelpMessageDialog open={showHelp} onClose={() => setShowHelp(false)}>
-                <Typography variant="h6">已啟用/停用的類別</Typography>
+                <Typography variant="h6" color='common.white'>已啟用/停用的類別</Typography>
                 <Typography variant="body">已啟用的類別可在建立支出記錄時選擇。已停用的類別會被隱藏。</Typography>
-                <Typography variant="h6">權重</Typography>
+                <Typography variant="h6" color='common.white'>權重</Typography>
                 <Typography variant="body">權重數字越小，排列順序會越優先。</Typography>
-                <Typography variant="h6">刪除</Typography>
+                <Typography variant="h6" color='common.white'>刪除</Typography>
                 <Typography variant="body">已被使用的類別無法刪除。請停用來代替刪除。</Typography>
             </HelpMessageDialog>
         </Box>

@@ -7,12 +7,13 @@ import RecordTypeCard from "./record-type-card";
 const TypeSumDetailModalProps = {
     type: null,
     typeSum: 0,
+    records: [],
     open: false,
     onClose: () => {}
 }
 
 export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
-    const { type, typeSum, open, onClose } = props
+    const { type, typeSum, records, open, onClose } = props
 
     const [internalShow, setInternalShow] = useState(open)
 
@@ -40,6 +41,13 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
 
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
+                            <Typography variant="subtitle1">記錄</Typography>
+                            <Typography variant="h6">{records?.length || '---'}筆</Typography>
+                        </Box>
+                    </Grid>
+
+                    <Grid xs={6}>
+                        <Box sx={{height: '100%', padding: 2}}>
                             <Typography variant="subtitle1">總支出</Typography>
                             <Typography variant="h6">${typeSum || '---'}</Typography>
                         </Box>
@@ -52,7 +60,7 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
                         </Box>
                     </Grid>
 
-                    <Grid xs={12}>
+                    <Grid xs={6}>
                         <Box sx={{padding: 2}}>
                             <Typography variant="subtitle1">餘額</Typography>
                             {type.budget_per_month ? (

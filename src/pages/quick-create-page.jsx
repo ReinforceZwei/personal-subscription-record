@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from "react"
 import { PocketBaseContext } from "../app"
 import Grid from '@mui/material/Unstable_Grid2'
 import {
-    Snackbar, Box, Typography
+    Snackbar, Box, Typography, ListItemButton, ListItemText, Paper, Divider
 } from "@mui/material"
 import { Link } from "react-router-dom"
 import RecordTypeCard from "../components/record-type-card"
@@ -10,6 +10,10 @@ import CreateRecordModal from "../components/create-record-modal"
 import { useDispatch, useSelector } from "react-redux"
 import { useAddRecordMutation } from "../redux/recordSlice"
 import { useGetTypesQuery } from '../redux/typeSlice'
+import { useGetPresetsQuery } from "../redux/presetSlice"
+import RecordTypeChip from "../components/record-type-chip"
+import _ from 'lodash-es'
+import { useGetPaymentsQuery } from "../redux/paymentSlice"
 
 
 export default function QuickCreatePage() {
@@ -19,8 +23,15 @@ export default function QuickCreatePage() {
 
     const { data: types, isLoading: isTypeLoading } = useGetTypesQuery()
     const enabledTypes = useMemo(() => types ? types.filter(x => x.enabled) : [], [types])
+    const typesTable = useMemo(() => types ? _.keyBy(types, 'id') : {}, [types])
+
+    const { data: payments } = useGetPaymentsQuery()
+    const paymentsTable = useMemo(() => payments ? _.keyBy(payments, 'id') : {}, [payments])
+
+    const { data: presets } = useGetPresetsQuery()
 
     const [selectedType, setSelectedType] = useState({})
+    const [selectedPreset, setSelectedPreset] = useState(null)
 
     const [showModal, setShowModal] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
@@ -28,7 +39,14 @@ export default function QuickCreatePage() {
     const handleSelectType = (type) => {
         setShowModal(true)
         setSelectedType(type)
+        setSelectedPreset(null)
         console.log(type)
+    }
+
+    const handleSelectPreset = (preset) => {
+        setSelectedPreset(preset)
+        setSelectedType(typesTable[preset.type])
+        setShowModal(true)
     }
 
     const handleCloseModal = () => {
@@ -56,7 +74,23 @@ export default function QuickCreatePage() {
 
     return (
         <Box sx={{ mt: 2 }}>
-            <Typography variant="h5">選擇一個類別來記錄支出</Typography>
+            <Box>
+                { presets && (
+                    <Grid container columnSpacing={3} columns={{ xs: 6, sm: 12 }}>
+                        { presets.map((preset) => (
+                            <Grid xs={6}>
+                                <ListItemButton sx={{ height: '100%' }} onClick={() => handleSelectPreset(preset)}>
+                                    <RecordTypeChip label={typesTable[preset.type]?.name} bg={typesTable[preset.type]?.color} sx={{mr: 1}} />
+                                    <ListItemText primary={preset.name} secondary={paymentsTable[preset.payment]?.name} />
+                                    { !!preset.price && (<span>${preset.price}</span>) }
+                                </ListItemButton>
+                            </Grid>
+                        ))}
+                    </Grid>
+                )}
+            </Box>
+            {/* <Typography variant="h5">選擇一個類別來記錄支出</Typography> */}
+            <Divider>選擇類別</Divider>
             <Box sx={{textAlign: 'center', mt: 2}}>
                 <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
                 {enabledTypes.length ? enabledTypes.map((type) => (
@@ -77,6 +111,7 @@ export default function QuickCreatePage() {
                     open={showModal}
                     onClose={() => handleCloseModal()}
                     selectedType={selectedType}
+                    preset={selectedPreset}
                     onCreate={onCreate}
                 />
             )}

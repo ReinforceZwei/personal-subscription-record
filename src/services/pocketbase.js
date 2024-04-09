@@ -12,5 +12,6 @@ export const SPENT_SUM_BY_MONTH_COL = 'spentSumByMonth'
 export const PAYMENT_METHOD_COL = 'paymentMethods'
 export const USER_SETTINGS_COL = 'userSettings'
 export const BUDGET_HISTORY_COL = 'budgetHistory'
+export const SPENT_PRESET_COL = 'spentPresets'
 
 export default pocketbase

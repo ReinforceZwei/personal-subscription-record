@@ -39,6 +39,8 @@ import ConfigPreferencePage from './pages/config-pages/config-preference-page.js
 import { fetchUserSettings, selectUserSettings } from "./redux/userSettingsSlice";
 import SubscriptionRecordPage from './pages/subscription-record-page.jsx';
 import ConfigBudgetPage from './pages/config-pages/config-budget-page.jsx';
+import ConfigPresetPage from './pages/config-pages/config-preset-page.jsx';
+import Logout from './routers/logout.jsx';
 
 export const PocketBaseContext = React.createContext({})
 
@@ -70,12 +72,13 @@ export default function App() {
                         <Route path="budget" element={<ConfigBudgetPage />} />
                         <Route path="type" element={<ConfigTypePage />} />
                         <Route path="payment" element={<ConfigPaymentPage />} />
+                        <Route path="preset" element={<ConfigPresetPage />} />
                     </Route>
                 </Route>
             ), (
                 <Route path="/login" element={<LoginPage />} />
             ), (
-                <Route path="/logout" loader={logoutAction} />
+                <Route path="/logout" element={<Logout />} />
             )
         ])
     );

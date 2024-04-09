@@ -14,13 +14,14 @@ import { useGetPaymentsQuery } from "../redux/paymentSlice"
 
 const CreateRecordModalProps = {
     selectedType: null,
+    preset: null,
     open: false,
     onClose: () => {},
     onCreate: (data) => {},
 }
 
 export default function CreateRecordModal(props = CreateRecordModalProps) {
-    const { selectedType, open, onClose, onCreate, ...other } = props
+    const { selectedType, preset, open, onClose, onCreate, ...other } = props
 
     const [showThisModal, setShowThisModal] = useState(open)
 
@@ -38,13 +39,21 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
 
     useEffect(() => {
         if (payments.length) {
-            setValue('payment', payments[0].id)
+            if (preset && preset.payment) {
+                setValue('payment', preset.payment)
+            } else {
+                setValue('payment', payments[0].id)
+            }
+        }
+        if (preset) {
+            if (preset.name) setValue('name', preset.name)
+            if (preset.price) setValue('price', preset.price)
         }
 
         setTimeout(() => {
             setFocus('price')
         }, 1)
-    }, [payments])
+    }, [payments, preset])
 
     return (
         <Dialog open={showThisModal}

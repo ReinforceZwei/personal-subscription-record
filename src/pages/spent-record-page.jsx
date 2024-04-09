@@ -46,13 +46,21 @@ export default function SpentRecordPage() {
             .value()
     }, [records])
 
+    const recordsByType = useMemo(() => {
+        return _.groupBy(records, x => x.type)
+    })
+
     // Get spending sum for each type
     const typeMonthSum = useMemo(() => {
         if (types && records) {
-            return _.chain(records)
-                .groupBy(x => x.type)
+            return _.chain(recordsByType)
                 .map((v, k) => {
-                    return {id: k, type: _.find(types, x => x.id === k), sum: _.sumBy(v, x => x.price)}
+                    return {
+                        id: k,
+                        type: _.find(types, x => x.id === k),
+                        sum: _.sumBy(v, x => x.price),
+                        records: recordsByType[k]
+                    }
                 })
                 .value()
         }
@@ -72,6 +80,7 @@ export default function SpentRecordPage() {
         type: null,
         typeSum: 0,
         open: false,
+        records: [],
     })
 
     const handleRecordClick = (record) => {
@@ -88,12 +97,13 @@ export default function SpentRecordPage() {
         })
     }
 
-    const handleTypeSumDetail = (type, sum) => {
+    const handleTypeSumDetail = (type, sum, records) => {
         console.log(type, sum)
         setTypeDetailModal({
             open: true,
             type: type,
             typeSum: sum,
+            records: records,
         })
     }
 
@@ -144,7 +154,7 @@ export default function SpentRecordPage() {
                         {typeMonthSum.map((details) => (
                             <Grid xs={4} key={details.type?.id}>
                                 <Card elevation={2}>
-                                    <CardActionArea onClick={() => {handleTypeSumDetail(details.type, details.sum)}}>
+                                    <CardActionArea onClick={() => {handleTypeSumDetail(details.type, details.sum, details.records)}}>
                                         <CardContent>
                                             <Typography component='div'><RecordTypeChip label={details.type?.name} bg={details.type?.color} /></Typography>
                                             <Typography variant='h5'>
@@ -175,6 +185,7 @@ export default function SpentRecordPage() {
                     onClose={() => setTypeDetailModal({...typeDetailModal, open: false})}
                     type={typeDetailModal.type}
                     typeSum={typeDetailModal.typeSum}
+                    records={typeDetailModal.records}
                 />
             )}
 
