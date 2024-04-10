@@ -15,6 +15,7 @@ import TypeSumDetailModal from '../components/type-sum-detail-modal'
 import { useGetBudgetQuery } from '../redux/budgetSlice'
 import { useGetRecordsQuery } from '../redux/recordSlice'
 import { hideLinearProgress, showLinearProgress } from '../redux/uiSlice'
+import { sumBy, subtract } from '../vendors/fixedPointMath'
 
 export default function SpentRecordPage() {
     const dispatch = useDispatch()
@@ -35,7 +36,7 @@ export default function SpentRecordPage() {
     }, [isTypeLoading, isBudgetLoading, isRecordLoading])
 
     const monthSum = useMemo(() => {
-        return _.round(_.sumBy(records, x => x.price), 2)
+        return sumBy(records, x => x.price)
     }, [records])
 
     // Group raw records by date (year-month-day)
@@ -58,7 +59,7 @@ export default function SpentRecordPage() {
                     return {
                         id: k,
                         type: _.find(types, x => x.id === k),
-                        sum: _.sumBy(v, x => x.price),
+                        sum: sumBy(v, x => x.price),
                         records: recordsByType[k]
                     }
                 })
@@ -68,7 +69,7 @@ export default function SpentRecordPage() {
     }, [records, types])
 
     const balance = useMemo(() => {
-        return budget?.budget ? _.round(_.subtract(budget.budget, monthSum), 2) : null
+        return budget?.budget ? subtract(budget.budget, monthSum) : null
     }, [budget, monthSum])
 
     const [detailModal, setDetailModal] = useState({

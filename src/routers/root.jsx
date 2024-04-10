@@ -1,7 +1,7 @@
 
 import { useEffect, useState, useContext } from 'react'
 import { Navigate, Outlet, useNavigate } from "react-router-dom"
-import { PocketBaseContext } from '../app'
+import { PocketBaseContext } from '../context'
 import HeaderLayout from '../layouts/header-layout'
 import Stack from '@mui/material/Stack'
 import { Container, CssBaseline } from '@mui/material'

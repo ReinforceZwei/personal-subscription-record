@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useContext, useEffect, useState } from "react";
 import Grid from '@mui/material/Unstable_Grid2'
 import { Link, useNavigate } from 'react-router-dom'
-import { PocketBaseContext } from "../../app";
+import { PocketBaseContext } from "../../context";
 import { useGetBudgetQuery, useUpdateBudgetMutation } from "../../redux/budgetSlice";
 import { DateTime } from "luxon";
 import { useForm, Controller } from "react-hook-form";

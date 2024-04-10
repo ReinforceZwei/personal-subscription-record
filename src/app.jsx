@@ -24,7 +24,6 @@ import LoginPage from './pages/login-page.jsx'
 import SpentRecordPage from './pages/spent-record-page.jsx'
 import pb from './services/pocketbase.js'
 
-import logoutAction from './routers/actions/logout-action.js'
 import QuickCreatePage from './pages/quick-create-page.jsx'
 import ConfigPage from './pages/config-page.jsx'
 import ConfigTypePage from './pages/config-pages/config-type-page.jsx'
@@ -32,28 +31,21 @@ import ConfigPaymentPage from './pages/config-pages/config-payment-page.jsx'
 
 import { themeOptions } from './themes.js';
 
-import { useDispatch, useSelector } from 'react-redux'
 import UserDefaultPage from './routers/user-default-page.jsx';
 import ConfigPreferencePage from './pages/config-pages/config-preference-page.jsx';
 
-import { fetchUserSettings, selectUserSettings } from "./redux/userSettingsSlice";
+import { useGetUserSettingsQuery } from "./redux/userSettingsSlice";
 import SubscriptionRecordPage from './pages/subscription-record-page.jsx';
 import ConfigBudgetPage from './pages/config-pages/config-budget-page.jsx';
 import ConfigPresetPage from './pages/config-pages/config-preset-page.jsx';
 import Logout from './routers/logout.jsx';
 
-export const PocketBaseContext = React.createContext({})
+import { PocketBaseContext } from './context'
 
 export default function App() {
-    const dispatch = useDispatch()
 
-    const userSettings = useSelector(selectUserSettings)
+    const { data: userSettings } = useGetUserSettingsQuery()
     const colorMode = userSettings?.color_mode || 'system'
-
-    useEffect(() => {
-        dispatch(fetchUserSettings())
-
-    }, [])
 
     const router = createBrowserRouter(
         createRoutesFromElements([

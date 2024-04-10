@@ -16,7 +16,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useAddPaymentMutation, useDeletePaymentMutation, useGetPaymentsQuery, useUpdatePaymentMutation } from "../../redux/paymentSlice"
 import CreatePaymentModal from "../../components/create-payment-modal"
 import EditPaymentModal from "../../components/edit-payment-modal"
-import { PocketBaseContext } from "../../app"
+import { PocketBaseContext } from "../../context"
 import HelpMessageDialog from "../../components/help-message-dialog"
 
 export default function ConfigPaymentPage() {

@@ -7,7 +7,7 @@ import {
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import { useContext, useEffect, useMemo, useState } from "react"
-import { PocketBaseContext } from "../../app"
+import { PocketBaseContext } from "../../context"
 import { useForm, Controller } from "react-hook-form"
 import { SwatchesPicker, ChromePicker } from 'react-color'
 import CloseIcon from '@mui/icons-material/Close'

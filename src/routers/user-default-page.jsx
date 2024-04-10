@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserSettings, selectUserSettings } from "../redux/userSettingsSlice";
+import { fetchUserSettings, selectUserSettings, useGetUserSettingsQuery } from "../redux/userSettingsSlice";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Box, LinearProgress } from "@mui/material";
@@ -13,12 +13,8 @@ function Loading() {
 }
 
 export default function UserDefaultPage() {
-    const dispatch = useDispatch()
-
-    const userSettings = useSelector(selectUserSettings)
-    const defaultPage = userSettings == null ? 'spentRecord' : userSettings['default_page'] || 'loading'
-
-    
+    const { data: userSettings, isLoading } = useGetUserSettingsQuery()
+    const defaultPage = isLoading ? 'loading' : userSettings ? userSettings['default_page'] : 'spentRecord'
 
     let page = <Navigate to='/spentRecord' />//<SpentRecordPage />
 
