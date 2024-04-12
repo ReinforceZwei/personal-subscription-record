@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import pb, { SPENT_RECORD_NAME_COL, SPENT_TYPE_COL, PAYMENT_METHOD_COL, USER_SETTINGS_COL } from '../services/pocketbase'
+import pb, { USER_SETTINGS_COL } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
 
 export const userSettingsApi = pocketbaseApi.injectEndpoints({
@@ -9,7 +9,6 @@ export const userSettingsApi = pocketbaseApi.injectEndpoints({
             queryFn: async (defaultSettings) => {
                 try {
                     const result = (await pb.collection(USER_SETTINGS_COL).getList(1, 1))
-                    console.log('in rtk query', result)
                     if (result.totalItems < 1) {
                         if (defaultSettings) {
                             const result = await pb.collection(USER_SETTINGS_COL).create({
@@ -22,7 +21,6 @@ export const userSettingsApi = pocketbaseApi.injectEndpoints({
                     }
                     return { data: result.items[0] }
                 } catch (error) {
-                    console.log('in rtk query', error)
                     return { error: error.error }
                 }
             }

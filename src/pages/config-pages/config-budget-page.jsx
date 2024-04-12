@@ -12,31 +12,41 @@ import { useForm, Controller } from "react-hook-form";
 export default function ConfigBudgetPage() {
     const pb = useContext(PocketBaseContext)
 
-    const { data: currentBudget } = useGetBudgetQuery(DateTime.now().endOf('month').toISO())
+    const { data: currentBudget } = useGetBudgetQuery({date: DateTime.now().endOf('month').toISO(), type: 'spent'})
+    const { data: subscriptionBudget } = useGetBudgetQuery({date: DateTime.now().endOf('month').toISO(), type: 'subscription'})
     const [updateBudget] = useUpdateBudgetMutation()
 
     const { handleSubmit, reset, setValue, setFocus, control, formState } = useForm({
         defaultValues: {
             budget: currentBudget?.budget,
+            subscriptionBudget: subscriptionBudget?.budget,
         }
     })
 
     const isModified = formState.isDirty
 
     useEffect(() => {
+        let toReset = {}
         if (currentBudget?.budget) {
-            reset({
-                budget: currentBudget.budget
-            })
+            toReset.budget = currentBudget.budget
         }
-    }, [currentBudget])
+        if (subscriptionBudget?.budget) {
+            toReset.subscriptionBudget = subscriptionBudget.budget
+        }
+        reset(toReset)
+    }, [currentBudget, subscriptionBudget])
 
     const onSave = (data) => {
         const modified = formState.dirtyFields
         let promises = []
         if (modified.budget) {
             promises.push(
-                updateBudget(data.budget).unwrap()
+                updateBudget({ budget: data.budget, type: 'spent' }).unwrap()
+            )
+        }
+        if (modified.subscriptionBudget) {
+            promises.push(
+                updateBudget({ budget: data.subscriptionBudget, type: 'subscription' }).unwrap()
             )
         }
         
@@ -58,7 +68,7 @@ export default function ConfigBudgetPage() {
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <TextField
                                     fullWidth
-                                    label='每月預算'
+                                    label='消費預算'
                                     variant="outlined"
                                     type="number"
                                     inputMode="decimal"
@@ -77,7 +87,35 @@ export default function ConfigBudgetPage() {
                             name='budget'
                             control={control}
                         />
-                        <FormHelperText>每月總預算，不包括訂閱項目</FormHelperText>
+                        <FormHelperText>每月消費預算，不包括訂閱項目</FormHelperText>
+                        </FormControl>
+                    </Grid>
+                    <Grid xs={6}>
+                        <FormControl fullWidth>
+                        <Controller
+                            render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                <TextField
+                                    fullWidth
+                                    label='訂閱預算'
+                                    variant="outlined"
+                                    type="number"
+                                    inputMode="decimal"
+                                    inputProps={{ inputMode: 'decimal' }}
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">$</InputAdornment>
+                                    }}
+                                    value={value}
+                                    onChange={onChange}
+                                    onBlur={onBlur}
+                                    disabled={disabled}
+                                    inputRef={ref}
+                                    name={name}
+                                />
+                            )}
+                            name='subscriptionBudget'
+                            control={control}
+                        />
+                        <FormHelperText>每月訂閱預算</FormHelperText>
                         </FormControl>
                     </Grid>
 

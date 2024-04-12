@@ -12,7 +12,7 @@ import { setSelectedDate, selectSelectedDate } from '../redux/recordSlice'
 import _ from 'lodash-es'
 import { useGetTypesQuery } from '../redux/typeSlice'
 import TypeSumDetailModal from '../components/type-sum-detail-modal'
-import { useGetBudgetQuery } from '../redux/budgetSlice'
+import { useGetBudgetListQuery, useGetBudgetQuery } from '../redux/budgetSlice'
 import { useGetRecordsQuery } from '../redux/recordSlice'
 import { hideLinearProgress, showLinearProgress } from '../redux/uiSlice'
 import { sumBy, subtract } from '../vendors/fixedPointMath'
@@ -24,7 +24,7 @@ export default function SpentRecordPage() {
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
 
     const { data: types, isLoading: isTypeLoading } = useGetTypesQuery()
-    const { data: budget, isLoading: isBudgetLoading } = useGetBudgetQuery(selectedDate.toISO())
+    const { data: budget, isLoading: isBudgetLoading } = useGetBudgetQuery({date: selectedDate.toISO(), type: 'spent'})
     const { data: records, error, isLoading: isRecordLoading } = useGetRecordsQuery(selectedDate.toISO())
 
     useEffect(() => {
@@ -36,7 +36,7 @@ export default function SpentRecordPage() {
     }, [isTypeLoading, isBudgetLoading, isRecordLoading])
 
     const monthSum = useMemo(() => {
-        return sumBy(records, x => x.price)
+        return sumBy(records || [], x => x.price)
     }, [records])
 
     // Group raw records by date (year-month-day)
@@ -162,7 +162,7 @@ export default function SpentRecordPage() {
                                                 ${details.sum || '---'}
                                                 
                                                 {' '}
-                                                { details.type?.budget_per_month > 0 && (
+                                                { (details.type?.budget_per_month > 0) && (
                                                     <Typography
                                                         sx={{
                                                             color: (details.type.budget_per_month - details.sum) < 0 ? 'error.main' : 'success.main',

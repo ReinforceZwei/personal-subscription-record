@@ -42,12 +42,12 @@ export default function FooterLayout() {
                         LinkComponent={NavLink}
                         to='/quickCreate' />
                     
-                    {/* <BottomNavigationAction 
+                    <BottomNavigationAction 
                         label='訂閱'
                         value='subscriptionRecord'
                         icon={<CreditScoreIcon />}
                         LinkComponent={NavLink}
-                        to='/subscriptionRecord' /> */}
+                        to='/subscriptionRecord' />
                     
                     <BottomNavigationAction 
                         label='設定'

@@ -14,7 +14,6 @@ import CloseIcon from '@mui/icons-material/Close'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AddIcon from '@mui/icons-material/Add'
 import HelpIcon from '@mui/icons-material/Help'
-import { useSelector, useDispatch } from 'react-redux'
 
 import RecordTypeCard from "../../components/record-type-card"
 import { useAddTypeMutation, useDeleteTypeMutation, useGetTypesQuery, useUpdateTypeMutation } from "../../redux/typeSlice"

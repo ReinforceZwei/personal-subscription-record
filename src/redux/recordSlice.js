@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { DateTime } from 'luxon'
-import pb, { PAYMENT_METHOD_COL, SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL, SPENT_TYPE_COL } from '../services/pocketbase'
+import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
 

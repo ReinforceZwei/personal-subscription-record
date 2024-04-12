@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import pb, { SPENT_RECORD_NAME_COL, SPENT_TYPE_COL, PAYMENT_METHOD_COL } from '../services/pocketbase'
+import pb, { PAYMENT_METHOD_COL } from '../services/pocketbase'
 import { sort } from 'fast-sort'
 import { pocketbaseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
