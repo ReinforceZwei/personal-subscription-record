@@ -40,8 +40,9 @@ import ConfigBudgetPage from './pages/config-pages/config-budget-page.jsx';
 import ConfigPresetPage from './pages/config-pages/config-preset-page.jsx';
 import Logout from './routers/logout.jsx';
 
-import { PocketBaseContext } from './context'
+import { PocketBaseContext, SupabaseContext } from './context'
 import ConfigAboutPage from './pages/config-pages/config-about-page.jsx';
+import { supabase } from './services/supabase.js';
 
 export default function App() {
 
@@ -103,6 +104,7 @@ export default function App() {
     return (
         <div>
         <PocketBaseContext.Provider value={pb}>
+            <SupabaseContext.Provider value={supabase}>
             <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale='zh-HK' localeText={zhHK.components.MuiLocalizationProvider.defaultProps.localeText}>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
@@ -112,6 +114,7 @@ export default function App() {
                 </ThemeProvider>
                 
             </LocalizationProvider>
+            </SupabaseContext.Provider>
         </PocketBaseContext.Provider>
         </div>
     )

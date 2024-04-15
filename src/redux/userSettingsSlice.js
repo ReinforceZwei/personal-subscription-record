@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import pb, { USER_SETTINGS_COL } from '../services/pocketbase'
-import { pocketbaseApi } from './api'
+import { baseApi } from './api'
 
-export const userSettingsApi = pocketbaseApi.injectEndpoints({
+export const userSettingsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getUserSettings: builder.query({
             providesTags: [{ type: 'userSettings', id: '*' }],

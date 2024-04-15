@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { DateTime } from 'luxon'
 import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase'
-import { pocketbaseApi } from './api'
+import { baseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
 
-const recordApi = pocketbaseApi.injectEndpoints({
+const recordApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getRecords: builder.query({
             providesTags: (result) => generateCacheTagList(result, 'records'),

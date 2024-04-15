@@ -2,21 +2,27 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import pb, { BUDGET_HISTORY_COL } from '../services/pocketbase'
 import { DateTime } from 'luxon'
 import { removePbDefaultField } from '../vendors/pocketbaseUtils'
-import { pocketbaseApi } from './api'
+import { baseApi } from './api'
+import { supabase } from '../services/supabase'
 
-export const budgetApi = pocketbaseApi.injectEndpoints({
+export const budgetApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getBudget: builder.query({
             providesTags: [{ type: 'budget', id: '*' }],
             queryFn: async ({ date, type }) => {
                 const _date = DateTime.fromISO(date.toString()).endOf('month').toUTC()
                 const filter = `created <= '${_date}' && type = '${type}'`
-                try {
-                    const data = await pb.collection(BUDGET_HISTORY_COL).getFirstListItem(filter, { sort: '-created' })
-                    return { data }
-                } catch (error) {
-                    return { error: error.error }
+                const { data, error } = await supabase
+                    .from(BUDGET_HISTORY_COL)
+                    .select()
+                    .lte('created_at', _date)
+                    .eq('type', type)
+                    .limit(1).single()
+                if (error) {
+                    return { error }
                 }
+                return { data }
+                
             }
         }),
         getBudgetList: builder.query({

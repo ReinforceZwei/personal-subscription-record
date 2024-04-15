@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import pb, { PAYMENT_METHOD_COL } from '../services/pocketbase'
 import { sort } from 'fast-sort'
-import { pocketbaseApi } from './api'
+import { baseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
 
-export const paymentApi = pocketbaseApi.injectEndpoints({
+export const paymentApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getPayments: builder.query({
             providesTags: (result) => generateCacheTagList(result, 'payments'),

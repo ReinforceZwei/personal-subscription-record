@@ -18,6 +18,7 @@ import HelpIcon from '@mui/icons-material/Help'
 import RecordTypeCard from "../../components/record-type-card"
 import { useAddTypeMutation, useDeleteTypeMutation, useGetTypesQuery, useUpdateTypeMutation } from "../../redux/typeSlice"
 import HelpMessageDialog from "../../components/help-message-dialog"
+import { useGetSessionQuery } from "../../redux/userSlice"
 
 export default function ConfigTypePage() {
     const pb = useContext(PocketBaseContext)
@@ -26,6 +27,8 @@ export default function ConfigTypePage() {
     const [addType] = useAddTypeMutation()
     const [updateType] = useUpdateTypeMutation()
     const [deleteType] = useDeleteTypeMutation()
+
+    const { data: session } = useGetSessionQuery()
     
     const enabledTypes = useMemo(() => types ? types.filter(x => x.enabled) : [], [types])
     const disabledTypes = useMemo(() => types ? types.filter(x => !x.enabled) : [], [types])
@@ -47,7 +50,7 @@ export default function ConfigTypePage() {
     const { handleSubmit, reset, setValue, setFocus, watch, control } = useForm({
         defaultValues: {
             weight: 100,
-            budget_per_month: 0,
+            budget: 0,
         }
     })
     const watchName = watch('name')
@@ -58,7 +61,7 @@ export default function ConfigTypePage() {
         setValue('color', type.color || '#fff')
         setValue('enabled', type.enabled)
         setValue('weight', type.weight)
-        setValue('budget_per_month', type.budget_per_month)
+        setValue('budget', type.budget)
         setSelectedType(type)
         setModalType('edit')
         setShowModal(true)
@@ -89,12 +92,11 @@ export default function ConfigTypePage() {
         console.log(data)
         let final = {
             owned_by: selectedType.owned_by,
-            icon: selectedType.icon,
             name: data.name,
             color: data.color.hex,
             enabled: data.enabled,
             weight: data.weight,
-            budget_per_month: data.budget_per_month,
+            budget: data.budget,
         }
         updateType({ id: selectedType.id, data: final })
             .unwrap()
@@ -110,13 +112,12 @@ export default function ConfigTypePage() {
     const onCreate = (data) => {
         console.log(data)
         let final = {
-            owned_by: pb.authStore.model.id,
-            icon: '',
+            owned_by: session.user.id,
             name: data.name,
             color: data.color.hex,
             enabled: true,
             weight: data.weight,
-            budget_per_month: data.budget_per_month,
+            budget: data.budget,
         }
         addType(final)
             .unwrap()
@@ -266,7 +267,7 @@ export default function ConfigTypePage() {
                                             type="number"
                                         />
                                     )}
-                                    name='budget_per_month'
+                                    name='budget'
                                     rules={{ required: true }}
                                     control={control}
                                 />

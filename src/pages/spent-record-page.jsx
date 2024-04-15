@@ -162,13 +162,13 @@ export default function SpentRecordPage() {
                                                 ${details.sum || '---'}
                                                 
                                                 {' '}
-                                                { (details.type?.budget_per_month > 0) && (
+                                                { (details.type?.budget > 0) && (
                                                     <Typography
                                                         sx={{
-                                                            color: (details.type.budget_per_month - details.sum) < 0 ? 'error.main' : 'success.main',
+                                                            color: (details.type.budget - details.sum) < 0 ? 'error.main' : 'success.main',
                                                         }}
                                                         display='inline'
-                                                    >(${details.type.budget_per_month - details.sum || '---'})</Typography>
+                                                    >(${details.type.budget - details.sum || '---'})</Typography>
                                                 ) }
                                             </Typography>
                                         </CardContent>

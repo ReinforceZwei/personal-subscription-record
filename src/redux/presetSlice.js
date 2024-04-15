@@ -1,8 +1,8 @@
 import pb, { SPENT_PRESET_COL } from '../services/pocketbase'
-import { pocketbaseApi } from './api'
+import { baseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
 
-export const presetApi = pocketbaseApi.injectEndpoints({
+export const presetApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getPresets: builder.query({
             providesTags: (result) => generateCacheTagList(result, 'presets'),

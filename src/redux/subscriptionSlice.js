@@ -1,8 +1,8 @@
 import pb, { SUBSCRIPTION_PLAN_COL } from '../services/pocketbase'
-import { pocketbaseApi } from './api'
+import { baseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
 
-export const subscriptionApi = pocketbaseApi.injectEndpoints({
+export const subscriptionApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getSubscriptions: builder.query({
             providesTags: (result) => generateCacheTagList(result, 'subscriptions'),

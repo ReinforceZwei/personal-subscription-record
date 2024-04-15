@@ -48,7 +48,6 @@ export default function ConfigPaymentPage() {
         console.log('onCreate', data)
         const final = {
             name: data.name,
-            icon: '',
             color: '',
             owned_by: pb.authStore.model.id,
             enabled: true,
@@ -69,7 +68,6 @@ export default function ConfigPaymentPage() {
         console.log('onUpdate', data)
         const final = {
             name: data.name,
-            icon: selectedPayment.icon,
             color: selectedPayment.color,
             owned_by: selectedPayment.owned_by,
             enabled: data.enabled,

@@ -56,19 +56,19 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
                             <Typography variant="subtitle1">每月預算</Typography>
-                            <Typography variant="h6">${type.budget_per_month || '---'}</Typography>
+                            <Typography variant="h6">${type.budget || '---'}</Typography>
                         </Box>
                     </Grid>
 
                     <Grid xs={6}>
                         <Box sx={{padding: 2}}>
                             <Typography variant="subtitle1">餘額</Typography>
-                            {type.budget_per_month ? (
+                            {type.budget ? (
                                 <Typography variant="h6"
                                     sx={{
-                                        color: (type.budget_per_month - typeSum) < 0 ? 'error.main' : 'success.main',
+                                        color: (type.budget - typeSum) < 0 ? 'error.main' : 'success.main',
                                     }}
-                                >${type.budget_per_month - typeSum || '---'}</Typography>
+                                >${type.budget - typeSum || '---'}</Typography>
                             ) : (
                                 <Typography variant="h6">$---</Typography>
                             )}

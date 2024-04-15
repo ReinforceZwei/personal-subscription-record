@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { PocketBaseContext } from "../context"
+import { PocketBaseContext, SupabaseContext } from "../context"
 import { USER_COL } from "../services/pocketbase"
 import { Navigate, useNavigate } from "react-router-dom"
 import { Alert, Box, Button, ButtonGroup, Container, CssBaseline, Divider, InputAdornment, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Paper, TextField, Typography } from "@mui/material"
@@ -9,9 +9,11 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 
 export default function LoginPage() {
     const pb = useContext(PocketBaseContext)
+    const supabase = useContext(SupabaseContext)
     const navigate = useNavigate()
     const [authMethods, setAuthMethods] = useState([])
     const [loginError, setLoginError] = useState('')
+    const [session, setSession] = useState(null)
     
     const { handleSubmit, reset, setValue, setFocus, control } = useForm()
 
@@ -21,12 +23,34 @@ export default function LoginPage() {
             setAuthMethods(methods.authProviders)
         }
         getAuthMethods()
+        
+        console.log(supabase.auth.getSession())
+        supabase.auth.getSession().then(({ data }) => {
+            setSession(data.session)
+        })
     }, [])
 
     const handleLogin = ({ username, password }) => {
-        pb.collection('users').authWithPassword(username, password)
-        .then(authData => {
-            navigate("/")
+        // pb.collection('users').authWithPassword(username, password)
+        // .then(authData => {
+        //     navigate("/")
+        // })
+        // .catch(err => {
+        //     console.log(err)
+        //     setLoginError(err?.message || 'Unknown error')
+        // })
+        supabase.auth.signInWithPassword({
+            email: username,
+            password: password,
+        })
+        .then(({ data, error }) => {
+            if (error) {
+                console.log(error)
+                setLoginError(error?.message || 'Unknown error')
+            } else {
+                console.log(data)
+                //navigate("/")
+            }
         })
         .catch(err => {
             console.log(err)
@@ -35,21 +59,21 @@ export default function LoginPage() {
     }
 
     const handleGithub = (e) => {
-        let w = window.open()
-        pb.collection('users').authWithOAuth2({
-            provider: 'github',
-            urlCallback: (url) => {
-                w.location.href = url
-            },
-        })
-        .then(authData => {
-            navigate("/")
-        })
+        // let w = window.open()
+        // pb.collection('users').authWithOAuth2({
+        //     provider: 'github',
+        //     urlCallback: (url) => {
+        //         w.location.href = url
+        //     },
+        // })
+        // .then(authData => {
+        //     navigate("/")
+        // })
     }
 
     return (
         <div>
-            {pb.authStore.isValid && <Navigate to="/" />}
+            {session?.user && <Navigate to="/" />}
             <CssBaseline />
             <Container maxWidth='sm' sx={{mt: 5}}>
                 <Paper sx={{ margin: 2, padding: 2 }}>

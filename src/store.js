@@ -7,11 +7,11 @@ import routingReducer from './redux/routingSlice'
 import budgetReducer from './redux/budgetSlice'
 import uiReducer from './redux/uiSlice'
 
-import { pocketbaseApi } from './redux/api'
+import { baseApi } from './redux/api'
 
 export default configureStore({
     reducer: {
-        [pocketbaseApi.reducerPath]: pocketbaseApi.reducer,
+        [baseApi.reducerPath]: baseApi.reducer,
         record: recordReducer,
         type: typeReducer,
         payment: paymentReducer,
@@ -21,6 +21,6 @@ export default configureStore({
         ui: uiReducer,
     },
     middleware: (getDefaultMiddleware) => {
-        return getDefaultMiddleware().concat(pocketbaseApi.middleware)
+        return getDefaultMiddleware().concat(baseApi.middleware)
     },
 })
