@@ -24,6 +24,8 @@ export default function ConfigPage() {
             setValue('budget')
         } else if (pathname.includes('/preset')) {
             setValue('preset')
+        } else if (pathname.includes('/about')) {
+            setValue('about')
         } else {
             navigate(lastPage)
         }
@@ -42,6 +44,7 @@ export default function ConfigPage() {
                     <Tab LinkComponent={NavLink} to='type' value='type' label='支出類別' />
                     <Tab LinkComponent={NavLink} to='payment' value='payment' label='支付方式' />
                     <Tab LinkComponent={NavLink} to='preset' value='preset' label='預設範本' />
+                    <Tab LinkComponent={NavLink} to='about' value='about' label='關於' />
                 </Tabs>
             </Box>
             <div>

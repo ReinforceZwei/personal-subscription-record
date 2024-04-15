@@ -41,6 +41,7 @@ import ConfigPresetPage from './pages/config-pages/config-preset-page.jsx';
 import Logout from './routers/logout.jsx';
 
 import { PocketBaseContext } from './context'
+import ConfigAboutPage from './pages/config-pages/config-about-page.jsx';
 
 export default function App() {
 
@@ -65,6 +66,7 @@ export default function App() {
                         <Route path="type" element={<ConfigTypePage />} />
                         <Route path="payment" element={<ConfigPaymentPage />} />
                         <Route path="preset" element={<ConfigPresetPage />} />
+                        <Route path="about" element={<ConfigAboutPage />} />
                     </Route>
                 </Route>
             ), (
