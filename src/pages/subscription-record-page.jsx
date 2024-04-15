@@ -12,6 +12,7 @@ import { sumBy, add, subtract } from '../vendors/fixedPointMath'
 import { useGetBudgetQuery } from '../redux/budgetSlice';
 import { DateTime } from 'luxon';
 import HelpMessageDialog from '../components/help-message-dialog';
+import _ from 'lodash-es'
 
 export default function SubscriptionRecordPage() {
 
@@ -26,7 +27,7 @@ export default function SubscriptionRecordPage() {
     const inactiveSubscriptions = useMemo(() => subscriptions ? subscriptions.filter(x => !x.active) : [], [subscriptions])
     const priceSum = useMemo(() => {
         return activeSubscriptions.reduce((p, c) => {
-            return add(p, c.price / (c.renew_period_month || 1))
+            return _.round(add(p, c.price / (c.renew_period_month || 1)), 2)
         }, 0)
     }, [activeSubscriptions])
     const balance = useMemo(() => budget ? subtract(budget.budget, priceSum) : null, [budget, priceSum])
