@@ -27,7 +27,7 @@ const recordApi = pocketbaseApi.injectEndpoints({
             }
         }),
         addRecord: builder.mutation({
-            invalidatesTags: [{ type: 'records', id: '*' }],
+            invalidatesTags: [{ type: 'records', id: '*' }, { type: 'suggestedName', id: '*' }],
             queryFn: async (data) => {
                 try {
                     const result = pb.collection(SPENT_RECORD_COL).create(data)
