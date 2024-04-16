@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { DateTime } from 'luxon'
-import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL } from '../services/pocketbase'
 import { baseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
+import { supabase, SPENT_RECORD_COL } from '../services/supabase'
 
 const recordApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -12,92 +12,50 @@ const recordApi = baseApi.injectEndpoints({
                 const _selectedDate = DateTime.fromISO(selectedDate.toString())
                 const startDate = _selectedDate.startOf('month').toUTC().toString()
                 const endDate = _selectedDate.endOf('month').toUTC().toString()
-                try {
-                    const data = await pb.collection(SPENT_RECORD_COL).getFullList({
-                        sort: '-created',
-                        expand: 'type,payment',
-                        fields: '*,expand.type.name,expand.type.color,expand.payment.name',
-                        filter: `created >= '${startDate}' && created <= '${endDate}'`
-                    })
-                    return { data }
-                } catch (error) {
-                    console.log(error)
-                    return { error: error.error }
+                const { data, error } = await supabase.from(SPENT_RECORD_COL)
+                    .select('*, type ( id, name, color ), payment ( id, name )')
+                    .gte('created_at', startDate)
+                    .lte('created_at', endDate)
+                    .order('created_at', { ascending: false })
+                if (error) {
+                    return { error }
                 }
+                return { data }
             }
         }),
         addRecord: builder.mutation({
             invalidatesTags: [{ type: 'records', id: '*' }, { type: 'suggestedName', id: '*' }],
             queryFn: async (data) => {
-                try {
-                    const result = pb.collection(SPENT_RECORD_COL).create(data)
-                    return { data: result }
-                } catch (error) {
-                    return { error: error.error }
+                const { data: { session } } = await supabase.auth.getSession()
+                const userId = session.user.id
+                const { error } = await supabase.from(SPENT_RECORD_COL).insert({...data, owned_by: userId})
+                if (error) {
+                    return { error }
                 }
+                return { data: null }
             }
         }),
-        getMonthSum: builder.query({
-            providesTags: ['monthSum'],
-            queryFn: async (date) => {
-                const _date = DateTime.fromISO(date.toString())
-                try {
-                    const data = await pb.collection(SPENT_SUM_BY_MONTH_COL)
-                        .getFirstListItem(`year_month = '${_date.toFormat('yyyy-MM')}'`)
-                    return { data }
-                } catch (error) {
-                    return { error: error.error }
-                }
-            }
-        })
+        // getMonthSum: builder.query({
+        //     providesTags: ['monthSum'],
+        //     queryFn: async (date) => {
+        //         const _date = DateTime.fromISO(date.toString())
+        //         try {
+        //             const data = await pb.collection(SPENT_SUM_BY_MONTH_COL)
+        //                 .getFirstListItem(`year_month = '${_date.toFormat('yyyy-MM')}'`)
+        //             return { data }
+        //         } catch (error) {
+        //             return { error: error.error }
+        //         }
+        //     }
+        // })
     })
 })
 
 export const {
     useGetRecordsQuery,
-    useGetMonthSumQuery,
     useAddRecordMutation,
 } = recordApi
 
-
-export const fetchRecords = createAsyncThunk('record/fetchRecords', async (args, { getState }) => {
-    const selectedDate = DateTime.fromISO(getState().record.selectedDate)
-    console.log(selectedDate)
-    const startDate = selectedDate.startOf('month').toString()
-    const endDate = selectedDate.endOf('month').toString()
-    const records = await pb.collection(SPENT_RECORD_COL).getFullList({
-        sort: '-created',
-        expand: 'type,payment',
-        filter: `created >= '${startDate}' && created <= '${endDate}'`
-    })
-
-    let a = records.reduce((prev, curr) => {
-        let date = DateTime.fromSQL(curr.created)
-        let key = date.toLocaleString()
-        if (prev[key]) {
-            prev[key].push(curr)
-        } else {
-            prev[key] = [curr]
-        }
-        return prev
-    }, {})
-    const groupedRecords = Object.keys(a).map((date) => {
-        return {
-            date,
-            records: a[date],
-        }
-    })
-
-
-    return { records, groupedRecords }
-})
-
-export const fetchMonthSum = createAsyncThunk('record/fetchMonthSum', async (args, { getState }) => {
-    const selectedDate = DateTime.fromISO(getState().record.selectedDate)
-    const record = await pb.collection(SPENT_SUM_BY_MONTH_COL)
-        .getFirstListItem(`year_month = '${selectedDate.toFormat('yyyy-MM')}'`)
-    return record
-})
 
 export const recordSlice = createSlice({
     name: 'record',
@@ -112,16 +70,6 @@ export const recordSlice = createSlice({
             state.selectedDate = action.payload
         },
     },
-    extraReducers: (builder) => {
-        builder.addCase(fetchRecords.fulfilled, (state, action) => {
-            state.records = action.payload.records
-            state.groupedRecords = action.payload.groupedRecords
-
-        }).addCase(fetchMonthSum.fulfilled, (state, action) => {
-            state.monthSum[action.payload['year_month']] = action.payload['price']
-
-        })
-    }
 })
 
 export const { setSelectedDate } = recordSlice.actions

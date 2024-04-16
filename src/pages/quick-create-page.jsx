@@ -14,6 +14,8 @@ import { useGetPresetsQuery } from "../redux/presetSlice"
 import RecordTypeChip from "../components/record-type-chip"
 import _ from 'lodash-es'
 import { useGetPaymentsQuery } from "../redux/paymentSlice"
+import { useGetSessionQuery } from "../redux/userSlice"
+import { hideLinearProgress, showLinearProgress } from "../redux/uiSlice"
 
 
 export default function QuickCreatePage() {
@@ -21,20 +23,30 @@ export default function QuickCreatePage() {
 
     const dispatch = useDispatch()
 
+    const { data: session } = useGetSessionQuery()
+
     const { data: types, isLoading: isTypeLoading } = useGetTypesQuery()
     const enabledTypes = useMemo(() => types ? types.filter(x => x.enabled) : [], [types])
     const typesTable = useMemo(() => types ? _.keyBy(types, 'id') : {}, [types])
 
-    const { data: payments } = useGetPaymentsQuery()
+    const { data: payments, isLoading: isPaymentLoading } = useGetPaymentsQuery()
     const paymentsTable = useMemo(() => payments ? _.keyBy(payments, 'id') : {}, [payments])
 
-    const { data: presets } = useGetPresetsQuery()
+    const { data: presets, isLoading: isPresetLoading } = useGetPresetsQuery()
 
     const [selectedType, setSelectedType] = useState({})
     const [selectedPreset, setSelectedPreset] = useState(null)
 
     const [showModal, setShowModal] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
+
+    useEffect(() => {
+        if (isTypeLoading || isPaymentLoading || isPresetLoading) {
+            dispatch(showLinearProgress())
+        } else {
+            dispatch(hideLinearProgress())
+        }
+    }, [isTypeLoading, isPaymentLoading, isPresetLoading])
 
     const handleSelectType = (type) => {
         setShowModal(true)
@@ -59,7 +71,7 @@ export default function QuickCreatePage() {
         let final = {
             ...data,
             type: selectedType.id,
-            owned_by: pb.authStore.model.id,
+            owned_by: session.user.id,
         }
         console.log('final', final)
         addRecord(final).unwrap().then(() => {
@@ -90,6 +102,7 @@ export default function QuickCreatePage() {
                 )}
             </Box>
             {/* <Typography variant="h5">選擇一個類別來記錄支出</Typography> */}
+            {!isTypeLoading && (<>
             <Divider>選擇類別</Divider>
             <Box sx={{textAlign: 'center', mt: 2}}>
                 <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
@@ -105,6 +118,7 @@ export default function QuickCreatePage() {
                 </Grid>
                 
             </Box>
+            </>)}
 
             { showModal && (
                 <CreateRecordModal

@@ -18,7 +18,9 @@ export const typeApi = baseApi.injectEndpoints({
         addType: builder.mutation({
             invalidatesTags: [{ type: 'types', id: '*' }],
             queryFn: async (data) => {
-                const { error } = await supabase.from(SPENT_TYPE_COL).insert(data)
+                const { data: { session } } = await supabase.auth.getSession()
+                const userId = session.user.id
+                const { error } = await supabase.from(SPENT_TYPE_COL).insert({...data, owned_by: userId})
                 if (error) {
                     return { error }
                 }
@@ -28,7 +30,9 @@ export const typeApi = baseApi.injectEndpoints({
         updateType: builder.mutation({
             invalidatesTags: (result, error, { id }) => [{ type: 'types', id }],
             queryFn: async ({ id, data }) => {
-                const { error } = await supabase.from(SPENT_TYPE_COL).update(data).eq('id', id)
+                const { data: { session } } = await supabase.auth.getSession()
+                const userId = session.user.id
+                const { error } = await supabase.from(SPENT_TYPE_COL).update({...data, owned_by: userId}).eq('id', id)
                 if (error) {
                     return { error }
                 }

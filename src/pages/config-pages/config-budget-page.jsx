@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment, IconButton } from "@mui/material";
+import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment, IconButton, Skeleton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useContext, useEffect, useState } from "react";
 import Grid from '@mui/material/Unstable_Grid2'
@@ -7,13 +7,15 @@ import { PocketBaseContext } from "../../context";
 import { useGetBudgetQuery, useUpdateBudgetMutation } from "../../redux/budgetSlice";
 import { DateTime } from "luxon";
 import { useForm, Controller } from "react-hook-form";
+import { hideLinearProgress, showLinearProgress } from "../../redux/uiSlice";
 
 
 export default function ConfigBudgetPage() {
     const pb = useContext(PocketBaseContext)
+    const dispatch = useDispatch()
 
-    const { data: currentBudget } = useGetBudgetQuery({date: DateTime.now().endOf('month').toISO(), type: 'spent'})
-    const { data: subscriptionBudget } = useGetBudgetQuery({date: DateTime.now().endOf('month').toISO(), type: 'subscription'})
+    const { data: currentBudget, isLoading: isCurrentBudgetLoading } = useGetBudgetQuery({date: DateTime.now().endOf('month').toISO(), type: 'spent'})
+    const { data: subscriptionBudget, isLoading: isSubsBudgetLoading } = useGetBudgetQuery({date: DateTime.now().endOf('month').toISO(), type: 'subscription'})
     const [updateBudget] = useUpdateBudgetMutation()
 
     const { handleSubmit, reset, setValue, setFocus, control, formState } = useForm({
@@ -24,6 +26,14 @@ export default function ConfigBudgetPage() {
     })
 
     const isModified = formState.isDirty
+
+    useEffect(() => {
+        if (isCurrentBudgetLoading || isSubsBudgetLoading) {
+            dispatch(showLinearProgress())
+        } else {
+            dispatch(hideLinearProgress())
+        }
+    }, [isCurrentBudgetLoading, isSubsBudgetLoading])
 
     useEffect(() => {
         let toReset = {}

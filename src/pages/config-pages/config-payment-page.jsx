@@ -5,7 +5,8 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    ListItemText
+    ListItemText,
+    CircularProgress
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -18,14 +19,17 @@ import CreatePaymentModal from "../../components/create-payment-modal"
 import EditPaymentModal from "../../components/edit-payment-modal"
 import { PocketBaseContext } from "../../context"
 import HelpMessageDialog from "../../components/help-message-dialog"
+import { useGetSessionQuery } from "../../redux/userSlice"
 
 export default function ConfigPaymentPage() {
     const pb = useContext(PocketBaseContext)
 
-    const { data: payments } = useGetPaymentsQuery()
+    const { data: payments, isLoading: isPaymentLoading } = useGetPaymentsQuery()
     const [addPayment] = useAddPaymentMutation()
     const [updatePayment] = useUpdatePaymentMutation()
     const [deletePayment] = useDeletePaymentMutation()
+
+    const { data: session } = useGetSessionQuery()
 
     const enabledPayments = useMemo(() => payments ? payments.filter(x => x.enabled) : [], [payments])
     const disabledPayments = useMemo(() => payments ? payments.filter(x => !x.enabled) : [], [payments])
@@ -49,7 +53,7 @@ export default function ConfigPaymentPage() {
         const final = {
             name: data.name,
             color: '',
-            owned_by: pb.authStore.model.id,
+            owned_by: session.user.id,
             enabled: true,
             weight: data.weight,
         }
@@ -110,6 +114,7 @@ export default function ConfigPaymentPage() {
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box>
+                        {isPaymentLoading ? (<CircularProgress />) : (
                         <List>
                             {enabledPayments.length ? enabledPayments.map((payment) => (
                                 <ListItem key={payment.id} sx={{ p: 0 }}>
@@ -118,7 +123,7 @@ export default function ConfigPaymentPage() {
                                     </ListItemButton>
                                 </ListItem>
                             )) : (<ListItem><Box fontStyle='italic'>先建立支付方式</Box></ListItem>)}
-                        </List>
+                        </List>)}
                     </Box>
                 </AccordionDetails>
             </Accordion>

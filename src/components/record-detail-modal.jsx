@@ -34,8 +34,8 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
                     <Grid xs={12}>
                         <Paper elevation={1}>
                             <ListItem>
-                                <RecordTypeChip label={record.expand.type.name} bg={record.expand.type.color} sx={{mr: 1}} />
-                                <ListItemText primary={record.name} secondary={DateTime.fromSQL(record.created).toLocaleString(DateTime.DATETIME_SHORT)} />
+                                <RecordTypeChip label={record.type.name} bg={record.type.color} sx={{mr: 1}} />
+                                <ListItemText primary={record.name} secondary={DateTime.fromISO(record.created_at).toLocaleString(DateTime.DATETIME_SHORT)} />
                             </ListItem>
                         </Paper>
                     </Grid>
@@ -50,7 +50,7 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
                             <Typography variant="subtitle1">支付方式</Typography>
-                            <Typography variant="h6">{record.expand.payment?.name || '---'}</Typography>
+                            <Typography variant="h6">{record.payment?.name || '---'}</Typography>
                         </Box>
                     </Grid>
 

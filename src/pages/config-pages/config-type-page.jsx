@@ -3,7 +3,9 @@ import {
     Dialog, DialogActions, DialogContent, DialogTitle, TextField,
     InputLabel, Paper, Divider, Typography, ToggleButtonGroup,
     ToggleButton, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails,
-    InputAdornment
+    InputAdornment,
+    LinearProgress,
+    CircularProgress
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import { useContext, useEffect, useMemo, useState } from "react"
@@ -23,7 +25,7 @@ import { useGetSessionQuery } from "../../redux/userSlice"
 export default function ConfigTypePage() {
     const pb = useContext(PocketBaseContext)
 
-    const { data: types } = useGetTypesQuery()
+    const { data: types, isLoading: isTypeLoading } = useGetTypesQuery()
     const [addType] = useAddTypeMutation()
     const [updateType] = useUpdateTypeMutation()
     const [deleteType] = useDeleteTypeMutation()
@@ -93,7 +95,7 @@ export default function ConfigTypePage() {
         let final = {
             owned_by: selectedType.owned_by,
             name: data.name,
-            color: data.color.hex,
+            color: data.color?.hex,
             enabled: data.enabled,
             weight: data.weight,
             budget: data.budget,
@@ -114,7 +116,7 @@ export default function ConfigTypePage() {
         let final = {
             owned_by: session.user.id,
             name: data.name,
-            color: data.color.hex,
+            color: data.color?.hex,
             enabled: true,
             weight: data.weight,
             budget: data.budget,
@@ -157,6 +159,7 @@ export default function ConfigTypePage() {
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box sx={{textAlign: 'center'}}>
+                        {isTypeLoading ? (<CircularProgress />) : (
                         <Grid container spacing={3} columns={{ xs: 4, sm: 8, md: 12 }}>
                             {enabledTypes.length ? enabledTypes.map((type) => (
                                 <Grid key={type.id} xs={2} sm={2} md={3}>
@@ -167,7 +170,7 @@ export default function ConfigTypePage() {
                                 
                             )): (<Grid xs={12} fontStyle='italic' textAlign='center'>{'先建立新的類別'}</Grid>)}
                             
-                        </Grid>
+                        </Grid>)}
                     </Box>
                 </AccordionDetails>
             </Accordion>

@@ -49,7 +49,7 @@ export default function LoginPage() {
                 setLoginError(error?.message || 'Unknown error')
             } else {
                 console.log(data)
-                //navigate("/")
+                navigate("/")
             }
         })
         .catch(err => {

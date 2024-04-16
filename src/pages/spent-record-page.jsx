@@ -12,7 +12,7 @@ import { setSelectedDate, selectSelectedDate } from '../redux/recordSlice'
 import _ from 'lodash-es'
 import { useGetTypesQuery } from '../redux/typeSlice'
 import TypeSumDetailModal from '../components/type-sum-detail-modal'
-import { useGetBudgetListQuery, useGetBudgetQuery } from '../redux/budgetSlice'
+import { useGetBudgetQuery } from '../redux/budgetSlice'
 import { useGetRecordsQuery } from '../redux/recordSlice'
 import { hideLinearProgress, showLinearProgress } from '../redux/uiSlice'
 import { sumBy, subtract } from '../vendors/fixedPointMath'
@@ -42,13 +42,13 @@ export default function SpentRecordPage() {
     // Group raw records by date (year-month-day)
     const groupedRecords = useMemo(() => {
         return _.chain(records)
-            .groupBy(x => DateTime.fromSQL(x.created).toLocaleString())
+            .groupBy(x => DateTime.fromISO(x.created_at).toLocaleString())
             .map((v, k) => ({ date: k, records: v }))
             .value()
     }, [records])
 
     const recordsByType = useMemo(() => {
-        return _.groupBy(records, x => x.type)
+        return _.groupBy(records, x => x.type.id)
     })
 
     // Get spending sum for each type
@@ -208,8 +208,8 @@ export default function SpentRecordPage() {
                             {records.map((record, i, { length }) => (
                                 <Fragment key={record.id} >
                                 <ListItemButton key={record.id} onClick={() => handleRecordClick(record)}>
-                                    <RecordTypeChip label={record.expand.type.name} bg={record.expand.type.color} sx={{mr: 1}} />
-                                    <ListItemText primary={record.name} secondary={DateTime.fromSQL(record.created).toLocaleString(DateTime.TIME_SIMPLE)} />
+                                    <RecordTypeChip label={record.type.name} bg={record.type.color} sx={{mr: 1}} />
+                                    <ListItemText primary={record.name} secondary={DateTime.fromISO(record.created_at).toLocaleString(DateTime.TIME_SIMPLE)} />
                                     <span>${record.price}</span>
                                 </ListItemButton>
                                 { (length - 1 !== i)&&<Divider variant='inset' key={record.id + '_Divider'}></Divider>}
