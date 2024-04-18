@@ -41,7 +41,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: personal-subscription-record
+          context: /home/runner/work/personal-subscription-record/personal-subscription-record
           file: github-ci.Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
