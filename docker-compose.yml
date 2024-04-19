@@ -5,7 +5,5 @@ services:
     container_name: ssrs
     ports:
       - "8083:80"
-    environment:
-      VITE_PB_URL: http://localhost:8083
     volumes:
       - ./data/data:/pb_data
