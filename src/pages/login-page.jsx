@@ -1,11 +1,17 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { PocketBaseContext } from "../context"
 import { USER_COL } from "../services/pocketbase"
 import { Navigate, useNavigate } from "react-router-dom"
-import { Alert, Box, Button, ButtonGroup, Container, CssBaseline, Divider, InputAdornment, List, ListItem, ListItemAvatar, ListItemButton, ListItemIcon, ListItemText, Paper, TextField, Typography } from "@mui/material"
+import { Alert, Box, Button, ButtonGroup, Container, CssBaseline, Divider, Paper, TextField, Typography } from "@mui/material"
 import { Controller, useForm } from "react-hook-form"
 import Grid from "@mui/material/Unstable_Grid2"
+import _ from 'lodash-es'
 import GitHubIcon from '@mui/icons-material/GitHub';
+import AppleIcon from '@mui/icons-material/Apple';
+import GoogleIcon from '@mui/icons-material/Google';
+import MicrosoftIcon from '@mui/icons-material/Microsoft';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import LanguageIcon from '@mui/icons-material/Language';
 
 export default function LoginPage() {
     const pb = useContext(PocketBaseContext)
@@ -34,10 +40,10 @@ export default function LoginPage() {
         })
     }
 
-    const handleGithub = (e) => {
+    const handleOauth = (providerName) => {
         let w = window.open()
         pb.collection('users').authWithOAuth2({
-            provider: 'github',
+            provider: providerName,
             urlCallback: (url) => {
                 w.location.href = url
             },
@@ -45,6 +51,17 @@ export default function LoginPage() {
         .then(authData => {
             navigate("/")
         })
+    }
+
+    const getProviderIcon = (name) => {
+        switch (name) {
+            case 'github': return <GitHubIcon />
+            case 'apple': return <AppleIcon />
+            case 'google': return <GoogleIcon />
+            case 'microsoft': return <MicrosoftIcon />
+            case 'facebook': return <FacebookIcon />
+            default: return <LanguageIcon />
+        }
     }
 
     return (
@@ -111,12 +128,20 @@ export default function LoginPage() {
                         </Grid>
                     </form>
                 </Paper>
-                <Divider>或</Divider>
-                <Box textAlign='center' mt={1}>
-                    <ButtonGroup orientation="vertical" variant="outlined" size="large">
-                        <Button variant="outlined" startIcon={<GitHubIcon />} onClick={handleGithub}>使用 Github 登入</Button>
-                    </ButtonGroup>
-                </Box>
+                { !!authMethods?.length && (
+                    <>
+                    <Divider>或</Divider>
+                    { authMethods.map((method) => (
+                        <Box textAlign='center' mt={1}>
+                            <ButtonGroup orientation="vertical" variant="outlined" size="large">
+                                <Button variant="outlined" startIcon={getProviderIcon(method.name)} onClick={() => handleOauth(method.name)}>使用 {method.displayName} 登入</Button>
+                            </ButtonGroup>
+                        </Box>
+                    )) }
+                    
+                    </>
+                ) }
+                
             </Container>
         </div>
     )
