@@ -57,7 +57,7 @@ export const typeApi = pocketbaseApi.injectEndpoints({
             queryFn: async (id) => {
                 try {
                     const data = await pb.collection(SPENT_RECORD_NAME_COL).getFullList({
-                        sort: '+name',
+                        sort: '-count,+name',
                         filter: `type = '${id}'`
                     })
                     return { data }
