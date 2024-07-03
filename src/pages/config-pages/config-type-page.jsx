@@ -2,8 +2,8 @@ import {
     Box, Button, Container, List, ListItem, Chip, IconButton,
     Dialog, DialogActions, DialogContent, DialogTitle, TextField,
     InputLabel, Paper, Divider, Typography, ToggleButtonGroup,
-    ToggleButton, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails,
-    InputAdornment
+    ToggleButton, FormControl, FormControlLabel, Switch, Accordion, AccordionSummary, AccordionDetails,
+    InputAdornment, Select, MenuItem,
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import { useContext, useEffect, useMemo, useState } from "react"
@@ -17,18 +17,21 @@ import HelpIcon from '@mui/icons-material/Help'
 
 import RecordTypeCard from "../../components/record-type-card"
 import { useAddTypeMutation, useDeleteTypeMutation, useGetTypesQuery, useUpdateTypeMutation } from "../../redux/typeSlice"
+import { useGetPaymentsQuery } from "../../redux/paymentSlice"
 import HelpMessageDialog from "../../components/help-message-dialog"
 
 export default function ConfigTypePage() {
     const pb = useContext(PocketBaseContext)
 
     const { data: types } = useGetTypesQuery()
+    const { data: payments } = useGetPaymentsQuery()
     const [addType] = useAddTypeMutation()
     const [updateType] = useUpdateTypeMutation()
     const [deleteType] = useDeleteTypeMutation()
     
     const enabledTypes = useMemo(() => types ? types.filter(x => x.enabled) : [], [types])
     const disabledTypes = useMemo(() => types ? types.filter(x => !x.enabled) : [], [types])
+    const enabledPayments = useMemo(() => payments ? payments.filter(x => x.enabled) : [], [payments])
     
     const [selectedType, setSelectedType] = useState({})
 
@@ -59,6 +62,7 @@ export default function ConfigTypePage() {
         setValue('enabled', type.enabled)
         setValue('weight', type.weight)
         setValue('budget_per_month', type.budget_per_month)
+        setValue('default_payment', type.default_payment)
         setSelectedType(type)
         setModalType('edit')
         setShowModal(true)
@@ -95,6 +99,7 @@ export default function ConfigTypePage() {
             enabled: data.enabled,
             weight: data.weight,
             budget_per_month: data.budget_per_month,
+            default_payment: data.default_payment,
         }
         updateType({ id: selectedType.id, data: final })
             .unwrap()
@@ -117,6 +122,7 @@ export default function ConfigTypePage() {
             enabled: true,
             weight: data.weight,
             budget_per_month: data.budget_per_month,
+            default_payment: data.default_payment,
         }
         addType(final)
             .unwrap()
@@ -270,6 +276,33 @@ export default function ConfigTypePage() {
                                     rules={{ required: true }}
                                     control={control}
                                 />
+                            </Grid>
+
+                            <Grid xs={8}>
+                                <FormControl fullWidth>
+                                    <InputLabel>預設支付方式</InputLabel>
+                                    <Controller
+                                        render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
+                                            <Select
+                                                onBlur={onBlur}
+                                                onChange={onChange}
+                                                inputRef={ref}
+                                                value={value}
+                                                name={name}
+                                                disabled={disabled}
+                                                label="預設支付方式"
+                                                fullWidth
+                                            >
+                                                <MenuItem key='none' value=''><Box fontStyle='italic'>無</Box></MenuItem>
+                                                {!!enabledPayments.length && enabledPayments.map((payment) => (
+                                                    <MenuItem key={payment.id} value={payment.id}>{payment.name}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        )}
+                                        name='default_payment'
+                                        control={control}
+                                    />
+                                </FormControl>
                             </Grid>
                             
                             

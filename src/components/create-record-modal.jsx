@@ -42,7 +42,11 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
             if (preset && preset.payment) {
                 setValue('payment', preset.payment)
             } else {
-                setValue('payment', payments[0].id)
+                if (selectedType.default_payment) {
+                    setValue('payment', selectedType.default_payment)
+                } else {
+                    setValue('payment', payments[0].id)
+                }
             }
         }
         if (preset) {
