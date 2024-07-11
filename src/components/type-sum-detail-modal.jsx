@@ -3,6 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Unstable_Grid2'
 import { useState } from "react";
 import RecordTypeCard from "./record-type-card";
+import SpentRecordList from "./SpendRecord/spent-record-list";
 
 const TypeSumDetailModalProps = {
     type: null,
@@ -41,8 +42,8 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
 
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
-                            <Typography variant="subtitle1">記錄</Typography>
-                            <Typography variant="h6">{records?.length || '---'}筆</Typography>
+                            <Typography variant="subtitle1">每月預算</Typography>
+                            <Typography variant="h6">${type.budget_per_month || '---'}</Typography>
                         </Box>
                     </Grid>
 
@@ -50,13 +51,6 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
                         <Box sx={{height: '100%', padding: 2}}>
                             <Typography variant="subtitle1">總支出</Typography>
                             <Typography variant="h6">${typeSum || '---'}</Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid xs={6}>
-                        <Box sx={{height: '100%', padding: 2}}>
-                            <Typography variant="subtitle1">每月預算</Typography>
-                            <Typography variant="h6">${type.budget_per_month || '---'}</Typography>
                         </Box>
                     </Grid>
 
@@ -74,6 +68,17 @@ export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
                             )}
                             
                         </Box>
+                    </Grid>
+
+                    <Grid xs={6}>
+                        <Box sx={{height: '100%', padding: 2}}>
+                            <Typography variant="subtitle1">記錄</Typography>
+                            <Typography variant="h6">{records?.length || '---'}筆</Typography>
+                        </Box>
+                    </Grid>
+
+                    <Grid xs={12}>
+                        <SpentRecordList records={records} />
                     </Grid>
                 </Grid>
                 )}

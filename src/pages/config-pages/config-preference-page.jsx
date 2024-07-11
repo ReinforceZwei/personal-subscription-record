@@ -70,59 +70,62 @@ export default function ConfigPreferencePage() {
 
     return (
         <Box>
-            {(userSettings == null || !userSettings.id) ? (<Loading />) : (
-                <Box>
-                    <Grid container spacing={3} columns={{ xs: 6, sm: 12}}>
-                        <Grid xs={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>起始頁面</InputLabel>
-                                <Select
-                                    fullWidth
-                                    label='起始頁面'
-                                    value={userSettings.default_page}
-                                    onChange={handleSetDefaultPage}
-                                >
-                                    {defaultPageOption.map(({ name, value }) => (
-                                        <MenuItem key={value} value={value} >{name}</MenuItem>
-                                    ))}
-                                </Select>
-                                <FormHelperText>開啟APP時預設顯示哪一個頁面</FormHelperText>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid xs={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>顏色外觀</InputLabel>
-                                <Select
-                                    fullWidth
-                                    label='顏色外觀'
-                                    value={userSettings.color_mode}
-                                    onChange={handleSetColorMode}
-                                >
-                                    {colorModeOption.map(({ name, value }) => (
-                                        <MenuItem key={value} value={value} >{name}</MenuItem>
-                                    ))}
-                                </Select>
-                                <FormHelperText>APP的顏色外觀</FormHelperText>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid xs={6}>
-                            <Button variant="outlined" fullWidth onClick={() => handleConfirmLogout()}>登出</Button>
-                            {showConfirmLogout && 
-                                <ConfirmDeleteDialog
-                                    open={showConfirmLogout}
-                                    title="確定要登出嗎？"
-                                    confirmActionText="登出"
-                                    cancelActionText="取消"
-                                    onConfirm={() => logout()}
-                                    onClose={() => setShowConfirmLogout(false)}
-                                />
-                            }
-                        </Grid>
+            
+            <Box>
+                <Grid container spacing={3} columns={{ xs: 6, sm: 12}}>
+                    {(userSettings == null || !userSettings.id) ? (<Loading />) : (
+                    <>
+                    <Grid xs={6}>
+                        <FormControl fullWidth>
+                            <InputLabel>起始頁面</InputLabel>
+                            <Select
+                                fullWidth
+                                label='起始頁面'
+                                value={userSettings.default_page}
+                                onChange={handleSetDefaultPage}
+                            >
+                                {defaultPageOption.map(({ name, value }) => (
+                                    <MenuItem key={value} value={value} >{name}</MenuItem>
+                                ))}
+                            </Select>
+                            <FormHelperText>開啟APP時預設顯示哪一個頁面</FormHelperText>
+                        </FormControl>
                     </Grid>
-                </Box>
-            )}
+
+                    <Grid xs={6}>
+                        <FormControl fullWidth>
+                            <InputLabel>顏色外觀</InputLabel>
+                            <Select
+                                fullWidth
+                                label='顏色外觀'
+                                value={userSettings.color_mode}
+                                onChange={handleSetColorMode}
+                            >
+                                {colorModeOption.map(({ name, value }) => (
+                                    <MenuItem key={value} value={value} >{name}</MenuItem>
+                                ))}
+                            </Select>
+                            <FormHelperText>APP的顏色外觀</FormHelperText>
+                        </FormControl>
+                    </Grid>
+                    </>
+                    )}
+                    <Grid xs={6}>
+                        <Button variant="outlined" fullWidth onClick={() => handleConfirmLogout()}>登出</Button>
+                        {showConfirmLogout && 
+                            <ConfirmDeleteDialog
+                                open={showConfirmLogout}
+                                title="確定要登出嗎？"
+                                confirmActionText="登出"
+                                cancelActionText="取消"
+                                onConfirm={() => logout()}
+                                onClose={() => setShowConfirmLogout(false)}
+                            />
+                        }
+                    </Grid>
+                </Grid>
+            </Box>
+            
         </Box>
     )
 }

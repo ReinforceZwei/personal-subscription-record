@@ -3,11 +3,9 @@ import { DateTime } from 'luxon'
 import { Accordion, AccordionDetails, AccordionSummary, AppBar, Box, Card, CardActionArea, CardActions, CardContent, Chip, Divider, InputLabel, List, ListItem, ListItemButton, ListItemText, Paper, Stack, Toolbar, Typography } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { DatePicker } from '@mui/x-date-pickers'
-import AirIcon from '@mui/icons-material/Air';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useSelector, useDispatch } from 'react-redux'
 import RecordTypeChip from '../components/record-type-chip'
-import RecordDetailModal from '../components/record-detail-modal'
 import { setSelectedDate, selectSelectedDate } from '../redux/recordSlice'
 import _ from 'lodash-es'
 import { useGetTypesQuery } from '../redux/typeSlice'
@@ -16,6 +14,7 @@ import { useGetBudgetListQuery, useGetBudgetQuery } from '../redux/budgetSlice'
 import { useGetRecordsQuery } from '../redux/recordSlice'
 import { hideLinearProgress, showLinearProgress } from '../redux/uiSlice'
 import { sumBy, subtract } from '../vendors/fixedPointMath'
+import SpentRecordList from '../components/SpendRecord/spent-record-list'
 
 export default function SpentRecordPage() {
     const dispatch = useDispatch()
@@ -39,17 +38,9 @@ export default function SpentRecordPage() {
         return sumBy(records || [], x => x.price)
     }, [records])
 
-    // Group raw records by date (year-month-day)
-    const groupedRecords = useMemo(() => {
-        return _.chain(records)
-            .groupBy(x => DateTime.fromSQL(x.created).toLocaleString())
-            .map((v, k) => ({ date: k, records: v }))
-            .value()
-    }, [records])
-
     const recordsByType = useMemo(() => {
         return _.groupBy(records, x => x.type)
-    })
+    }, [records])
 
     // Get spending sum for each type
     const typeMonthSum = useMemo(() => {
@@ -83,20 +74,6 @@ export default function SpentRecordPage() {
         open: false,
         records: [],
     })
-
-    const handleRecordClick = (record) => {
-        setDetailModal({
-            open: true,
-            record: record,
-        })
-    }
-
-    const handleCloseDetailModal = () => {
-        setDetailModal({
-            ...detailModal,
-            open: false
-        })
-    }
 
     const handleTypeSumDetail = (type, sum, records) => {
         console.log(type, sum)
@@ -190,37 +167,7 @@ export default function SpentRecordPage() {
                 />
             )}
 
-            <Box mt={1}>
-                {!groupedRecords.length && (
-                    <Stack direction='row' justifyContent='center'>
-                        <AirIcon />
-                        <Typography sx={{
-                            textAlign: 'center',
-                            fontStyle: 'italic'
-                        }}>沒有記錄 </Typography>
-                    </Stack>
-                    
-                )}
-                {groupedRecords.map(({ date, records }) => (
-                    <Box key={date}>
-                        <Divider><Chip label={date} size='small' /></Divider>
-                        <List>
-                            {records.map((record, i, { length }) => (
-                                <Fragment key={record.id} >
-                                <ListItemButton key={record.id} onClick={() => handleRecordClick(record)}>
-                                    <RecordTypeChip label={record.expand.type.name} bg={record.expand.type.color} sx={{mr: 1}} />
-                                    <ListItemText primary={record.name} secondary={DateTime.fromSQL(record.created).toLocaleString(DateTime.TIME_SIMPLE)} />
-                                    <span>${record.price}</span>
-                                </ListItemButton>
-                                { (length - 1 !== i)&&<Divider variant='inset' key={record.id + '_Divider'}></Divider>}
-                                </Fragment>
-                            ))}
-                        </List>
-                    </Box>
-                ))}
-            </Box>
-
-            <RecordDetailModal open={detailModal.open} onClose={handleCloseDetailModal} record={detailModal.record} />
+            <SpentRecordList records={records} />
         </Box>
     )
 }

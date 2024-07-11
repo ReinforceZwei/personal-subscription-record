@@ -123,7 +123,12 @@ export default function QuickCreatePage() {
                 autoHideDuration={4000}
                 message="記錄已建立"
                 
-                sx={{ bottom: { xs: 65, sm: 65 } }}
+                sx={{
+                    bottom: {
+                        xs: 'calc(65px + env(safe-area-inset-bottom))',
+                        sm: 'calc(65px + env(safe-area-inset-bottom))',
+                    }
+                }}
             />
         </Box>
     )
