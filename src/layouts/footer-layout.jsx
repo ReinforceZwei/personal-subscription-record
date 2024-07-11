@@ -5,6 +5,7 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import AddIcon from '@mui/icons-material/Add';
 import TuneIcon from '@mui/icons-material/Tune';
 import CreditScoreIcon from '@mui/icons-material/CreditScore';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { useEffect, useState } from "react";
 
 
@@ -21,6 +22,8 @@ export default function FooterLayout() {
             setValue('settings')
         } else if (pathname.startsWith('/subscriptionRecord')) {
             setValue('subscriptionRecord')
+        } else if (pathname.startsWith('/recordChart')) {
+            setValue('recordChart')
         }
     }, [pathname])
    
@@ -34,6 +37,13 @@ export default function FooterLayout() {
                         icon={<LocalMallIcon />}
                         LinkComponent={NavLink}
                         to='/spentRecord' />
+                    
+                    <BottomNavigationAction 
+                        label='圖表'
+                        value='recordChart'
+                        icon={<BarChartIcon />}
+                        LinkComponent={NavLink}
+                        to='/recordChart' />
                     
                     <BottomNavigationAction 
                         label='建立'

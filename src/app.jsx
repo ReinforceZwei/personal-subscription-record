@@ -42,6 +42,7 @@ import Logout from './routers/logout.jsx';
 
 import { PocketBaseContext } from './context'
 import ConfigAboutPage from './pages/config-pages/config-about-page.jsx';
+import RecordChartPage from './pages/record-chart-page.jsx';
 
 export default function App() {
 
@@ -57,6 +58,7 @@ export default function App() {
                     <Route path="spentRecord" element={<SpentRecordPage />} />
                     <Route path="quickCreate" element={<QuickCreatePage />} />
                     <Route path="subscriptionRecord" element={<SubscriptionRecordPage />} />
+                    <Route path="recordChart" element={<RecordChartPage />} />
 
                     <Route path="config" element={<ConfigPage />}>
                         {/* <Route index element={<Navigate to="preference" replace />} /> */}
