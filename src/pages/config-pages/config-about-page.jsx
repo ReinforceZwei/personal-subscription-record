@@ -6,6 +6,11 @@ import { Box, Button } from "@mui/material"
 export default function ConfigAboutPage() {
     const loadedScripts = Array.from(document.getElementsByTagName('script'))
 
+
+    const reload = () => {
+        window.location.reload()
+    }
+
     const clearCacheAndReload = () => {
         window.location.reload(true)
     }
@@ -25,6 +30,7 @@ export default function ConfigAboutPage() {
                 <code>{__COMMIT_HASH__}</code>
             </Box>
             <Box>
+                <Button variant="contained" onClick={() => reload()}>Reload</Button>
                 <Button variant="contained" onClick={() => clearCacheAndReload()}>Clear Cache and Reload</Button>
             </Box>
         </Box>

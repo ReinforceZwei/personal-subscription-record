@@ -63,11 +63,6 @@ export default function SpentRecordPage() {
         return budget?.budget ? subtract(budget.budget, monthSum) : null
     }, [budget, monthSum])
 
-    const [detailModal, setDetailModal] = useState({
-        record: null,
-        open: false,
-    })
-
     const [typeDetailModal, setTypeDetailModal] = useState({
         type: null,
         typeSum: 0,
