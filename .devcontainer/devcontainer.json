@@ -2,5 +2,17 @@
     "image":"mcr.microsoft.com/devcontainers/javascript-node:20-bullseye",
     "features": {
         "ghcr.io/devcontainers/features/go:1": {}
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "go.toolsManagement.checkForUpdates": "local",
+                "go.useLanguageServer": true,
+                "go.gopath": "/go"
+            },
+            "extensions": [
+                "golang.Go"
+            ]
+        }
     }
 }
