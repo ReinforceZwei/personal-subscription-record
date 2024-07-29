@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment } from 'react'
+import { useState, useMemo, Fragment, useEffect } from 'react'
 import _ from 'lodash-es'
 import { DateTime } from 'luxon'
 import { Box, Divider, Chip, List, ListItemButton, ListItemText, Stack, Typography } from '@mui/material'
@@ -26,6 +26,17 @@ export default function SpentRecordList(props = SpentRecordListProps) {
             .groupBy(x => DateTime.fromSQL(x.created).toLocaleString())
             .map((v, k) => ({ date: k, records: v, sum: sumBy(v, x => x.price) }))
             .value()
+    }, [records])
+
+    useEffect(() => {
+        // Also update record for opened modal when records changed
+        if (detailModal.open) {
+            const newRecord = records.find((record) => record.id === detailModal.record.id)
+            setDetailModal({
+                ...detailModal,
+                record: newRecord
+            })
+        }
     }, [records])
 
     const handleRecordClick = (record) => {

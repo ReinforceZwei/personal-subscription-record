@@ -41,6 +41,21 @@ const recordApi = pocketbaseApi.injectEndpoints({
                 }
             }
         }),
+        updateRecord: builder.mutation({
+            invalidatesTags: [
+                { type: 'records', id: '*' },
+                { type: 'suggestedName', id: '*' },
+                { type: 'monthSumType', id: new Date().getFullYear() },
+            ],
+            queryFn: async ({ id, data }) => {
+                try {
+                    const result = pb.collection(SPENT_RECORD_COL).update(id, data)
+                    return { data: result }
+                } catch (error) {
+                    return { error: error.error }
+                }
+            }
+        }),
         getMonthSum: builder.query({
             providesTags: ['monthSum'],
             queryFn: async (date) => {
@@ -89,6 +104,7 @@ export const {
     useGetRecordsQuery,
     useGetMonthSumQuery,
     useAddRecordMutation,
+    useUpdateRecordMutation,
     useGetMonthTypeSumByYearQuery,
     useGetMonthTypeSumByYearMonthQuery,
 } = recordApi

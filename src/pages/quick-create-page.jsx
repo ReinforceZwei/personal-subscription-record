@@ -78,7 +78,7 @@ export default function QuickCreatePage() {
                 { presets && (
                     <Grid container columnSpacing={3} columns={{ xs: 6, sm: 12 }}>
                         { presets.map((preset) => (
-                            <Grid xs={6}>
+                            <Grid xs={6} key={preset.id}>
                                 <ListItemButton sx={{ height: '100%' }} onClick={() => handleSelectPreset(preset)}>
                                     <RecordTypeChip label={typesTable[preset.type]?.name} bg={typesTable[preset.type]?.color} sx={{mr: 1}} />
                                     <ListItemText primary={preset.name} secondary={paymentsTable[preset.payment]?.name} />

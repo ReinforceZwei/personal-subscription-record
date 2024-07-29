@@ -3,6 +3,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import RecordTypeChip from "./record-type-chip"
 import { DateTime } from "luxon"
 import Grid from '@mui/material/Unstable_Grid2'
+import EditRecordModal from './edit-record-modal'
+import { useState } from "react";
+import EditIcon from '@mui/icons-material/Edit';
 
 const recordDetailModalProps = {
     record: null,
@@ -13,7 +16,10 @@ const recordDetailModalProps = {
 export default function RecordDetailModal(props = recordDetailModalProps) {
     const { record, open, onClose } = props
 
+    const [showEditModal, setShowEditModal] = useState(false)
+
     return (
+        <>
         <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth='sm'>
             <DialogTitle>
                 支出詳情
@@ -64,9 +70,13 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
                 )}
             </DialogContent>
 
-            <DialogActions>
+            <DialogActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Button startIcon={<EditIcon />} variant="outlined" onClick={() => setShowEditModal(true)}>編輯</Button>
                 <Button onClick={onClose}>關閉</Button>
             </DialogActions>
         </Dialog>
+
+        { showEditModal && <EditRecordModal record={record} onClose={() => setShowEditModal(false)} /> }
+        </>
     )
 }

@@ -29,7 +29,7 @@ export default function YearMonthBarChart(props = YearMonthBarChartProps) {
                 let p = new Array(12).fill(0)
                 
                 byType[key].forEach(x => {
-                    p[Number(x.month)] = x.price
+                    p[Number(x.month) - 1] = x.price
                 })
                 //p[byType[key].month] = byType[key].price
                 let t = {
