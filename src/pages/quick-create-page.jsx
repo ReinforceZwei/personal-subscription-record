@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from "react"
 import { PocketBaseContext } from "../context"
 import Grid from '@mui/material/Unstable_Grid2'
 import {
-    Snackbar, Box, Typography, ListItemButton, ListItemText, Paper, Divider
+    Snackbar, Box, Typography, ListItemButton, ListItemText, Paper, Divider, Fab
 } from "@mui/material"
 import { Link } from "react-router-dom"
 import RecordTypeCard from "../components/record-type-card"
@@ -14,6 +14,8 @@ import { useGetPresetsQuery } from "../redux/presetSlice"
 import RecordTypeChip from "../components/record-type-chip"
 import _ from 'lodash-es'
 import { useGetPaymentsQuery } from "../redux/paymentSlice"
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import CurrencyCalculatorModal from "../components/currency-calculator-modal"
 
 
 export default function QuickCreatePage() {
@@ -35,6 +37,7 @@ export default function QuickCreatePage() {
 
     const [showModal, setShowModal] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
+    const [showCalc, setShowCalc] = useState(false)
 
     const handleSelectType = (type) => {
         setShowModal(true)
@@ -130,6 +133,14 @@ export default function QuickCreatePage() {
                     }
                 }}
             />
+
+            <Box sx={{position: 'fixed', left: 10, bottom: 'calc(65px + env(safe-area-inset-bottom))'}}>
+                <Fab size="small" color='secondary' onClick={() => setShowCalc(true)}>
+                    <CurrencyExchangeIcon />
+                </Fab>
+            </Box>
+
+            { showCalc && <CurrencyCalculatorModal onClose={() => setShowCalc(false)} />}
         </Box>
     )
 }

@@ -1,10 +1,11 @@
-import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment } from "@mui/material";
 import { useGetUserSettingsQuery, useUpdateUserSettingsMutation } from "../../redux/userSettingsSlice";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import Grid from '@mui/material/Unstable_Grid2'
 import { Link, useNavigate } from 'react-router-dom'
 import { removePbDefaultField } from "../../vendors/pocketbaseUtils"
 import ConfirmDeleteDialog from "../../components/confirm-delete-dialog";
+import commonCurrency from "../../commonCurrency"
 
 const defaultSettings = {
     'default_page': 'spentRecord',
@@ -41,7 +42,11 @@ export default function ConfigPreferencePage() {
     const [updateUserSettings] = useUpdateUserSettingsMutation()
 
     const [showConfirmLogout, setShowConfirmLogout] = useState(false)
+    const [selectFavCurrency, setSelectFavCurrency] = useState([])
 
+    const currencyList = useMemo(() => {
+        return Object.keys(commonCurrency).map(key => commonCurrency[key]).sort((a, b) => a.code > b.code ? 1 : -1)
+    }, [commonCurrency])
 
     const handleSetDefaultPage = (e) => {
         const data = {
@@ -59,6 +64,23 @@ export default function ConfigPreferencePage() {
         updateUserSettings({ id: userSettings.id, data })
     }
 
+    const handleSetFavCurrency = (e) => {
+        setSelectFavCurrency(e.target.value)
+    }
+
+    const handleCloseFavCurrency = () => {
+        if (selectFavCurrency.length === userSettings.fav_currency.length 
+            && selectFavCurrency.every((value, index) => value === userSettings.fav_currency[index])) {
+            // value are the same, no need update
+        } else {
+            const data = {
+                ...removePbDefaultField(userSettings),
+                fav_currency: selectFavCurrency,
+            }
+            updateUserSettings({ id: userSettings.id, data })
+        }
+    }
+
     const handleConfirmLogout = (e) => {
         setShowConfirmLogout(true)
     }
@@ -66,6 +88,12 @@ export default function ConfigPreferencePage() {
     const logout = () => {
         navigate('/logout')
     }
+
+    useEffect(() => {
+        if (userSettings) {
+            setSelectFavCurrency(userSettings.fav_currency || [])
+        }
+    }, [userSettings])
 
 
     return (
@@ -106,6 +134,32 @@ export default function ConfigPreferencePage() {
                                 ))}
                             </Select>
                             <FormHelperText>APP的顏色外觀</FormHelperText>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid xs={6}>
+                        <FormControl fullWidth>
+                            <InputLabel>喜好貨幣</InputLabel>
+                            <Select
+                                fullWidth
+                                label='喜好貨幣'
+                                value={selectFavCurrency}
+                                onChange={handleSetFavCurrency}
+                                onClose={handleCloseFavCurrency}
+                                multiple
+                                renderValue={(selected) => (
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Chip key={value} label={value} />
+                                        ))}
+                                    </Box>
+                                )}
+                            >
+                                {currencyList.map(({ code, name }) => (
+                                    <MenuItem key={code} value={code}>{code} - {name}</MenuItem>
+                                ))}
+                            </Select>
+                            <FormHelperText>用於貨幣轉換計算機</FormHelperText>
                         </FormControl>
                     </Grid>
                     </>

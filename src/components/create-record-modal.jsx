@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from "react-redux"
 import RecordTypeChip from "../components/record-type-chip"
 import { useGetSuggestedNameQuery } from "../redux/typeSlice"
 import { useGetPaymentsQuery } from "../redux/paymentSlice"
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import CurrencyCalculatorModal from "../components/currency-calculator-modal"
 
 const CreateRecordModalProps = {
     selectedType: null,
@@ -24,6 +26,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
     const { selectedType, preset, open, onClose, onCreate, ...other } = props
 
     const [showThisModal, setShowThisModal] = useState(open)
+    const [showCalc, setShowCalc] = useState(false)
 
     const { data: suggestedName } = useGetSuggestedNameQuery(selectedType?.id)
     const { data: allPayments } = useGetPaymentsQuery()
@@ -36,6 +39,11 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
             price: '',
         }
     })
+
+    const handleCalcResult = (price) => {
+        setValue('price', price)
+        setShowCalc(false)
+    }
 
     useEffect(() => {
         if (payments.length) {
@@ -60,6 +68,7 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
     }, [payments, preset])
 
     return (
+        <>
         <Dialog open={showThisModal}
             onClose={() => setShowThisModal(false)}
             fullWidth={true}
@@ -205,10 +214,15 @@ export default function CreateRecordModal(props = CreateRecordModalProps) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
+                    <IconButton onClick={() => setShowCalc(true)}><CurrencyExchangeIcon /></IconButton>
+                    <span style={{flex: '1 1'}}></span>
                     <Button onClick={() => setShowThisModal(false)}>關閉</Button>
                     <Button type="submit" variant="contained">建立</Button>
                 </DialogActions>
             </form>
         </Dialog>
+
+        { showCalc && <CurrencyCalculatorModal acceptResult onResult={handleCalcResult} onClose={() => setShowCalc(false)} />}
+        </>
     )
 }
