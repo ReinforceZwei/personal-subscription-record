@@ -69,7 +69,8 @@ export default function ConfigPreferencePage() {
     }
 
     const handleCloseFavCurrency = () => {
-        if (selectFavCurrency.length === userSettings.fav_currency.length 
+        if (userSettings.fav_currency
+            && selectFavCurrency.length === userSettings.fav_currency.length 
             && selectFavCurrency.every((value, index) => value === userSettings.fav_currency[index])) {
             // value are the same, no need update
         } else {
