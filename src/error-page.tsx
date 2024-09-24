@@ -2,7 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { Link, useRouteError } from "react-router-dom";
 
 export default function ErrorPage() {
-    const error = useRouteError();
+    const error = useRouteError() as any;
     console.error(error);
 
     return (
@@ -33,7 +33,7 @@ export default function ErrorPage() {
                     {JSON.stringify(error, null, 4)}
                 </code>
             </pre>
-            <Button variant="outlined" LinkComponent={Link} to='/'>Back to home page</Button>
+            <Button variant="outlined" component={Link} to='/'>Back to home page</Button>
         </Box>
     );
 }

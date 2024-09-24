@@ -9,7 +9,7 @@ import uiReducer from './redux/uiSlice'
 
 import { pocketbaseApi } from './redux/api'
 
-export default configureStore({
+export const store = configureStore({
     reducer: {
         [pocketbaseApi.reducerPath]: pocketbaseApi.reducer,
         record: recordReducer,
@@ -24,3 +24,8 @@ export default configureStore({
         return getDefaultMiddleware().concat(pocketbaseApi.middleware)
     },
 })
+
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
+
+export default store
