@@ -3,10 +3,13 @@ import { DateTime } from 'luxon'
 import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL, SPENT_SUM_BY_MONTH_TYPE_COL } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
+import { handlePbError } from '../vendors/pocketbaseUtils'
+import { RootState } from '../store'
 
 const recordApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
         getRecords: builder.query({
+            // @ts-expect-error
             providesTags: (result) => generateCacheTagList(result, 'records'),
             queryFn: async (selectedDate) => {
                 const _selectedDate = DateTime.fromISO(selectedDate.toString())
@@ -21,8 +24,7 @@ const recordApi = pocketbaseApi.injectEndpoints({
                     })
                     return { data }
                 } catch (error) {
-                    console.log(error)
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -37,7 +39,7 @@ const recordApi = pocketbaseApi.injectEndpoints({
                     const result = pb.collection(SPENT_RECORD_COL).create(data)
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -52,7 +54,7 @@ const recordApi = pocketbaseApi.injectEndpoints({
                     const result = pb.collection(SPENT_RECORD_COL).update(id, data)
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -65,7 +67,7 @@ const recordApi = pocketbaseApi.injectEndpoints({
                         .getFirstListItem(`year_month = '${_date.toFormat('yyyy-MM')}'`)
                     return { data }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -79,7 +81,7 @@ const recordApi = pocketbaseApi.injectEndpoints({
                         })
                     return { data }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -93,7 +95,7 @@ const recordApi = pocketbaseApi.injectEndpoints({
                         })
                     return { data }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -109,46 +111,6 @@ export const {
     useGetMonthTypeSumByYearMonthQuery,
 } = recordApi
 
-
-export const fetchRecords = createAsyncThunk('record/fetchRecords', async (args, { getState }) => {
-    const selectedDate = DateTime.fromISO(getState().record.selectedDate)
-    console.log(selectedDate)
-    const startDate = selectedDate.startOf('month').toString()
-    const endDate = selectedDate.endOf('month').toString()
-    const records = await pb.collection(SPENT_RECORD_COL).getFullList({
-        sort: '-created',
-        expand: 'type,payment',
-        filter: `created >= '${startDate}' && created <= '${endDate}'`
-    })
-
-    let a = records.reduce((prev, curr) => {
-        let date = DateTime.fromSQL(curr.created)
-        let key = date.toLocaleString()
-        if (prev[key]) {
-            prev[key].push(curr)
-        } else {
-            prev[key] = [curr]
-        }
-        return prev
-    }, {})
-    const groupedRecords = Object.keys(a).map((date) => {
-        return {
-            date,
-            records: a[date],
-        }
-    })
-
-
-    return { records, groupedRecords }
-})
-
-export const fetchMonthSum = createAsyncThunk('record/fetchMonthSum', async (args, { getState }) => {
-    const selectedDate = DateTime.fromISO(getState().record.selectedDate)
-    const record = await pb.collection(SPENT_SUM_BY_MONTH_COL)
-        .getFirstListItem(`year_month = '${selectedDate.toFormat('yyyy-MM')}'`)
-    return record
-})
-
 export const recordSlice = createSlice({
     name: 'record',
     initialState: {
@@ -162,22 +124,10 @@ export const recordSlice = createSlice({
             state.selectedDate = action.payload
         },
     },
-    extraReducers: (builder) => {
-        builder.addCase(fetchRecords.fulfilled, (state, action) => {
-            state.records = action.payload.records
-            state.groupedRecords = action.payload.groupedRecords
-
-        }).addCase(fetchMonthSum.fulfilled, (state, action) => {
-            state.monthSum[action.payload['year_month']] = action.payload['price']
-
-        })
-    }
 })
-
-export const { setSelectedDate } = recordSlice.actions
 
 export default recordSlice.reducer
 
-export const selectAllRecord = (state) => state.record.records
-export const selectGroupedRecord = (state) => state.record.groupedRecords
-export const selectSelectedDate = (state) => state.record.selectedDate
+export const { setSelectedDate } = recordSlice.actions
+
+export const selectSelectedDate = (state: RootState) => state.record.selectedDate

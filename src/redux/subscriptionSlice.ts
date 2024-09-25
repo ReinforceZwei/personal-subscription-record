@@ -1,10 +1,12 @@
 import pb, { SUBSCRIPTION_PLAN_COL } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
+import { handlePbError } from '../vendors/pocketbaseUtils'
 
 export const subscriptionApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
         getSubscriptions: builder.query({
+            // @ts-expect-error
             providesTags: (result) => generateCacheTagList(result, 'subscriptions'),
             queryFn: async () => {
                 try {
@@ -13,7 +15,7 @@ export const subscriptionApi = pocketbaseApi.injectEndpoints({
                     })
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -21,10 +23,10 @@ export const subscriptionApi = pocketbaseApi.injectEndpoints({
             invalidatesTags: [{ type: 'subscriptions', id: '*' }],
             queryFn: async (data) => {
                 try {
-                    const result = await pb.collection(SUBSCRIPTION_PLAN_COL).create({...data, owned_by: pb.authStore.model.id})
+                    const result = await pb.collection(SUBSCRIPTION_PLAN_COL).create({...data, owned_by: pb.authStore.model?.id})
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -32,10 +34,10 @@ export const subscriptionApi = pocketbaseApi.injectEndpoints({
             invalidatesTags: (result, error, { id }) => [{ type: 'subscriptions', id }],
             queryFn: async ({ data, id }) => {
                 try {
-                    const result = await pb.collection(SUBSCRIPTION_PLAN_COL).update(id, {...data, owned_by: pb.authStore.model.id})
+                    const result = await pb.collection(SUBSCRIPTION_PLAN_COL).update(id, {...data, owned_by: pb.authStore.model?.id})
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -46,7 +48,7 @@ export const subscriptionApi = pocketbaseApi.injectEndpoints({
                     const result = await pb.collection(SUBSCRIPTION_PLAN_COL).delete(id)
                     return { data: null }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserSettings, selectUserSettings, useGetUserSettingsQuery } from "../redux/userSettingsSlice";
+import { useGetUserSettingsQuery } from "../redux/userSettingsSlice";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Box, LinearProgress } from "@mui/material";

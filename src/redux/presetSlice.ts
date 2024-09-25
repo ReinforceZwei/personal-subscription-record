@@ -1,10 +1,12 @@
 import pb, { SPENT_PRESET_COL } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
+import { handlePbError } from '../vendors/pocketbaseUtils'
 
 export const presetApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
         getPresets: builder.query({
+            // @ts-expect-error
             providesTags: (result) => generateCacheTagList(result, 'presets'),
             queryFn: async () => {
                 try {
@@ -13,7 +15,7 @@ export const presetApi = pocketbaseApi.injectEndpoints({
                     })
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -21,10 +23,10 @@ export const presetApi = pocketbaseApi.injectEndpoints({
             invalidatesTags: [{ type: 'presets', id: '*' }],
             queryFn: async (data) => {
                 try {
-                    const result = await pb.collection(SPENT_PRESET_COL).create({...data, owned_by: pb.authStore.model.id})
+                    const result = await pb.collection(SPENT_PRESET_COL).create({...data, owned_by: pb.authStore.model?.id})
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -32,10 +34,10 @@ export const presetApi = pocketbaseApi.injectEndpoints({
             invalidatesTags: (result, error, { id }) => [{ type: 'presets', id }],
             queryFn: async ({ id, data }) => {
                 try {
-                    const result = await pb.collection(SPENT_PRESET_COL).update(id, {...data, owned_by: pb.authStore.model.id})
+                    const result = await pb.collection(SPENT_PRESET_COL).update(id, {...data, owned_by: pb.authStore.model?.id})
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -46,7 +48,7 @@ export const presetApi = pocketbaseApi.injectEndpoints({
                     await pb.collection(SPENT_PRESET_COL).delete(id)
                     return { data: null }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         })

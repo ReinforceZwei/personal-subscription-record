@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import pb, { USER_SETTINGS_COL } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
+import { handlePbError } from '../vendors/pocketbaseUtils'
 
 export const userSettingsApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -13,7 +14,7 @@ export const userSettingsApi = pocketbaseApi.injectEndpoints({
                         if (defaultSettings) {
                             const result = await pb.collection(USER_SETTINGS_COL).create({
                                 ...defaultSettings,
-                                owned_by: pb.authStore.model.id
+                                owned_by: pb.authStore.model?.id
                             })
                             return { data: result }
                         }
@@ -21,7 +22,7 @@ export const userSettingsApi = pocketbaseApi.injectEndpoints({
                     }
                     return { data: result.items[0] }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -32,7 +33,7 @@ export const userSettingsApi = pocketbaseApi.injectEndpoints({
                     const result = await pb.collection(USER_SETTINGS_COL).create(data)
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -43,7 +44,7 @@ export const userSettingsApi = pocketbaseApi.injectEndpoints({
                     const result = await pb.collection(USER_SETTINGS_COL).update(id, data)
                     return { data: result }
                 } catch (error) {
-                    return { error: error.error }
+                    return handlePbError(error)
                 }
             }
         }),
@@ -56,48 +57,3 @@ export const {
     useUpdateUserSettingsMutation,
 } = userSettingsApi
 
-
-export const fetchUserSettings = createAsyncThunk('userSettings/fetchUserSettings', async () => {
-    const result = (await pb.collection(USER_SETTINGS_COL).getList(1, 1))
-    if (result.totalItems < 1) {
-        return null
-    }
-    return result.items[0]
-})
-
-export const createUserSettings = createAsyncThunk('userSettings/createUserSettings', async (args) => {
-    const { defaultSettings, id } = args
-
-    const result = await pb.collection(USER_SETTINGS_COL).create({ ...defaultSettings, owned_by: id })
-    return result
-})
-
-export const updateUserSettings = createAsyncThunk('userSettings/updateUserSettings', async (args) => {
-    const { id, data } = args
-
-    const result = await pb.collection(USER_SETTINGS_COL).update(id, data)
-    return result
-})
-
-export const userSettingsSlice = createSlice({
-    name: 'userSettings',
-    initialState: {
-        userSettings: {},
-    },
-    extraReducers: (builder) => {
-        builder.addCase(fetchUserSettings.fulfilled, (state, action) => {
-            state.userSettings = action.payload
-
-        }).addCase(createUserSettings.fulfilled, (state, action) => {
-            state.userSettings = action.payload
-
-        }).addCase(updateUserSettings.fulfilled, (state, action) => {
-            state.userSettings = action.payload
-            
-        })
-    }
-})
-
-export default userSettingsSlice.reducer
-
-export const selectUserSettings = (state) => state.userSettings.userSettings

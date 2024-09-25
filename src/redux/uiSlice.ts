@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { RootState } from '../store'
 
 export const uiSlice = createSlice({
     name: 'ui',
@@ -19,4 +20,4 @@ export default uiSlice.reducer
 
 export const { showLinearProgress, hideLinearProgress } = uiSlice.actions
 
-export const selectLinearProgress = (state) => state.ui.linearProgress
+export const selectLinearProgress = (state: RootState) => state.ui.linearProgress
