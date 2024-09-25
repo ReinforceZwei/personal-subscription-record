@@ -5,7 +5,7 @@ import { handlePbError } from '../vendors/pocketbaseUtils'
 
 export const userSettingsApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getUserSettings: builder.query({
+        getUserSettings: builder.query<any, any | void>({
             providesTags: [{ type: 'userSettings', id: '*' }],
             queryFn: async (defaultSettings) => {
                 try {

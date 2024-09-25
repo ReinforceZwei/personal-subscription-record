@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import pb, { SPENT_RECORD_NAME_COL, SPENT_TYPE_COL } from '../services/pocketbase'
+import pb, { SPENT_RECORD_NAME_COL, SPENT_TYPE_COL, SpentRecordName, SpentType } from '../services/pocketbase'
 import { sort } from 'fast-sort'
 import { pocketbaseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
@@ -7,12 +7,12 @@ import { handlePbError } from '../vendors/pocketbaseUtils'
 
 export const typeApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getTypes: builder.query({
+        getTypes: builder.query<SpentType[], void>({
             // @ts-expect-error
             providesTags: (result) => generateCacheTagList(result, 'types'),
             queryFn: async () => {
                 try {
-                    const data = await pb.collection(SPENT_TYPE_COL).getFullList({
+                    const data = await pb.collection<SpentType>(SPENT_TYPE_COL).getFullList({
                         sort: '+weight,+name'
                     })
                     return { data }
@@ -21,11 +21,11 @@ export const typeApi = pocketbaseApi.injectEndpoints({
                 }
             }
         }),
-        addType: builder.mutation({
+        addType: builder.mutation<Partial<SpentType>, SpentType>({
             invalidatesTags: [{ type: 'types', id: '*' }],
             queryFn: async (data) => {
                 try {
-                    const result = await pb.collection(SPENT_TYPE_COL).create(data)
+                    const result = await pb.collection<SpentType>(SPENT_TYPE_COL).create(data)
                     return { data: result }
                 } catch (error) {
                     return handlePbError(error)
@@ -36,7 +36,7 @@ export const typeApi = pocketbaseApi.injectEndpoints({
             invalidatesTags: (result, error, { id }) => [{ type: 'types', id }],
             queryFn: async ({ id, data }) => {
                 try {
-                    const result = await pb.collection(SPENT_TYPE_COL).update(id, data)
+                    const result = await pb.collection<SpentType>(SPENT_TYPE_COL).update(id, data)
                     return { data: result }
                 } catch (error) {
                     return handlePbError(error)
@@ -47,7 +47,7 @@ export const typeApi = pocketbaseApi.injectEndpoints({
             invalidatesTags: [{ type: 'types', id: '*' }],
             queryFn: async (id) => {
                 try {
-                    await pb.collection(SPENT_TYPE_COL).delete(id)
+                    await pb.collection<SpentType>(SPENT_TYPE_COL).delete(id)
                     return { data: null }
                 } catch (error) {
                     return handlePbError(error)
@@ -58,7 +58,7 @@ export const typeApi = pocketbaseApi.injectEndpoints({
             providesTags: [{ type: 'suggestedName', id: '*' }],
             queryFn: async (id) => {
                 try {
-                    const data = await pb.collection(SPENT_RECORD_NAME_COL).getFullList({
+                    const data = await pb.collection<SpentRecordName>(SPENT_RECORD_NAME_COL).getFullList({
                         sort: '-count,+name',
                         filter: `type = '${id}'`
                     })

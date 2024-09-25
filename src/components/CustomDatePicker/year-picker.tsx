@@ -1,26 +1,25 @@
-import { MonthCalendar } from '@mui/x-date-pickers/MonthCalendar';
+import { YearCalendar } from '@mui/x-date-pickers/YearCalendar';
 import { Box, Button, IconButton, Popover, Stack } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { DateTime } from 'luxon';
-import { useEffect, useState } from 'react';
+import { MouseEventHandler, useEffect, useState } from 'react';
 
 const calendarMinDate = DateTime.fromObject({ year: 2023, month: 1, day: 1 })
 
-const MonthPickerProps = {
-    year: 0,
-    month: 0,
-    onChange: (value) => {},
+interface YearPickerProps {
+    value: number
+    onChange: (value: number) => void
 }
 
-export default function MonthPicker(props = MonthPickerProps) {
-    const { year, month, onChange } = props
-    const [calendarValue, setCalendarValue] = useState(DateTime.fromObject({ year, month }))
+export default function YearPicker(props: YearPickerProps) {
+    const { value, onChange } = props
+    const [calendarValue, setCalendarValue] = useState(DateTime.fromObject({ year: value }))
 
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
-    const handleClick = (event) => {
+    const handleClick: MouseEventHandler = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -30,37 +29,37 @@ export default function MonthPicker(props = MonthPickerProps) {
 
     const open = Boolean(anchorEl);
 
-    const onCalendarChange = (date) => {
+    const onCalendarChange = (date: DateTime) => {
         setCalendarValue(date)
-        onChange(date)
+        onChange(date.get('year'))
         handleClose()
     }
 
     const onBackClick = () => {
-        const newValue = calendarValue.minus({ month: 1 })
+        const newValue = calendarValue.minus({ year: 1 })
         if (newValue > calendarMinDate) {
             setCalendarValue(newValue)
-            onChange(newValue)
+            onChange(newValue.get('year'))
         }
     }
 
     const onNextClick = () => {
-        const newValue = calendarValue.plus({ month: 1 })
+        const newValue = calendarValue.plus({ year: 1 })
         if (newValue < DateTime.now()) {
             setCalendarValue(newValue)
-            onChange(newValue)
+            onChange(newValue.get('year'))
         }
     }
 
     useEffect(() => {
-        setCalendarValue(DateTime.fromObject({ year, month }))
-    }, [year, month])
+        setCalendarValue(DateTime.fromObject({ year: value }))
+    }, [value])
 
     return (
         <Box>
             <Stack direction='row' spacing={2}>
                 <IconButton onClick={onBackClick}><ArrowBackIosNewIcon /></IconButton>
-                <Button size="large" endIcon={<ArrowDropDownIcon />} onClick={handleClick}>{calendarValue.get('month')}</Button>
+                <Button size="large" endIcon={<ArrowDropDownIcon />} onClick={handleClick}>{calendarValue.get('year')}</Button>
                 <IconButton onClick={onNextClick}><ArrowForwardIosIcon /></IconButton>
             </Stack>
             
@@ -73,7 +72,7 @@ export default function MonthPicker(props = MonthPickerProps) {
                     horizontal: 'left',
                 }}
             >
-                <MonthCalendar value={calendarValue} onChange={onCalendarChange} disableFuture minDate={calendarMinDate} />
+                <YearCalendar value={calendarValue} onChange={onCalendarChange} disableFuture minDate={calendarMinDate} />
             </Popover>
         </Box>
     )

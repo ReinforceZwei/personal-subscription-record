@@ -9,11 +9,11 @@ const xAxisLabels = [
     '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'
 ]
 
-const YearMonthBarChartProps = {
-    year: 0
+interface YearMonthBarChartProps {
+    year: number
 }
 
-export default function YearMonthBarChart(props = YearMonthBarChartProps) {
+export default function YearMonthBarChart(props: YearMonthBarChartProps) {
     const { year } = props
 
     const { data, isFetching } = useGetMonthTypeSumByYearQuery(year)
@@ -33,7 +33,7 @@ export default function YearMonthBarChart(props = YearMonthBarChartProps) {
                 })
                 //p[byType[key].month] = byType[key].price
                 let t = {
-                    data: p, label: typesById[key].name, id: key, color: typesById[key].color, stack: 'total', stackOrder: 'appearance'
+                    data: p, label: typesById[key].name, id: key, color: typesById[key].color, stack: 'total', stackOrder: 'appearance' as const
                 }
                 series.push(t)
             }

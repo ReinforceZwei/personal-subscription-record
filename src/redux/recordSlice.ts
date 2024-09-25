@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { DateTime } from 'luxon'
-import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL, SPENT_SUM_BY_MONTH_TYPE_COL } from '../services/pocketbase'
+import pb, { SPENT_RECORD_COL, SPENT_SUM_BY_MONTH_COL, SPENT_SUM_BY_MONTH_TYPE_COL, SpentSumByTypeMonth } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
 import { generateCacheTagList } from '../vendors/rtkQueryUtils'
 import { handlePbError } from '../vendors/pocketbaseUtils'
@@ -71,11 +71,11 @@ const recordApi = pocketbaseApi.injectEndpoints({
                 }
             }
         }),
-        getMonthTypeSumByYear: builder.query({
+        getMonthTypeSumByYear: builder.query<SpentSumByTypeMonth[], any>({
             providesTags: (result, error, arg) => ([{ type: 'monthSumType', id: arg }]),
             queryFn: async (year) => {
                 try {
-                    const data = await pb.collection(SPENT_SUM_BY_MONTH_TYPE_COL)
+                    const data = await pb.collection<SpentSumByTypeMonth>(SPENT_SUM_BY_MONTH_TYPE_COL)
                         .getFullList({
                             filter: `year = ${year}`,
                         })
@@ -85,11 +85,11 @@ const recordApi = pocketbaseApi.injectEndpoints({
                 }
             }
         }),
-        getMonthTypeSumByYearMonth: builder.query({
+        getMonthTypeSumByYearMonth: builder.query<SpentSumByTypeMonth[], any>({
             providesTags: (result, error, arg) => ([{ type: 'monthSumType', id: `${arg.year}${arg.month}` }]),
             queryFn: async ({ year, month }) => {
                 try {
-                    const data = await pb.collection(SPENT_SUM_BY_MONTH_TYPE_COL)
+                    const data = await pb.collection<SpentSumByTypeMonth>(SPENT_SUM_BY_MONTH_TYPE_COL)
                         .getFullList({
                             filter: `year = ${year} && month = ${month}`,
                         })

@@ -6,16 +6,17 @@ import AirIcon from '@mui/icons-material/Air';
 import { sumBy } from '../../vendors/fixedPointMath'
 import RecordTypeChip from '../record-type-chip'
 import RecordDetailModal from '../../components/record-detail-modal'
+import { SpentRecord } from '../../services/pocketbase';
 
 
-const SpentRecordListProps = {
-    records: null
+interface SpentRecordListProps {
+    records: SpentRecord[]
 }
 
-export default function SpentRecordList(props = SpentRecordListProps) {
+export default function SpentRecordList(props: SpentRecordListProps) {
     const { records } = props
 
-    const [detailModal, setDetailModal] = useState({
+    const [detailModal, setDetailModal] = useState<{ record: SpentRecord | null, open: Boolean }>({
         record: null,
         open: false,
     })
@@ -31,15 +32,15 @@ export default function SpentRecordList(props = SpentRecordListProps) {
     useEffect(() => {
         // Also update record for opened modal when records changed
         if (detailModal.open) {
-            const newRecord = records.find((record) => record.id === detailModal.record.id)
+            const newRecord = records.find((record) => record.id === detailModal.record?.id)
             setDetailModal({
                 ...detailModal,
-                record: newRecord
+                record: newRecord!
             })
         }
     }, [records])
 
-    const handleRecordClick = (record) => {
+    const handleRecordClick = (record: SpentRecord) => {
         setDetailModal({
             open: true,
             record: record,
@@ -73,7 +74,7 @@ export default function SpentRecordList(props = SpentRecordListProps) {
                         {records.map((record, i, { length }) => (
                             <Fragment key={record.id} >
                             <ListItemButton key={record.id} onClick={() => handleRecordClick(record)}>
-                                <RecordTypeChip label={record.expand.type.name} bg={record.expand.type.color} sx={{mr: 1}} />
+                                <RecordTypeChip label={record.expand?.type.name} bg={record.expand?.type.color} sx={{mr: 1}} />
                                 <ListItemText primary={record.name} secondary={DateTime.fromSQL(record.created).toLocaleString(DateTime.TIME_SIMPLE)} />
                                 <span>${record.price}</span>
                             </ListItemButton>

@@ -7,12 +7,12 @@ import { Skeleton } from '@mui/material'
 
 
 
-const MonthPieChartProps = {
-    year: 0,
-    month: 0,
+interface MonthPieChartProps {
+    year: number,
+    month: number,
 }
 
-export default function MonthPieChart(props = MonthPieChartProps) {
+export default function MonthPieChart(props: MonthPieChartProps) {
     const { year, month } = props
 
     const { data, isFetching } = useGetMonthTypeSumByYearMonthQuery({ year, month })

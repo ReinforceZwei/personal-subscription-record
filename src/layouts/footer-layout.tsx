@@ -8,10 +8,11 @@ import CreditScoreIcon from '@mui/icons-material/CreditScore';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import { useEffect, useState } from "react";
 
+type NavigateLocation = 'records' | 'create' | 'settings' | 'subscriptionRecord' | 'recordChart'
 
 export default function FooterLayout() {
     const { pathname } = useLocation()
-    const [value, setValue] = useState(0)
+    const [value, setValue] = useState<NavigateLocation | null>(null)
 
     useEffect(() => {
         if (pathname.startsWith('/spentRecord')) {
@@ -35,35 +36,35 @@ export default function FooterLayout() {
                         label='記錄'
                         value='records'
                         icon={<LocalMallIcon />}
-                        LinkComponent={NavLink}
+                        component={NavLink}
                         to='/spentRecord' />
                     
                     <BottomNavigationAction 
                         label='圖表'
                         value='recordChart'
                         icon={<BarChartIcon />}
-                        LinkComponent={NavLink}
+                        component={NavLink}
                         to='/recordChart' />
                     
                     <BottomNavigationAction 
                         label='建立'
                         value='create'
                         icon={<AddIcon />}
-                        LinkComponent={NavLink}
+                        component={NavLink}
                         to='/quickCreate' />
                     
                     <BottomNavigationAction 
                         label='訂閱'
                         value='subscriptionRecord'
                         icon={<CreditScoreIcon />}
-                        LinkComponent={NavLink}
+                        component={NavLink}
                         to='/subscriptionRecord' />
                     
                     <BottomNavigationAction 
                         label='設定'
                         value='settings'
                         icon={<TuneIcon />}
-                        LinkComponent={NavLink}
+                        component={NavLink}
                         to='/config' />
                 </BottomNavigation>
             </Paper>
