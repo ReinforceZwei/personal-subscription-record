@@ -7,9 +7,9 @@ import '@mui/material/styles/styled';
 import './index.css'
 import '@fontsource-variable/noto-sans-tc';
 
-import store from './store.js'
+import store from './store'
 import { Provider } from 'react-redux'
-import App from './app.jsx'
+import App from './app'
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

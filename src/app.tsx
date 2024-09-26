@@ -18,31 +18,31 @@ import { CssBaseline } from '@mui/material';
 
 import { isTokenExpired } from 'pocketbase';
 
-import Root from './routers/root.jsx'
+import Root from './routers/root'
 import ErrorPage from "./error-page"
-import LoginPage from './pages/login-page.jsx'
-import SpentRecordPage from './pages/spent-record-page.jsx'
-import pb from './services/pocketbase.js'
+import LoginPage from './pages/login-page'
+import SpentRecordPage from './pages/spent-record-page'
+import pb from './services/pocketbase'
 
-import QuickCreatePage from './pages/quick-create-page.jsx'
-import ConfigPage from './pages/config-page.jsx'
-import ConfigTypePage from './pages/config-pages/config-type-page.jsx'
-import ConfigPaymentPage from './pages/config-pages/config-payment-page.jsx'
+import QuickCreatePage from './pages/quick-create-page'
+import ConfigPage from './pages/config-page'
+import ConfigTypePage from './pages/config-pages/config-type-page'
+import ConfigPaymentPage from './pages/config-pages/config-payment-page'
 
-import { themeOptions } from './themes.js';
+import { themeOptions } from './themes';
 
-import UserDefaultPage from './routers/user-default-page.jsx';
-import ConfigPreferencePage from './pages/config-pages/config-preference-page.jsx';
+import UserDefaultPage from './routers/user-default-page';
+import ConfigPreferencePage from './pages/config-pages/config-preference-page';
 
 import { useGetUserSettingsQuery } from "./redux/userSettingsSlice";
-import SubscriptionRecordPage from './pages/subscription-record-page.jsx';
-import ConfigBudgetPage from './pages/config-pages/config-budget-page.jsx';
-import ConfigPresetPage from './pages/config-pages/config-preset-page.jsx';
-import Logout from './routers/logout.jsx';
+import SubscriptionRecordPage from './pages/subscription-record-page';
+import ConfigBudgetPage from './pages/config-pages/config-budget-page';
+import ConfigPresetPage from './pages/config-pages/config-preset-page';
+import Logout from './routers/logout';
 
 import { PocketBaseContext } from './context'
-import ConfigAboutPage from './pages/config-pages/config-about-page.jsx';
-import RecordChartPage from './pages/record-chart-page.jsx';
+import ConfigAboutPage from './pages/config-pages/config-about-page';
+import RecordChartPage from './pages/record-chart-page';
 
 export default function App() {
 
