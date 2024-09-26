@@ -3,14 +3,17 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Outlet, NavLink, useLocation, useNavigate } from "react-router-dom"
 import { selectLastConfigPage, setLastConfigPage } from "../redux/routingSlice"
+import { useAppDispatch } from "../hooks"
+
+type ConfigPages = 'type' | 'payment' | 'preference' | 'budget' | 'preset' | 'about'
 
 export default function ConfigPage() {
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const navigate = useNavigate()
 
     const { pathname } = useLocation()
-    const lastPage = useSelector(selectLastConfigPage)
-    const [value, setValue] = useState(lastPage || 'preference')
+    const lastPage = useSelector(selectLastConfigPage) as ConfigPages
+    const [value, setValue] = useState<ConfigPages>(lastPage || 'preference')
     
 
     useEffect(() => {
@@ -39,12 +42,12 @@ export default function ConfigPage() {
         <div>
             <Box mb={2}>
                 <Tabs value={value} onChange={(e, v) => setValue(v)} role='navigation' variant="scrollable" scrollButtons="auto">
-                    <Tab LinkComponent={NavLink} to='preference' value='preference' label='喜好' />
-                    <Tab LinkComponent={NavLink} to='budget' value='budget' label='預算' />
-                    <Tab LinkComponent={NavLink} to='type' value='type' label='支出類別' />
-                    <Tab LinkComponent={NavLink} to='payment' value='payment' label='支付方式' />
-                    <Tab LinkComponent={NavLink} to='preset' value='preset' label='預設範本' />
-                    <Tab LinkComponent={NavLink} to='about' value='about' label='關於' />
+                    <Tab component={NavLink} to='preference' value='preference' label='喜好' />
+                    <Tab component={NavLink} to='budget' value='budget' label='預算' />
+                    <Tab component={NavLink} to='type' value='type' label='支出類別' />
+                    <Tab component={NavLink} to='payment' value='payment' label='支付方式' />
+                    <Tab component={NavLink} to='preset' value='preset' label='預設範本' />
+                    <Tab component={NavLink} to='about' value='about' label='關於' />
                 </Tabs>
             </Box>
             <div>

@@ -7,10 +7,10 @@ export const uiSlice = createSlice({
         linearProgress: false,
     },
     reducers: {
-        showLinearProgress: (state, action) => {
+        showLinearProgress: (state) => {
             state.linearProgress = true
         },
-        hideLinearProgress: (state, action) => {
+        hideLinearProgress: (state) => {
             state.linearProgress = false
         },
     },

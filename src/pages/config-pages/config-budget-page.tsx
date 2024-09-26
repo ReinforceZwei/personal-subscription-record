@@ -8,6 +8,10 @@ import { useGetBudgetQuery, useUpdateBudgetMutation } from "../../redux/budgetSl
 import { DateTime } from "luxon";
 import { useForm, Controller } from "react-hook-form";
 
+type FormValues = {
+    budget?: number
+    subscriptionBudget?: number
+}
 
 export default function ConfigBudgetPage() {
     const pb = useContext(PocketBaseContext)
@@ -16,7 +20,7 @@ export default function ConfigBudgetPage() {
     const { data: subscriptionBudget } = useGetBudgetQuery({date: DateTime.now().endOf('month').toISO(), type: 'subscription'})
     const [updateBudget] = useUpdateBudgetMutation()
 
-    const { handleSubmit, reset, setValue, setFocus, control, formState } = useForm({
+    const { handleSubmit, reset, setValue, setFocus, control, formState } = useForm<FormValues>({
         defaultValues: {
             budget: currentBudget?.budget,
             subscriptionBudget: subscriptionBudget?.budget,
@@ -26,7 +30,7 @@ export default function ConfigBudgetPage() {
     const isModified = formState.isDirty
 
     useEffect(() => {
-        let toReset = {}
+        let toReset: { budget?: number, subscriptionBudget?: number } = {}
         if (currentBudget?.budget) {
             toReset.budget = currentBudget.budget
         }
@@ -36,7 +40,7 @@ export default function ConfigBudgetPage() {
         reset(toReset)
     }, [currentBudget, subscriptionBudget])
 
-    const onSave = (data) => {
+    const onSave = (data: FormValues) => {
         const modified = formState.dirtyFields
         let promises = []
         if (modified.budget) {

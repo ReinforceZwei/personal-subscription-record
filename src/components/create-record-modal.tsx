@@ -11,41 +11,71 @@ import { useDispatch, useSelector } from "react-redux"
 import RecordTypeChip from "../components/record-type-chip"
 import { useGetSuggestedNameQuery } from "../redux/typeSlice"
 import { useGetPaymentsQuery } from "../redux/paymentSlice"
-import { useUpdateRecordMutation } from "../redux/recordSlice"
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import CurrencyCalculatorModal from "../components/currency-calculator-modal"
+import { SpentPreset, SpentType } from "../services/pocketbase"
 
-const EditRecordModalProps = {
-    record: null,
-    onClose: () => {},
+interface CreateRecordModalProps {
+    selectedType: SpentType,
+    preset: SpentPreset,
+    open: boolean,
+    onClose: () => void,
+    onCreate: (data: FormValues) => void,
 }
 
-export default function CreateRecordModal(props = EditRecordModalProps) {
-    const { record, onClose } = props
+type FormValues = {
+    name: string
+    payment: string
+    price: number
+    description?: string
+}
 
-    const [showThisModal, setShowThisModal] = useState(true)
+export default function CreateRecordModal(props: CreateRecordModalProps) {
+    const { selectedType, preset, open, onClose, onCreate } = props
 
-    const { data: suggestedName } = useGetSuggestedNameQuery(record.type)
+    const [showThisModal, setShowThisModal] = useState(open)
+    const [showCalc, setShowCalc] = useState(false)
+
+    const { data: suggestedName } = useGetSuggestedNameQuery(selectedType?.id)
     const { data: allPayments } = useGetPaymentsQuery()
-    const [updateRecord] = useUpdateRecordMutation()
     const payments = useMemo(() => allPayments ? allPayments.filter(x => x.enabled) : [], [allPayments])
 
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm()
-
-    useEffect(() => {
-        if (record) {
-            reset(record)
+    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>({
+        defaultValues: {
+            name: '',
+            payment: '',
         }
-    }, [record])
+    })
 
-    const onSave = (data) => {
-        updateRecord({ id: record.id, data }).unwrap().then(() => {
-            setShowThisModal(false)
-        }).catch(error => {
-            console.error(error)
-            alert('Fail to update record')
-        })
+    const handleCalcResult = (price: number) => {
+        setValue('price', price)
+        setShowCalc(false)
     }
 
+    useEffect(() => {
+        if (payments.length) {
+            if (preset && preset.payment) {
+                setValue('payment', preset.payment)
+            } else {
+                if (selectedType.default_payment) {
+                    setValue('payment', selectedType.default_payment)
+                } else {
+                    setValue('payment', payments[0].id)
+                }
+            }
+        }
+        if (preset) {
+            if (preset.name) setValue('name', preset.name)
+            if (preset.price) setValue('price', preset.price)
+        }
+
+        setTimeout(() => {
+            setFocus('price')
+        }, 1)
+    }, [payments, preset])
+
     return (
+        <>
         <Dialog open={showThisModal}
             onClose={() => setShowThisModal(false)}
             fullWidth={true}
@@ -62,10 +92,10 @@ export default function CreateRecordModal(props = EditRecordModalProps) {
             <DialogTitle>
                 <Grid container spacing={1}>
                     <Grid xs='auto'>
-                        <RecordTypeChip label={record.expand.type.name} bg={record.expand.type.color} />
+                        <RecordTypeChip label={selectedType.name} bg={selectedType.color} />
                     </Grid>
                     <Grid>
-                        編輯支出記錄
+                        建立支出記錄
                     </Grid>
                 </Grid>
 
@@ -79,7 +109,7 @@ export default function CreateRecordModal(props = EditRecordModalProps) {
                     }}><CloseIcon /></IconButton>
 
             </DialogTitle>
-            <form onSubmit={handleSubmit(onSave)}>
+            <form onSubmit={handleSubmit(onCreate)}>
 
                 <DialogContent>
                     <Box sx={{ pt: 1 }}>
@@ -191,10 +221,15 @@ export default function CreateRecordModal(props = EditRecordModalProps) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
+                    <IconButton onClick={() => setShowCalc(true)}><CurrencyExchangeIcon /></IconButton>
+                    <span style={{flex: '1 1'}}></span>
                     <Button onClick={() => setShowThisModal(false)}>關閉</Button>
-                    <Button type="submit" variant="contained">儲存</Button>
+                    <Button type="submit" variant="contained">建立</Button>
                 </DialogActions>
             </form>
         </Dialog>
+
+        { showCalc && <CurrencyCalculatorModal acceptResult onResult={handleCalcResult} onClose={() => setShowCalc(false)} />}
+        </>
     )
 }

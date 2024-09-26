@@ -1,4 +1,4 @@
-import { Box, Button, Chip, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment } from "@mui/material";
+import { Box, Button, Chip, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment, SelectChangeEvent } from "@mui/material";
 import { useGetUserSettingsQuery, useUpdateUserSettingsMutation } from "../../redux/userSettingsSlice";
 import { useContext, useEffect, useMemo, useState } from "react";
 import Grid from '@mui/material/Unstable_Grid2'
@@ -42,47 +42,47 @@ export default function ConfigPreferencePage() {
     const [updateUserSettings] = useUpdateUserSettingsMutation()
 
     const [showConfirmLogout, setShowConfirmLogout] = useState(false)
-    const [selectFavCurrency, setSelectFavCurrency] = useState([])
+    const [selectFavCurrency, setSelectFavCurrency] = useState<string[]>([])
 
     const currencyList = useMemo(() => {
         return Object.keys(commonCurrency).map(key => commonCurrency[key]).sort((a, b) => a.code > b.code ? 1 : -1)
     }, [commonCurrency])
 
-    const handleSetDefaultPage = (e) => {
+    const handleSetDefaultPage = (e: SelectChangeEvent) => {
         const data = {
             ...removePbDefaultField(userSettings),
             default_page: e.target.value,
         }
-        updateUserSettings({ id: userSettings.id, data })
+        updateUserSettings({ id: userSettings!.id, data })
     }
 
-    const handleSetColorMode = (e) => {
+    const handleSetColorMode = (e: SelectChangeEvent) => {
         const data = {
             ...removePbDefaultField(userSettings),
             color_mode: e.target.value,
         }
-        updateUserSettings({ id: userSettings.id, data })
+        updateUserSettings({ id: userSettings!.id, data })
     }
 
-    const handleSetFavCurrency = (e) => {
-        setSelectFavCurrency(e.target.value)
+    const handleSetFavCurrency = (e: SelectChangeEvent<string[]>) => {
+        setSelectFavCurrency(e.target.value as string[])
     }
 
     const handleCloseFavCurrency = () => {
-        if (userSettings.fav_currency
+        if (userSettings?.fav_currency
             && selectFavCurrency.length === userSettings.fav_currency.length 
-            && selectFavCurrency.every((value, index) => value === userSettings.fav_currency[index])) {
+            && selectFavCurrency.every((value, index) => value === userSettings.fav_currency![index])) {
             // value are the same, no need update
         } else {
             const data = {
                 ...removePbDefaultField(userSettings),
                 fav_currency: selectFavCurrency,
             }
-            updateUserSettings({ id: userSettings.id, data })
+            updateUserSettings({ id: userSettings!.id, data })
         }
     }
 
-    const handleConfirmLogout = (e) => {
+    const handleConfirmLogout = () => {
         setShowConfirmLogout(true)
     }
 
@@ -92,7 +92,7 @@ export default function ConfigPreferencePage() {
 
     useEffect(() => {
         if (userSettings) {
-            setSelectFavCurrency(userSettings.fav_currency || [])
+            setSelectFavCurrency(userSettings?.fav_currency || [])
         }
     }, [userSettings])
 

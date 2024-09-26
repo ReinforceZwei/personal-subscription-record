@@ -15,14 +15,14 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close'
 import { useLocalStorage } from "../vendors/localStorageHook";
 
-const CurrencyCalculatorModalProps = {
-    onResult: (price) => {},
-    onClose: () => {},
-    acceptResult: false,
+interface CurrencyCalculatorModalProps {
+    onResult?: (price: number) => void
+    onClose: () => void
+    acceptResult?: boolean
 }
 
-export default function CurrencyCalculatorModal(props = CurrencyCalculatorModalProps) {
-    const { onResult, onClose, acceptResult } = props
+export default function CurrencyCalculatorModal(props: CurrencyCalculatorModalProps) {
+    const { onResult, onClose, acceptResult = false } = props
 
     const { data: userSettings } = useGetUserSettingsQuery()
     const { data: currencyRate } = useGetCurrencyRateQuery()
@@ -109,7 +109,7 @@ export default function CurrencyCalculatorModal(props = CurrencyCalculatorModalP
                                 {favCurrency.map(x => (
                                     <MenuItem key={commonCurrency[x].code} value={commonCurrency[x].code}>{commonCurrency[x].code} - {commonCurrency[x].name}</MenuItem>
                                 ))}
-                                <MenuItem key={'none'} value={null} disabled>更多貨幣請在設定添加</MenuItem>
+                                <MenuItem key={'none'} disabled>更多貨幣請在設定添加</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -146,7 +146,7 @@ export default function CurrencyCalculatorModal(props = CurrencyCalculatorModalP
                                 {favCurrency.map(x => (
                                     <MenuItem key={commonCurrency[x].code} value={commonCurrency[x].code}>{commonCurrency[x].code} - {commonCurrency[x].name}</MenuItem>
                                 ))}
-                                <MenuItem key={'none'} value={null} disabled>更多貨幣請在設定添加</MenuItem>
+                                <MenuItem key={'none'} disabled>更多貨幣請在設定添加</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -164,7 +164,7 @@ export default function CurrencyCalculatorModal(props = CurrencyCalculatorModalP
                 </Grid>
             </DialogContent>
 
-            {acceptResult && (
+            {acceptResult && onResult && (
                 <DialogActions>
                     <Button onClick={() => onResult(destPrice)}>確定</Button>
                 </DialogActions>

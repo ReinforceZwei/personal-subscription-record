@@ -13,6 +13,7 @@ import { useGetBudgetQuery } from '../redux/budgetSlice';
 import { DateTime } from 'luxon';
 import HelpMessageDialog from '../components/help-message-dialog';
 import _ from 'lodash-es'
+import { SubscriptionPlan } from '../services/pocketbase';
 
 export default function SubscriptionRecordPage() {
 
@@ -32,7 +33,7 @@ export default function SubscriptionRecordPage() {
     }, [activeSubscriptions])
     const balance = useMemo(() => budget ? subtract(budget.budget, priceSum) : null, [budget, priceSum])
 
-    const [editModal, setEditModal] = useState({
+    const [editModal, setEditModal] = useState<{ mode: 'edit' | 'create', open: boolean, subscription: SubscriptionPlan | null }>({
         mode: 'edit',
         open: false,
         subscription: null,
@@ -41,7 +42,7 @@ export default function SubscriptionRecordPage() {
     const [showHelp, setShowHelp] = useState(false)
     const [confirmDeleteModal, setConfirmDeleteModal] = useState(false)
 
-    const handleCreate = (data) => {
+    const handleCreate = (data: Partial<SubscriptionPlan>) => {
         console.log(data)
         addSubscription(data)
             .unwrap()
@@ -54,9 +55,9 @@ export default function SubscriptionRecordPage() {
             })
     }
 
-    const handleUpdate = (data) => {
+    const handleUpdate = (data: Partial<SubscriptionPlan>) => {
         console.log(data)
-        updateSubscription({ id: editModal.subscription.id, data })
+        updateSubscription({ id: editModal.subscription!.id, data })
             .unwrap()
             .then(() => {
                 setEditModal({...editModal, open: false, subscription: null})
@@ -67,13 +68,13 @@ export default function SubscriptionRecordPage() {
             })
     }
 
-    const handleDelete = (data) => {
+    const handleDelete = (data: Partial<SubscriptionPlan>) => {
         console.log(data)
         setConfirmDeleteModal(true)
     }
 
     const handleConfirmDelete = () => {
-        deleteSubscription(editModal.subscription.id)
+        deleteSubscription(editModal.subscription!.id)
             .unwrap()
             .then(() => {
                 setConfirmDeleteModal(false)
@@ -105,7 +106,7 @@ export default function SubscriptionRecordPage() {
                             <Typography
                                 variant='h5' 
                                 sx={{
-                                    color: balance < 0 ? 'error.main' : 'success.main',
+                                    color: (balance || 0) < 0 ? 'error.main' : 'success.main',
                                 }}
                             >${balance || '---'}</Typography>
                         </CardContent>
@@ -125,7 +126,7 @@ export default function SubscriptionRecordPage() {
                         series={[{
                             data: [
                                 { id: 0, value: (priceSum) , label: '已訂閱', color: 'red'},
-                                { id: 1, value: (balance) , label: '餘額', color: 'green'},
+                                { id: 1, value: (balance || 0) , label: '餘額', color: 'green'},
                             ]
                         }]}
                         height={100}
@@ -164,8 +165,8 @@ export default function SubscriptionRecordPage() {
                 <EditSubscriptionModal
                     open={editModal.open}
                     mode={editModal.mode}
-                    subscription={editModal.subscription}
-                    payments={payments}
+                    subscription={editModal.subscription!}
+                    payments={payments!}
                     onClose={() => setEditModal({...editModal, open: false})}
                     onCreate={handleCreate}
                     onUpdate={handleUpdate}
@@ -179,7 +180,7 @@ export default function SubscriptionRecordPage() {
 
             <HelpMessageDialog open={showHelp} onClose={() => setShowHelp(false)}>
                 <Typography variant="h6" color='common.white'>訂閱記錄</Typography>
-                <Typography variant="body">記錄訂閱中的項目。訂閱支出不會記錄到消費記錄。</Typography>
+                <Typography variant="body1">記錄訂閱中的項目。訂閱支出不會記錄到消費記錄。</Typography>
             </HelpMessageDialog>
         </Box>
     )

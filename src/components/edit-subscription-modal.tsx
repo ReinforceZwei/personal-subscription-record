@@ -8,26 +8,35 @@ import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
+import { PaymentMethod, SubscriptionPlan } from "../services/pocketbase"
 
 
-const EditSubscriptionModalProps = {
-    mode: 'edit',
-    open: false,
-    subscription: null,
-    payments: [],
-    onClose: () => {},
-    onCreate: (data) => {},
-    onUpdate: (data) => {},
-    onDelete: (data) => {},
+interface EditSubscriptionModalProps {
+    mode: 'edit' | 'create'
+    open: boolean
+    subscription: SubscriptionPlan
+    payments: PaymentMethod[]
+    onClose: () => void
+    onCreate: (data: FormValues) => void
+    onUpdate: (data: FormValues) => void
+    onDelete: (data: SubscriptionPlan) => void
 }
 
+type FormValues = {
+    name: string
+    payment?: string
+    price: number
+    active: boolean
+    description?: string
+    renew_period_month: number
+}
 
-export default function EditSubscriptionModal(props = EditSubscriptionModalProps) {
+export default function EditSubscriptionModal(props: EditSubscriptionModalProps) {
     const {
-        mode = EditSubscriptionModalProps.mode,
-        open = EditSubscriptionModalProps.open,
+        mode = 'edit',
+        open = false,
         subscription,
-        payments = EditSubscriptionModalProps.payments,
+        payments = [],
         onClose,
         onCreate,
         onUpdate,
@@ -37,11 +46,10 @@ export default function EditSubscriptionModal(props = EditSubscriptionModalProps
     const enabledPayments = useMemo(() => payments ? payments.filter(x => x.enabled) : [], [payments])
 
     const [internalShow, setInternalShow] = useState(open)
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm({
+    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>({
         defaultValues: {
             name: '',
             payment: '',
-            price: '',
             active: true,
             description: '',
             renew_period_month: 1,

@@ -1,6 +1,14 @@
 import { DateTime } from "luxon"
 
-export async function fetchLatestCurrency() {
+type Rates = { [key: string]: number }
+
+export interface CurrencyRate {
+    date: string
+    base: string
+    rates: Rates
+}
+
+export async function fetchLatestCurrency(): Promise<{ base: string; rates: Rates }> {
     const base = 'usd'
     const url = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${base}.min.json`
     const fallback = `https://latest.currency-api.pages.dev/v1/currencies/${base}.min.json`
@@ -21,14 +29,16 @@ export async function fetchLatestCurrency() {
     }
 }
 
+
+
 /**
  * Get currency rate with caching
  * @returns Currency object
  */
-export async function getCurrencyRate() {
+export async function getCurrencyRate(): Promise<CurrencyRate> {
     const currencyCache = localStorage.getItem('currency')
     if (currencyCache !== null) {
-        const rates = JSON.parse(currencyCache)
+        const rates = JSON.parse(currencyCache) as CurrencyRate
         if (DateTime.fromISO(rates.date).plus({ day: 2 }) > DateTime.now().toUTC()) {
             return rates
         }

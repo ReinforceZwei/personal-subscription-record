@@ -1,18 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import pb, { USER_SETTINGS_COL } from '../services/pocketbase'
+import pb, { USER_SETTINGS_COL, UserSetting } from '../services/pocketbase'
 import { pocketbaseApi } from './api'
 import { handlePbError } from '../vendors/pocketbaseUtils'
 
 export const userSettingsApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getUserSettings: builder.query<any, any | void>({
+        getUserSettings: builder.query<UserSetting | null, unknown>({
             providesTags: [{ type: 'userSettings', id: '*' }],
             queryFn: async (defaultSettings) => {
                 try {
-                    const result = (await pb.collection(USER_SETTINGS_COL).getList(1, 1))
+                    const result = (await pb.collection<UserSetting>(USER_SETTINGS_COL).getList(1, 1))
                     if (result.totalItems < 1) {
                         if (defaultSettings) {
-                            const result = await pb.collection(USER_SETTINGS_COL).create({
+                            const result = await pb.collection<UserSetting>(USER_SETTINGS_COL).create({
                                 ...defaultSettings,
                                 owned_by: pb.authStore.model?.id
                             })

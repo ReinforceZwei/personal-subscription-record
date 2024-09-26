@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
  * @param {string} key Storage item key
  * @param {any} defaultValue Default value when localStorage.getItem return null
  */
-export function useLocalStorage(key: string, defaultValue: any = null): [string | null, (value: any) => void] {
+export function useLocalStorage(key: string, defaultValue: any = null): [string, (value: any) => void] {
     const storageValue = localStorage.getItem(key)
     const value = storageValue === null ? defaultValue : storageValue
 

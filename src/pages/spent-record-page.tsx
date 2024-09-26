@@ -15,16 +15,18 @@ import { useGetRecordsQuery } from '../redux/recordSlice'
 import { hideLinearProgress, showLinearProgress } from '../redux/uiSlice'
 import { sumBy, subtract } from '../vendors/fixedPointMath'
 import SpentRecordList from '../components/SpendRecord/spent-record-list'
+import { useAppDispatch } from '../hooks'
+import { SpentRecord, SpentType } from '../services/pocketbase'
 
 export default function SpentRecordPage() {
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     // User selected year-month
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
 
     const { data: types, isLoading: isTypeLoading } = useGetTypesQuery()
     const { data: budget, isLoading: isBudgetLoading } = useGetBudgetQuery({date: selectedDate.toISO(), type: 'spent'})
-    const { data: records, error, isLoading: isRecordLoading } = useGetRecordsQuery(selectedDate.toISO())
+    const { data: records, error, isLoading: isRecordLoading } = useGetRecordsQuery(selectedDate.toISO()!)
 
     useEffect(() => {
         if (isTypeLoading || isBudgetLoading || isRecordLoading) {
@@ -63,14 +65,19 @@ export default function SpentRecordPage() {
         return budget?.budget ? subtract(budget.budget, monthSum) : null
     }, [budget, monthSum])
 
-    const [typeDetailModal, setTypeDetailModal] = useState({
+    const [typeDetailModal, setTypeDetailModal] = useState<{
+        type: SpentType | null,
+        typeSum: number,
+        open: boolean,
+        records: SpentRecord[]
+    }>({
         type: null,
         typeSum: 0,
         open: false,
         records: [],
     })
 
-    const handleTypeSumDetail = (type, sum, records) => {
+    const handleTypeSumDetail = (type: SpentType, sum: number, records: SpentRecord[]) => {
         console.log(type, sum)
         setTypeDetailModal({
             open: true,
@@ -90,7 +97,7 @@ export default function SpentRecordPage() {
                         views={['year', 'month']}
                         openTo='month'
                         value={selectedDate}
-                        onChange={(value) => dispatch(setSelectedDate(value.startOf('month').toISO()))}
+                        onChange={(value) => dispatch(setSelectedDate(value!.startOf('month').toISO()))}
                         sx={{width: '100%'}}
                         disableFuture
                         closeOnSelect
@@ -110,7 +117,7 @@ export default function SpentRecordPage() {
                             <Typography>餘額</Typography>
                             <Typography variant='h5'
                                 sx={{
-                                    color: balance < 0 ? 'error.main' : 'success.main',
+                                    color: (balance || 0) < 0 ? 'error.main' : 'success.main',
                                 }}
                             >${balance || '---'}</Typography>
                         </CardContent>
@@ -127,14 +134,14 @@ export default function SpentRecordPage() {
                         {typeMonthSum.map((details) => (
                             <Grid xs={4} key={details.type?.id}>
                                 <Card elevation={2}>
-                                    <CardActionArea onClick={() => {handleTypeSumDetail(details.type, details.sum, details.records)}}>
+                                    <CardActionArea onClick={() => {handleTypeSumDetail(details.type!, details.sum, details.records)}}>
                                         <CardContent>
                                             <Typography component='div'><RecordTypeChip label={details.type?.name} bg={details.type?.color} /></Typography>
                                             <Typography variant='h5'>
                                                 ${details.sum || '---'}
                                                 
                                                 {' '}
-                                                { (details.type?.budget_per_month > 0) && (
+                                                { (details.type) && (details.type?.budget_per_month > 0) && (
                                                     <Typography
                                                         sx={{
                                                             color: (details.type.budget_per_month - details.sum) < 0 ? 'error.main' : 'success.main',
@@ -156,13 +163,13 @@ export default function SpentRecordPage() {
                 <TypeSumDetailModal
                     open={typeDetailModal.open}
                     onClose={() => setTypeDetailModal({...typeDetailModal, open: false})}
-                    type={typeDetailModal.type}
+                    type={typeDetailModal.type!}
                     typeSum={typeDetailModal.typeSum}
                     records={typeDetailModal.records}
                 />
             )}
 
-            <SpentRecordList records={records} />
+            <SpentRecordList records={records!} />
         </Box>
     )
 }

@@ -4,27 +4,36 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import RecordTypeChip from "./record-type-chip"
+import { PaymentMethod, SpentPreset, SpentType } from "../services/pocketbase"
 
 
-const EditPresetModalProps = {
-    mode: 'edit',
-    open: false,
-    preset: null,
-    types: [],
-    payments: [],
-    onClose: () => {},
-    onCreate: (data) => {},
-    onUpdate: (data) => {},
-    onDelete: (data) => {},
+interface EditPresetModalProps {
+    mode: 'edit' | 'create'
+    open: boolean
+    preset: SpentPreset
+    types: SpentType[]
+    payments: PaymentMethod[]
+    onClose: () => void
+    onCreate: (data: FormValues) => void
+    onUpdate: (data: FormValues) => void
+    onDelete: (data: SpentPreset) => void
 }
 
-export default function EditPresetModal(props = EditPresetModalProps) {
+type FormValues = {
+    name?: string,
+    payment?: string,
+    price?: number,
+    type?: string,
+    weight: number,
+}
+
+export default function EditPresetModal(props: EditPresetModalProps) {
     const {
-        mode = EditPresetModalProps.mode,
-        open = EditPresetModalProps.open,
+        mode = 'edit',
+        open = false,
         preset,
-        types = EditPresetModalProps.types,
-        payments = EditPresetModalProps.payments,
+        types = [],
+        payments = [],
         onClose,
         onCreate,
         onUpdate,
@@ -35,11 +44,10 @@ export default function EditPresetModal(props = EditPresetModalProps) {
     const enabledPayments = useMemo(() => payments ? payments.filter(x => x.enabled) : [], [payments])
 
     const [internalShow, setInternalShow] = useState(open)
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm({
+    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>({
         defaultValues: {
             name: '',
             payment: '',
-            price: '',
             type: '',
             weight: 100,
         }

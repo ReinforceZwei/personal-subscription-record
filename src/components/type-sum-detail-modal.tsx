@@ -4,16 +4,17 @@ import Grid from '@mui/material/Unstable_Grid2'
 import { useState } from "react";
 import RecordTypeCard from "./record-type-card";
 import SpentRecordList from "./SpendRecord/spent-record-list";
+import { SpentRecord, SpentType } from "../services/pocketbase";
 
-const TypeSumDetailModalProps = {
-    type: null,
-    typeSum: 0,
-    records: [],
-    open: false,
-    onClose: () => {}
+interface TypeSumDetailModalProps {
+    type: SpentType
+    typeSum: number
+    records: SpentRecord[]
+    open: boolean
+    onClose: () => void
 }
 
-export default function TypeSumDetailModal(props = TypeSumDetailModalProps) {
+export default function TypeSumDetailModal(props: TypeSumDetailModalProps) {
     const { type, typeSum, records, open, onClose } = props
 
     const [internalShow, setInternalShow] = useState(open)

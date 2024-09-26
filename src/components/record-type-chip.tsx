@@ -1,10 +1,16 @@
-import { Chip } from "@mui/material"
+import { Chip, ChipProps, SxProps } from "@mui/material"
+import { CSSProperties } from "react"
 import tinycolor from "tinycolor2"
 
-export default function RecordTypeChip(props) {
+interface RecordTypeChipProps {
+    bg?: string
+    sx?: SxProps
+}
+
+export default function RecordTypeChip(props: RecordTypeChipProps & ChipProps) {
     const { bg, sx, ...other } = props
 
-    let style = {...sx}
+    let style: any = {...sx}
     if (bg) {
         const bgColor = tinycolor(bg)
         style.backgroundColor = bgColor.toString()

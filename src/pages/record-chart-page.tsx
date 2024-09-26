@@ -12,7 +12,7 @@ export default function RecordChartPage() {
     const [selectedYear, setSelectedYear] = useState(DateTime.now().get('year'))
     const [selectedMonth, setSelectedMonth] = useState(DateTime.now().get('month'))
 
-    const handleSelectMonth = (date) => {
+    const handleSelectMonth = (date: DateTime) => {
         setSelectedYear(date.get('year'))
         setSelectedMonth(date.get('month'))
     }

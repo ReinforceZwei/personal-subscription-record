@@ -3,53 +3,43 @@ import {
     Dialog, DialogActions, DialogContent, DialogTitle, TextField,
     InputLabel, Paper, Divider, Typography, ToggleButtonGroup,
     ToggleButton,
-    ListItemButton, FormControlLabel, Switch
+    ListItemButton
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
-import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
-import { useState } from "react"
-import ConfirmDeleteDialog from "./confirm-delete-dialog"
+import { useEffect, useState } from "react"
 
-const EditPaymentModalProps = {
-    open: false,
-    payment: null,
-    onClose: () => {},
-    onUpdate: (data) => {},
-    onDelete: (payment) => {},
+interface CreatePaymentModalProps {
+    open: boolean
+    onClose: () => void
+    onSubmit: (data: FormValues) => void
 }
 
-export default function EditPaymentModal(props = EditPaymentModalProps) {
-    const { open, payment, onClose, onUpdate, onDelete } = props
+type FormValues = {
+    name: string
+    weight: number
+}
 
-    const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+export default function CreatePaymentModal(props: CreatePaymentModalProps) {
+    const { open, onClose, onSubmit } = props
 
     const [showThisModal, setShowThisModal] = useState(open)
 
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm({
+    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>({
         defaultValues: {
             name: '',
-            enabled: true,
+            weight: 100,
         }
     })
 
     useEffect(() => {
-        setValue('name', payment.name)
-        setValue('enabled', payment.enabled)
-        setValue('weight', payment.weight)
-
         setTimeout(() => {
             setFocus('name')
         }, 1)
     }, [])
 
-    const popConfirmDialog = () => {
-        setShowConfirmDialog(true)
-    }
-
     return (
-        <div>
         <Dialog
             open={showThisModal}
             onClose={() => setShowThisModal(false)}
@@ -65,7 +55,7 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
             }}
         >
             <DialogTitle>
-                編輯支付方式
+                建立支付方式
 
                 <IconButton
                     onClick={() => setShowThisModal(false)}
@@ -76,7 +66,7 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
                     }}><CloseIcon /></IconButton>
             </DialogTitle>
 
-            <form onSubmit={handleSubmit(onUpdate)}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <DialogContent>
                     <Box>
                         <Grid container spacing={1}>
@@ -101,6 +91,7 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
                                     control={control}
                                 />
                             </Grid>
+
                             <Grid xs={12}>
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
@@ -124,45 +115,15 @@ export default function EditPaymentModal(props = EditPaymentModalProps) {
                                     control={control}
                                 />
                             </Grid>
-                            <Grid xs={12}>
-                                <Controller
-                                    render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
-                                        <FormControlLabel
-                                            control={
-                                                <Switch
-                                                    checked={value}
-                                                    inputRef={ref}
-                                                    name={name}
-                                                    disabled={disabled}
-                                                    onChange={onChange}
-                                                    onBlur={onBlur}
-                                                />
-                                            }
-                                            label="已啟用"
-                                        />
-                                    )}
-                                    name='enabled'
-                                    control={control}
-                                />
-                            </Grid>
                         </Grid>
                     </Box>
                 </DialogContent>
 
                 <DialogActions>
-                    <Button variant="outlined" color='error' sx={{mr: 'auto'}} onClick={popConfirmDialog}>刪除</Button>
                     <Button onClick={() => setShowThisModal(false)}>關閉</Button>
-                    <Button type="submit" variant="contained">儲存</Button>
+                    <Button type="submit" variant="contained">建立</Button>
                 </DialogActions>
             </form>
         </Dialog>
-
-        <ConfirmDeleteDialog 
-            open={showConfirmDialog}
-            onClose={() => setShowConfirmDialog(false)}
-            onConfirm={() => onDelete(payment)}
-            content="如支付方式已被使用，則無法刪除"
-        />
-        </div>
     )
 }

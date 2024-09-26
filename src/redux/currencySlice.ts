@@ -1,9 +1,9 @@
-import { getCurrencyRate } from '../services/currency'
+import { CurrencyRate, getCurrencyRate } from '../services/currency'
 import { pocketbaseApi } from './api'
 
 export const currencyApi = pocketbaseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getCurrencyRate: builder.query({
+        getCurrencyRate: builder.query<CurrencyRate, void>({
             queryFn: async () => {
                 try {
                     return { data: await getCurrencyRate() }

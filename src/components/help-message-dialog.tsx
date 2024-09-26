@@ -1,26 +1,22 @@
 import {
-    Box, Button, Container, List, ListItem, Chip, IconButton,
-    Dialog, DialogActions, DialogContent, DialogTitle, TextField,
-    InputLabel, Paper, Divider, Typography, ToggleButtonGroup,
-    ToggleButton,
-    ListItemButton,
+    Box, Button, IconButton,
+    Dialog, DialogActions, DialogContent, DialogTitle, 
     DialogContentText
 } from "@mui/material"
-import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
-import { useState } from "react"
+import { ReactNode } from "react"
 
-const HelpMessageDialogProps = {
-    open: false,
-    title: '幫助',
-    children: null,
-    onClose: () => {},
+interface HelpMessageDialogProps {
+    open: boolean
+    title?: string
+    children?: ReactNode
+    onClose: () => void
 }
 
-export default function HelpMessageDialog(props = HelpMessageDialogProps) {
+export default function HelpMessageDialog(props: HelpMessageDialogProps) {
     const {
         open,
-        title = HelpMessageDialogProps.title,
+        title = '幫助',
         onClose,
         children,
     } = props

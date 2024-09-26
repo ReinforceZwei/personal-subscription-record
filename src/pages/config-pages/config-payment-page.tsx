@@ -18,9 +18,10 @@ import CreatePaymentModal from "../../components/create-payment-modal"
 import EditPaymentModal from "../../components/edit-payment-modal"
 import { PocketBaseContext } from "../../context"
 import HelpMessageDialog from "../../components/help-message-dialog"
+import { PaymentMethod } from "../../services/pocketbase"
 
 export default function ConfigPaymentPage() {
-    const pb = useContext(PocketBaseContext)
+    const pb = useContext(PocketBaseContext)!
 
     const { data: payments } = useGetPaymentsQuery()
     const [addPayment] = useAddPaymentMutation()
@@ -29,7 +30,7 @@ export default function ConfigPaymentPage() {
 
     const enabledPayments = useMemo(() => payments ? payments.filter(x => x.enabled) : [], [payments])
     const disabledPayments = useMemo(() => payments ? payments.filter(x => !x.enabled) : [], [payments])
-    const [selectedPayment, setSelectedPayment] = useState({})
+    const [selectedPayment, setSelectedPayment] = useState<PaymentMethod | null>(null)
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [showEditModal, setShowEditModal] = useState(false)
     const [showHelp, setShowHelp] = useState(false)
@@ -39,18 +40,18 @@ export default function ConfigPaymentPage() {
         setShowCreateModal(true)
     }
 
-    const handleEditPayment = (payment) => {
+    const handleEditPayment = (payment: PaymentMethod) => {
         setSelectedPayment(payment)
         setShowEditModal(true)
     }
 
-    const onCreate = (data) => {
+    const onCreate = (data: Partial<PaymentMethod>) => {
         console.log('onCreate', data)
         const final = {
             name: data.name,
             icon: '',
             color: '',
-            owned_by: pb.authStore.model.id,
+            owned_by: pb.authStore.model?.id,
             enabled: true,
             weight: data.weight,
         }
@@ -65,17 +66,17 @@ export default function ConfigPaymentPage() {
             })
     }
 
-    const onUpdate = (data) => {
+    const onUpdate = (data: Partial<PaymentMethod>) => {
         console.log('onUpdate', data)
         const final = {
             name: data.name,
-            icon: selectedPayment.icon,
-            color: selectedPayment.color,
-            owned_by: selectedPayment.owned_by,
+            icon: selectedPayment!.icon,
+            color: selectedPayment!.color,
+            owned_by: selectedPayment!.owned_by,
             enabled: data.enabled,
             weight: data.weight,
         }
-        updatePayment({ id: selectedPayment.id, data: final })
+        updatePayment({ id: selectedPayment!.id, data: final })
             .unwrap()
             .then(() => {
                 setShowEditModal(false)
@@ -86,7 +87,7 @@ export default function ConfigPaymentPage() {
             })
     }
 
-    const onDelete = (data) => {
+    const onDelete = (data: PaymentMethod) => {
         console.log('onDelete', data)
         deletePayment(data.id)
             .unwrap()
@@ -148,7 +149,7 @@ export default function ConfigPaymentPage() {
 
             {showCreateModal && <CreatePaymentModal open={showCreateModal} onClose={() => setShowCreateModal(false)} onSubmit={onCreate} />}
 
-            {showEditModal && (<EditPaymentModal
+            {showEditModal && selectedPayment && (<EditPaymentModal
                 open={showEditModal}
                 payment={selectedPayment}
                 onClose={() => setShowEditModal(false)}
@@ -158,11 +159,11 @@ export default function ConfigPaymentPage() {
 
             <HelpMessageDialog open={showHelp} onClose={() => setShowHelp(false)}>
                 <Typography variant="h6" color='common.white'>已啟用/停用的支付方式</Typography>
-                <Typography variant="body">已啟用的支付方式可以在建立支出記錄時選擇。已停用的支付方式會被隱藏。</Typography>
+                <Typography variant="body1">已啟用的支付方式可以在建立支出記錄時選擇。已停用的支付方式會被隱藏。</Typography>
                 <Typography variant="h6" color='common.white'>權重</Typography>
-                <Typography variant="body">權重數字越小，排列順序會越優先。</Typography>
+                <Typography variant="body1">權重數字越小，排列順序會越優先。</Typography>
                 <Typography variant="h6" color='common.white'>刪除</Typography>
-                <Typography variant="body">已被使用的支付方式無法刪除。請停用來代替刪除。</Typography>
+                <Typography variant="body1">已被使用的支付方式無法刪除。請停用來代替刪除。</Typography>
             </HelpMessageDialog>
         </Box>
     )

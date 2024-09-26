@@ -11,6 +11,7 @@ import { useGetPaymentsQuery } from "../../redux/paymentSlice"
 import EditPresetModal from "../../components/edit-preset-modal";
 import ConfirmDeleteDialog from "../../components/confirm-delete-dialog";
 import HelpMessageDialog from "../../components/help-message-dialog"
+import { SpentPreset } from "../../services/pocketbase";
 
 export default function ConfigPresetPage() {
     const { data: presets } = useGetPresetsQuery()
@@ -20,7 +21,11 @@ export default function ConfigPresetPage() {
     const { data: payments } = useGetPaymentsQuery()
     const paymentsTable = useMemo(() => payments ? _.keyBy(payments, 'id') : {}, [payments])
 
-    const [editModal, setEditModal] = useState({
+    const [editModal, setEditModal] = useState<{
+        mode: 'edit' | 'create',
+        open: boolean,
+        preset: SpentPreset | null
+    }>({
         mode: 'edit',
         open: false,
         preset: null,
@@ -32,7 +37,7 @@ export default function ConfigPresetPage() {
     const [updatePreset] = useUpdatePresetMutation()
     const [deletePreset] = useDeletePresetMutation()
 
-    const handleCreate = (data) => {
+    const handleCreate = (data: Partial<SpentPreset>) => {
         console.log(data)
         addPreset(data)
             .unwrap()
@@ -45,10 +50,10 @@ export default function ConfigPresetPage() {
             })
     }
 
-    const handleUpdate = (data) => {
+    const handleUpdate = (data: Partial<SpentPreset>) => {
         console.log(data)
         console.log(editModal)
-        updatePreset({ id: editModal.preset.id, data })
+        updatePreset({ id: editModal.preset!.id, data })
             .unwrap()
             .then(() => {
                 setEditModal({...editModal, open: false})
@@ -59,12 +64,12 @@ export default function ConfigPresetPage() {
             })
     }
 
-    const handleDelete = (data) => {
+    const handleDelete = (data: SpentPreset) => {
         setConfirmDelete(true)
     }
 
     const handleConfirmDelete = () => {
-        deletePreset(editModal.preset.id)
+        deletePreset(editModal.preset!.id)
             .unwrap()
             .then(() => {
                 setEditModal({...editModal, open: false})
@@ -87,11 +92,11 @@ export default function ConfigPresetPage() {
                 { (presets && presets.length) ? (
                     <Grid container columnSpacing={3} columns={{ xs: 6, sm: 12 }}>
                         { presets.map((preset) => (
-                            <Grid xs={6}>
+                            <Grid xs={6} key={preset.id}>
                                 <ListItemButton sx={{ height: '100%' }} onClick={() => setEditModal({...editModal, open: true, preset, mode: 'edit'})} >
-                                    <RecordTypeChip label={typesTable[preset.type]?.name} bg={typesTable[preset.type]?.color} sx={{mr: 1}} />
+                                    <RecordTypeChip label={typesTable[preset.type!]?.name} bg={typesTable[preset.type!]?.color} sx={{mr: 1}} />
                                     <ListItemText primary={preset.name} secondary={'權重: ' + preset.weight} />
-                                    <Box mr={1}>{paymentsTable[preset.payment]?.name}</Box>
+                                    <Box mr={1}>{paymentsTable[preset.payment!]?.name}</Box>
                                     { !!preset.price && (<span>${preset.price}</span>) }
                                 </ListItemButton>
                             </Grid>
@@ -108,9 +113,9 @@ export default function ConfigPresetPage() {
                 <EditPresetModal
                     open={editModal.open}
                     mode={editModal.mode}
-                    preset={editModal.preset}
-                    types={types}
-                    payments={payments}
+                    preset={editModal.preset!}
+                    types={types!}
+                    payments={payments!}
                     onClose={() => setEditModal({...editModal, open: false})}
                     onCreate={handleCreate}
                     onUpdate={handleUpdate}
@@ -124,9 +129,9 @@ export default function ConfigPresetPage() {
 
             <HelpMessageDialog open={showHelp} onClose={() => setShowHelp(false)}>
                 <Typography variant="h6" color='common.white'>預設範本</Typography>
-                <Typography variant="body">預設範本會顯示在建立頁面，允許你預先填入部分資料，減少建立記錄時的操作。</Typography>
+                <Typography variant="body1">預設範本會顯示在建立頁面，允許你預先填入部分資料，減少建立記錄時的操作。</Typography>
                 <Typography variant="h6" color='common.white'>權重</Typography>
-                <Typography variant="body">權重數字越小，排列順序會越優先。</Typography>
+                <Typography variant="body1">權重數字越小，排列順序會越優先。</Typography>
             </HelpMessageDialog>
         </Box>
     )

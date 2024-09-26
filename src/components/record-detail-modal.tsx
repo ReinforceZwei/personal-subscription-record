@@ -6,14 +6,15 @@ import Grid from '@mui/material/Unstable_Grid2'
 import EditRecordModal from './edit-record-modal'
 import { useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
+import { SpentRecord } from "../services/pocketbase";
 
-const recordDetailModalProps = {
-    record: null,
-    open: false,
-    onClose: () => {}
+interface RecordDetailModalProps {
+    record: SpentRecord
+    open: boolean
+    onClose: () => void
 }
 
-export default function RecordDetailModal(props = recordDetailModalProps) {
+export default function RecordDetailModal(props: RecordDetailModalProps) {
     const { record, open, onClose } = props
 
     const [showEditModal, setShowEditModal] = useState(false)
@@ -40,7 +41,7 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
                     <Grid xs={12}>
                         <Paper elevation={1}>
                             <ListItem>
-                                <RecordTypeChip label={record.expand.type.name} bg={record.expand.type.color} sx={{mr: 1}} />
+                                <RecordTypeChip label={record.expand?.type.name} bg={record.expand?.type.color} sx={{mr: 1}} />
                                 <ListItemText primary={record.name} secondary={DateTime.fromSQL(record.created).toLocaleString(DateTime.DATETIME_SHORT)} />
                             </ListItem>
                         </Paper>
@@ -56,7 +57,7 @@ export default function RecordDetailModal(props = recordDetailModalProps) {
                     <Grid xs={6}>
                         <Box sx={{height: '100%', padding: 2}}>
                             <Typography variant="subtitle1">支付方式</Typography>
-                            <Typography variant="h6">{record.expand.payment?.name || '---'}</Typography>
+                            <Typography variant="h6">{record.expand?.payment?.name || '---'}</Typography>
                         </Box>
                     </Grid>
 

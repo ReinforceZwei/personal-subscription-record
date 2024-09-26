@@ -12,14 +12,20 @@ import GoogleIcon from '@mui/icons-material/Google';
 import MicrosoftIcon from '@mui/icons-material/Microsoft';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LanguageIcon from '@mui/icons-material/Language';
+import { AuthProviderInfo } from "pocketbase"
+
+type FormValues = {
+    username: string
+    password: string
+}
 
 export default function LoginPage() {
-    const pb = useContext(PocketBaseContext)
+    const pb = useContext(PocketBaseContext)!
     const navigate = useNavigate()
-    const [authMethods, setAuthMethods] = useState([])
+    const [authMethods, setAuthMethods] = useState<AuthProviderInfo[]>([])
     const [loginError, setLoginError] = useState('')
     
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm()
+    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>()
 
     useEffect(() => {
         let getAuthMethods = async () => {
@@ -29,7 +35,7 @@ export default function LoginPage() {
         getAuthMethods()
     }, [])
 
-    const handleLogin = ({ username, password }) => {
+    const handleLogin = ({ username, password }: FormValues) => {
         pb.collection('users').authWithPassword(username, password)
         .then(authData => {
             navigate("/")
@@ -40,8 +46,8 @@ export default function LoginPage() {
         })
     }
 
-    const handleOauth = (providerName) => {
-        let w = window.open()
+    const handleOauth = (providerName: string) => {
+        let w = window.open()!
         pb.collection('users').authWithOAuth2({
             provider: providerName,
             urlCallback: (url) => {
@@ -53,7 +59,7 @@ export default function LoginPage() {
         })
     }
 
-    const getProviderIcon = (name) => {
+    const getProviderIcon = (name: string) => {
         switch (name) {
             case 'github': return <GitHubIcon />
             case 'apple': return <AppleIcon />

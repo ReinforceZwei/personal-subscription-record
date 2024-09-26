@@ -7,25 +7,33 @@ import {
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 
-const ConfirmDeleteDialogProps = {
+const defaultProps = {
     open: false,
     title: '確認刪除',
     content: '',
-    onClose: () => {},
-    onConfirm: () => {},
     confirmActionText: '刪除',
     cancelActionText: '取消',
 }
 
-export default function ConfirmDeleteDialog(props = ConfirmDeleteDialogProps) {
+interface ConfirmDeleteDialogProps {
+    open: boolean
+    title?: string
+    content?: string
+    onClose: () => void
+    onConfirm: () => void
+    confirmActionText?: string
+    cancelActionText?: string
+}
+
+export default function ConfirmDeleteDialog(props: ConfirmDeleteDialogProps) {
     const {
-        open = ConfirmDeleteDialogProps.open,
-        title = ConfirmDeleteDialogProps.title,
-        content = ConfirmDeleteDialogProps.content,
+        open = defaultProps.open,
+        title = defaultProps.title,
+        content = defaultProps.content,
         onClose,
         onConfirm,
-        confirmActionText = ConfirmDeleteDialogProps.confirmActionText,
-        cancelActionText = ConfirmDeleteDialogProps.cancelActionText,
+        confirmActionText = defaultProps.confirmActionText,
+        cancelActionText = defaultProps.cancelActionText,
     } = props
 
     return (

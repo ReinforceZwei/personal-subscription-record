@@ -1,3 +1,15 @@
+type CountryCurrency = {
+	symbol: string,
+	name: string,
+	symbol_native: string,
+	decimal_digits: number,
+	rounding: number,
+	code: string,
+	name_plural: string,
+}
+type CommonCurrency = {
+	[key: string]: CountryCurrency
+}
 // https://github.com/fawazahmed0/exchange-api
 export default
 {
@@ -1072,4 +1084,4 @@ export default
 		"code": "ZWL",
 		"name_plural": "Zimbabwean Dollar"
 	}
-}
+} as CommonCurrency

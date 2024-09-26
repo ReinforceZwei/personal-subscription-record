@@ -16,6 +16,7 @@ import _ from 'lodash-es'
 import { useGetPaymentsQuery } from "../redux/paymentSlice"
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import CurrencyCalculatorModal from "../components/currency-calculator-modal"
+import { SpentPreset, SpentRecord, SpentType } from "../services/pocketbase"
 
 
 export default function QuickCreatePage() {
@@ -32,23 +33,23 @@ export default function QuickCreatePage() {
 
     const { data: presets } = useGetPresetsQuery()
 
-    const [selectedType, setSelectedType] = useState({})
-    const [selectedPreset, setSelectedPreset] = useState(null)
+    const [selectedType, setSelectedType] = useState<SpentType | null>(null)
+    const [selectedPreset, setSelectedPreset] = useState<SpentPreset | null>(null)
 
     const [showModal, setShowModal] = useState(false)
     const [showSnackbar, setShowSnackbar] = useState(false)
     const [showCalc, setShowCalc] = useState(false)
 
-    const handleSelectType = (type) => {
+    const handleSelectType = (type: SpentType) => {
         setShowModal(true)
         setSelectedType(type)
         setSelectedPreset(null)
         console.log(type)
     }
 
-    const handleSelectPreset = (preset) => {
+    const handleSelectPreset = (preset: SpentPreset) => {
         setSelectedPreset(preset)
-        setSelectedType(typesTable[preset.type])
+        setSelectedType(typesTable[preset.type!])
         setShowModal(true)
     }
 
@@ -57,12 +58,12 @@ export default function QuickCreatePage() {
     }
 
     const [addRecord, { isLoading: isAdding }] = useAddRecordMutation()
-    const onCreate = (data) => {
+    const onCreate = (data: Partial<SpentRecord>) => {
         console.log(data)
         let final = {
             ...data,
-            type: selectedType.id,
-            owned_by: pb.authStore.model.id,
+            type: selectedType?.id,
+            owned_by: pb?.authStore.model?.id,
         }
         console.log('final', final)
         addRecord(final).unwrap().then(() => {
@@ -83,8 +84,8 @@ export default function QuickCreatePage() {
                         { presets.map((preset) => (
                             <Grid xs={6} key={preset.id}>
                                 <ListItemButton sx={{ height: '100%' }} onClick={() => handleSelectPreset(preset)}>
-                                    <RecordTypeChip label={typesTable[preset.type]?.name} bg={typesTable[preset.type]?.color} sx={{mr: 1}} />
-                                    <ListItemText primary={preset.name} secondary={paymentsTable[preset.payment]?.name} />
+                                    <RecordTypeChip label={typesTable[preset.type!]?.name} bg={typesTable[preset.type!]?.color} sx={{mr: 1}} />
+                                    <ListItemText primary={preset.name} secondary={paymentsTable[preset.payment!]?.name} />
                                     { !!preset.price && (<span>${preset.price}</span>) }
                                 </ListItemButton>
                             </Grid>
@@ -113,8 +114,8 @@ export default function QuickCreatePage() {
                 <CreateRecordModal
                     open={showModal}
                     onClose={() => handleCloseModal()}
-                    selectedType={selectedType}
-                    preset={selectedPreset}
+                    selectedType={selectedType!}
+                    preset={selectedPreset!}
                     onCreate={onCreate}
                 />
             )}

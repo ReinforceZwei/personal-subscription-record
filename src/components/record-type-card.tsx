@@ -1,10 +1,19 @@
 import { Card, CardActionArea, CardContent, Typography } from "@mui/material"
+import { CSSProperties, ReactNode } from "react"
 import tinycolor from "tinycolor2"
 
-export default function RecordTypeCard(props) {
-    const { bg, children, onClick, colorTransition, weight, ...other } = props
+interface RecordTypeCardProps {
+    bg?: string
+    children?: ReactNode
+    onClick?: () => void
+    colorTransition?: number
+    weight?: number
+}
 
-    let style = {
+export default function RecordTypeCard(props: RecordTypeCardProps) {
+    const { bg, children, onClick, colorTransition, weight } = props
+
+    let style: CSSProperties = {
         textAlign: 'center'
     }
     if (bg) {
