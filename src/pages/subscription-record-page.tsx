@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add'
 import HelpIcon from '@mui/icons-material/Help'
 import { useAddSubscriptionMutation, useDeleteSubscriptionMutation, useGetSubscriptionsQuery, useUpdateSubscriptionMutation } from '../redux/subscriptionSlice';
 import { useMemo, useState } from 'react';
-import EditSubscriptionModal from '../components/edit-subscription-modal';
+import EditSubscriptionModal from '../components/SubscriptionModal/edit-subscription-modal';
 import { useGetPaymentsQuery } from '../redux/paymentSlice';
 import ConfirmDeleteDialog from '../components/confirm-delete-dialog';
 import { sumBy, add, subtract } from '../vendors/fixedPointMath'

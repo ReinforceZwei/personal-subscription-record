@@ -6,14 +6,14 @@ import {
 } from "@mui/material"
 import Grid from '@mui/material/Unstable_Grid2'
 import { useState, useMemo, useEffect } from "react"
-import { useGetUserSettingsQuery } from "../redux/userSettingsSlice";
-import { useGetCurrencyRateQuery } from "../redux/currencySlice"
-import commonCurrency from "../commonCurrency"
+import { useGetUserSettingsQuery } from "../../redux/userSettingsSlice";
+import { useGetCurrencyRateQuery } from "../../redux/currencySlice"
+import commonCurrency from "../../commonCurrency"
 import fx from "money"
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close'
-import { useLocalStorage } from "../vendors/localStorageHook";
+import { useLocalStorage } from "../../vendors/localStorageHook";
 
 interface CurrencyCalculatorModalProps {
     onResult?: (price: number) => void

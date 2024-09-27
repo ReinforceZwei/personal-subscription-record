@@ -4,8 +4,8 @@ import { DateTime } from 'luxon'
 import { Box, Divider, Chip, List, ListItemButton, ListItemText, Stack, Typography } from '@mui/material'
 import AirIcon from '@mui/icons-material/Air';
 import { sumBy } from '../../vendors/fixedPointMath'
-import RecordTypeChip from '../record-type-chip'
-import RecordDetailModal from '../../components/record-detail-modal'
+import RecordTypeChip from '../RecordType/record-type-chip'
+import RecordDetailModal from '../RecordModal/record-detail-modal'
 import { SpentRecord } from '../../services/pocketbase';
 
 

@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle, DialogActions, List, ListItem, List
 import CloseIcon from '@mui/icons-material/Close';
 import Grid from '@mui/material/Unstable_Grid2'
 import { useState } from "react";
-import RecordTypeCard from "./record-type-card";
+import RecordTypeCard from "./RecordType/record-type-card";
 import SpentRecordList from "./SpendRecord/spent-record-list";
 import { SpentRecord, SpentType } from "../services/pocketbase";
 

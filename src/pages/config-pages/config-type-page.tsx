@@ -15,7 +15,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import AddIcon from '@mui/icons-material/Add'
 import HelpIcon from '@mui/icons-material/Help'
 
-import RecordTypeCard from "../../components/record-type-card"
+import RecordTypeCard from "../../components/RecordType/record-type-card"
 import { useAddTypeMutation, useDeleteTypeMutation, useGetTypesQuery, useUpdateTypeMutation } from "../../redux/typeSlice"
 import { useGetPaymentsQuery } from "../../redux/paymentSlice"
 import HelpMessageDialog from "../../components/help-message-dialog"

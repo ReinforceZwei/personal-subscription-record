@@ -1,12 +1,12 @@
 import { Dialog, DialogContent, DialogTitle, DialogActions, List, ListItem, ListItemText, Button, IconButton, Paper, Card, CardContent, Typography, Box } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
-import RecordTypeChip from "./record-type-chip"
+import RecordTypeChip from "../RecordType/record-type-chip"
 import { DateTime } from "luxon"
 import Grid from '@mui/material/Unstable_Grid2'
 import EditRecordModal from './edit-record-modal'
 import { useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
-import { SpentRecord } from "../services/pocketbase";
+import { SpentRecord } from "../../services/pocketbase";
 
 interface RecordDetailModalProps {
     record: SpentRecord

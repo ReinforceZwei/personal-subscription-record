@@ -8,7 +8,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
-import { PaymentMethod, SubscriptionPlan } from "../services/pocketbase"
+import { PaymentMethod, SubscriptionPlan } from "../../services/pocketbase"
 
 
 interface EditSubscriptionModalProps {

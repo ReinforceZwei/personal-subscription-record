@@ -8,11 +8,11 @@ import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { Controller, useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
-import RecordTypeChip from "../components/record-type-chip"
-import { useGetSuggestedNameQuery } from "../redux/typeSlice"
-import { useGetPaymentsQuery } from "../redux/paymentSlice"
-import { useUpdateRecordMutation } from "../redux/recordSlice"
-import { SpentRecord } from "../services/pocketbase"
+import RecordTypeChip from "../RecordType/record-type-chip"
+import { useGetSuggestedNameQuery } from "../../redux/typeSlice"
+import { useGetPaymentsQuery } from "../../redux/paymentSlice"
+import { useUpdateRecordMutation } from "../../redux/recordSlice"
+import { SpentRecord } from "../../services/pocketbase"
 
 interface EditRecordModalProps {
     record: SpentRecord

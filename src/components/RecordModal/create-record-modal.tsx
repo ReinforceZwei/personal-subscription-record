@@ -8,12 +8,12 @@ import Grid from '@mui/material/Unstable_Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { Controller, useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
-import RecordTypeChip from "../components/record-type-chip"
-import { useGetSuggestedNameQuery } from "../redux/typeSlice"
-import { useGetPaymentsQuery } from "../redux/paymentSlice"
+import RecordTypeChip from "../RecordType/record-type-chip"
+import { useGetSuggestedNameQuery } from "../../redux/typeSlice"
+import { useGetPaymentsQuery } from "../../redux/paymentSlice"
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
-import CurrencyCalculatorModal from "../components/currency-calculator-modal"
-import { SpentPreset, SpentType } from "../services/pocketbase"
+import CurrencyCalculatorModal from "../CurrencyCalculator/currency-calculator-modal"
+import { SpentPreset, SpentType } from "../../services/pocketbase"
 
 interface CreateRecordModalProps {
     selectedType: SpentType,

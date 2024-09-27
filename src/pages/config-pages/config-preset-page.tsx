@@ -4,7 +4,7 @@ import { Box, Button, IconButton, ListItemButton, ListItemText, Typography } fro
 import HelpIcon from '@mui/icons-material/Help'
 import AddIcon from '@mui/icons-material/Add'
 import _ from 'lodash-es'
-import RecordTypeChip from "../../components/record-type-chip"
+import RecordTypeChip from "../../components/RecordType/record-type-chip"
 import { useAddPresetMutation, useDeletePresetMutation, useGetPresetsQuery, useUpdatePresetMutation } from "../../redux/presetSlice"
 import { useGetTypesQuery } from '../../redux/typeSlice'
 import { useGetPaymentsQuery } from "../../redux/paymentSlice"

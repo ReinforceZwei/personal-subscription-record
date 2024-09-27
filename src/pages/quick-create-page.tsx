@@ -5,17 +5,17 @@ import {
     Snackbar, Box, Typography, ListItemButton, ListItemText, Paper, Divider, Fab
 } from "@mui/material"
 import { Link } from "react-router-dom"
-import RecordTypeCard from "../components/record-type-card"
-import CreateRecordModal from "../components/create-record-modal"
+import RecordTypeCard from "../components/RecordType/record-type-card"
+import CreateRecordModal from "../components/RecordModal/create-record-modal"
 import { useDispatch, useSelector } from "react-redux"
 import { useAddRecordMutation } from "../redux/recordSlice"
 import { useGetTypesQuery } from '../redux/typeSlice'
 import { useGetPresetsQuery } from "../redux/presetSlice"
-import RecordTypeChip from "../components/record-type-chip"
+import RecordTypeChip from "../components/RecordType/record-type-chip"
 import _ from 'lodash-es'
 import { useGetPaymentsQuery } from "../redux/paymentSlice"
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
-import CurrencyCalculatorModal from "../components/currency-calculator-modal"
+import CurrencyCalculatorModal from "../components/CurrencyCalculator/currency-calculator-modal"
 import { SpentPreset, SpentRecord, SpentType } from "../services/pocketbase"
 
 

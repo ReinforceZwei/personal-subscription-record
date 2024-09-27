@@ -14,8 +14,8 @@ import HelpIcon from '@mui/icons-material/Help'
 import { useContext, useEffect, useMemo, useState } from "react"
 import { useSelector, useDispatch } from 'react-redux'
 import { useAddPaymentMutation, useDeletePaymentMutation, useGetPaymentsQuery, useUpdatePaymentMutation } from "../../redux/paymentSlice"
-import CreatePaymentModal from "../../components/create-payment-modal"
-import EditPaymentModal from "../../components/edit-payment-modal"
+import CreatePaymentModal from "../../components/PaymentModal/create-payment-modal"
+import EditPaymentModal from "../../components/PaymentModal/edit-payment-modal"
 import { PocketBaseContext } from "../../context"
 import HelpMessageDialog from "../../components/help-message-dialog"
 import { PaymentMethod } from "../../services/pocketbase"

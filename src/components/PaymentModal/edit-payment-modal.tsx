@@ -8,8 +8,8 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useEffect } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { useState } from "react"
-import ConfirmDeleteDialog from "./confirm-delete-dialog"
-import { PaymentMethod } from "../services/pocketbase"
+import ConfirmDeleteDialog from "../confirm-delete-dialog"
+import { PaymentMethod } from "../../services/pocketbase"
 
 interface EditPaymentModalProps {
     open: boolean,

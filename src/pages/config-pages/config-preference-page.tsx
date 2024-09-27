@@ -7,11 +7,6 @@ import { removePbDefaultField } from "../../vendors/pocketbaseUtils"
 import ConfirmDeleteDialog from "../../components/confirm-delete-dialog";
 import commonCurrency from "../../commonCurrency"
 
-const defaultSettings = {
-    'default_page': 'spentRecord',
-    'color_mode': 'system',
-}
-
 const defaultPageOption = [
     { name: '支出記錄', value: 'spentRecord' },
     { name: '快速建立', value: 'quickCreate' },
@@ -38,7 +33,7 @@ function Loading() {
 export default function ConfigPreferencePage() {
     const navigate = useNavigate()
 
-    const { data: userSettings } = useGetUserSettingsQuery(defaultSettings)
+    const { data: userSettings } = useGetUserSettingsQuery()
     const [updateUserSettings] = useUpdateUserSettingsMutation()
 
     const [showConfirmLogout, setShowConfirmLogout] = useState(false)
