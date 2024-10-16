@@ -3,6 +3,7 @@ import { PocketBaseContext } from "../context"
 import { USER_COL } from "../services/pocketbase"
 import { Navigate, useNavigate } from "react-router-dom"
 import { Alert, Box, Button, ButtonGroup, Container, CssBaseline, Divider, Paper, TextField, Typography } from "@mui/material"
+import LoadingButton from '@mui/lab/LoadingButton'
 import { Controller, useForm } from "react-hook-form"
 import Grid from "@mui/material/Unstable_Grid2"
 import _ from 'lodash-es'
@@ -25,7 +26,9 @@ export default function LoginPage() {
     const [authMethods, setAuthMethods] = useState<AuthProviderInfo[]>([])
     const [loginError, setLoginError] = useState('')
     
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>()
+    const { handleSubmit, reset, setValue, setFocus, control, formState } = useForm<FormValues>()
+
+    const { isSubmitting } = formState
 
     useEffect(() => {
         let getAuthMethods = async () => {
@@ -35,15 +38,22 @@ export default function LoginPage() {
         getAuthMethods()
     }, [])
 
-    const handleLogin = ({ username, password }: FormValues) => {
-        pb.collection('users').authWithPassword(username, password)
-        .then(authData => {
+    const handleLogin = async ({ username, password }: FormValues) => {
+        try {
+            await pb.collection('users').authWithPassword(username, password)
             navigate("/")
-        })
-        .catch(err => {
-            console.log(err)
-            setLoginError(err?.message || 'Unknown error')
-        })
+        } catch (error) {
+            console.log(error)
+            setLoginError(error?.message || 'Unknown error')
+        }
+        // pb.collection('users').authWithPassword(username, password)
+        // .then(authData => {
+        //     navigate("/")
+        // })
+        // .catch(err => {
+        //     console.log(err)
+        //     setLoginError(err?.message || 'Unknown error')
+        // })
     }
 
     const handleOauth = (providerName: string) => {
@@ -124,7 +134,7 @@ export default function LoginPage() {
                                 />
                             </Grid>
                             <Grid xs={12} sx={{textAlign: 'center'}}>
-                                <Button type='submit' variant="outlined">登入</Button>
+                                <LoadingButton type='submit' variant="outlined" loading={isSubmitting}>登入</LoadingButton>
                             </Grid>
                             {loginError && (
                                 <Grid xs={12}>
@@ -138,7 +148,7 @@ export default function LoginPage() {
                     <>
                     <Divider>或</Divider>
                     { authMethods.map((method) => (
-                        <Box textAlign='center' mt={1}>
+                        <Box textAlign='center' mt={1} key={method.name}>
                             <ButtonGroup orientation="vertical" variant="outlined" size="large">
                                 <Button variant="outlined" startIcon={getProviderIcon(method.name)} onClick={() => handleOauth(method.name)}>使用 {method.displayName} 登入</Button>
                             </ButtonGroup>

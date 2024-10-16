@@ -46,7 +46,7 @@ import RecordChartPage from './pages/record-chart-page';
 
 export default function App() {
 
-    const { data: userSettings } = useGetUserSettingsQuery()
+    const { data: userSettings } = useGetUserSettingsQuery(undefined, { skip: !pb.authStore.isValid })
     const colorMode = userSettings?.color_mode || 'system'
 
     const router = createBrowserRouter(

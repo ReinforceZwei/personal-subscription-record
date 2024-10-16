@@ -21,7 +21,7 @@ export const typeApi = pocketbaseApi.injectEndpoints({
                 }
             }
         }),
-        addType: builder.mutation<Partial<SpentType>, SpentType>({
+        addType: builder.mutation<SpentType, Partial<SpentType>>({
             invalidatesTags: [{ type: 'types', id: '*' }],
             queryFn: async (data) => {
                 try {
