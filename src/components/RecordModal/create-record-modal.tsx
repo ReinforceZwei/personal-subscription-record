@@ -14,13 +14,14 @@ import { useGetPaymentsQuery } from "../../redux/paymentSlice"
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import CurrencyCalculatorModal from "../CurrencyCalculator/currency-calculator-modal"
 import { SpentPreset, SpentType } from "../../services/pocketbase"
+import { LoadingButton } from "@mui/lab"
 
 interface CreateRecordModalProps {
     selectedType: SpentType,
     preset: SpentPreset,
     open: boolean,
     onClose: () => void,
-    onCreate: (data: FormValues) => void,
+    onCreate: (data: FormValues) => Promise<void>,
 }
 
 type FormValues = {
@@ -40,7 +41,7 @@ export default function CreateRecordModal(props: CreateRecordModalProps) {
     const { data: allPayments } = useGetPaymentsQuery()
     const payments = useMemo(() => allPayments ? allPayments.filter(x => x.enabled) : [], [allPayments])
 
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>({
+    const { handleSubmit, reset, setValue, setFocus, control, formState: { isSubmitting } } = useForm<FormValues>({
         defaultValues: {
             name: '',
             payment: '',
@@ -224,7 +225,7 @@ export default function CreateRecordModal(props: CreateRecordModalProps) {
                     <IconButton onClick={() => setShowCalc(true)}><CurrencyExchangeIcon /></IconButton>
                     <span style={{flex: '1 1'}}></span>
                     <Button onClick={() => setShowThisModal(false)}>關閉</Button>
-                    <Button type="submit" variant="contained">建立</Button>
+                    <LoadingButton type="submit" variant="contained" loading={isSubmitting}>建立</LoadingButton>
                 </DialogActions>
             </form>
         </Dialog>

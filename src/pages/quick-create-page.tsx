@@ -58,7 +58,7 @@ export default function QuickCreatePage() {
     }
 
     const [addRecord, { isLoading: isAdding }] = useAddRecordMutation()
-    const onCreate = (data: Partial<SpentRecord>) => {
+    const onCreate = async (data: Partial<SpentRecord>) => {
         console.log(data)
         let final = {
             ...data,
@@ -66,14 +66,14 @@ export default function QuickCreatePage() {
             owned_by: pb?.authStore.model?.id,
         }
         console.log('final', final)
-        addRecord(final).unwrap().then(() => {
+        try {
+            await addRecord(final).unwrap()
             setShowModal(false)
             setShowSnackbar(true)
-        })
-        .catch((err) => {
+        } catch (err) {
             console.error(err)
             alert(err)
-        })
+        }
     }
 
     return (
