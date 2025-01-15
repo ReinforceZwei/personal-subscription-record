@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { lazy, Suspense, useEffect, useMemo } from 'react'
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -6,7 +6,6 @@ import {
     Route,
     Navigate,
 } from 'react-router-dom'
-import { useEffect, useMemo } from 'react';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon'
@@ -17,32 +16,28 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { CssBaseline } from '@mui/material';
 
 import { isTokenExpired } from 'pocketbase';
-
-import Root from './routers/root'
-import ErrorPage from "./error-page"
-import LoginPage from './pages/login-page'
-import SpentRecordPage from './pages/spent-record-page'
 import pb from './services/pocketbase'
-
-import QuickCreatePage from './pages/quick-create-page'
-import ConfigPage from './pages/config-page'
-import ConfigTypePage from './pages/config-pages/config-type-page'
-import ConfigPaymentPage from './pages/config-pages/config-payment-page'
-
 import { themeOptions } from './themes';
-
-import UserDefaultPage from './routers/user-default-page';
-import ConfigPreferencePage from './pages/config-pages/config-preference-page';
-
 import { useGetUserSettingsQuery } from "./redux/userSettingsSlice";
-import SubscriptionRecordPage from './pages/subscription-record-page';
-import ConfigBudgetPage from './pages/config-pages/config-budget-page';
-import ConfigPresetPage from './pages/config-pages/config-preset-page';
-import Logout from './routers/logout';
-
 import { PocketBaseContext } from './context'
-import ConfigAboutPage from './pages/config-pages/config-about-page';
-import RecordChartPage from './pages/record-chart-page';
+
+import PageTopProgressBar from './components/page-top-progress-bar'
+const Root = lazy(() => import('./routers/root'))
+const ErrorPage = lazy(() => import('./error-page'))
+const LoginPage = lazy(() => import('./pages/login-page'))
+const SpentRecordPage = lazy(() => import('./pages/spent-record-page'))
+const QuickCreatePage = lazy(() => import('./pages/quick-create-page'))
+const ConfigPage = lazy(() => import('./pages/config-page'))
+const ConfigTypePage = lazy(() => import('./pages/config-pages/config-type-page'))
+const ConfigPaymentPage = lazy(() => import('./pages/config-pages/config-payment-page'))
+const UserDefaultPage = lazy(() => import('./routers/user-default-page'))
+const ConfigPreferencePage = lazy(() => import('./pages/config-pages/config-preference-page'))
+const SubscriptionRecordPage = lazy(() => import('./pages/subscription-record-page'))
+const ConfigBudgetPage = lazy(() => import('./pages/config-pages/config-budget-page'))
+const ConfigPresetPage = lazy(() => import('./pages/config-pages/config-preset-page'))
+const Logout = lazy(() => import('./routers/logout'))
+const ConfigAboutPage = lazy(() => import('./pages/config-pages/config-about-page'))
+const RecordChartPage = lazy(() => import('./pages/record-chart-page'))
 
 export default function App() {
 
@@ -52,29 +47,29 @@ export default function App() {
     const router = createBrowserRouter(
         createRoutesFromElements([
             (
-                <Route path="/" element={<Root />} errorElement={<ErrorPage />}>
-                    <Route index element={<UserDefaultPage />} />
+                <Route path="/" element={<Suspense fallback={<PageTopProgressBar />}><Root /></Suspense>} errorElement={<Suspense fallback={<PageTopProgressBar />}><ErrorPage /></Suspense>}>
+                    <Route index element={<Suspense fallback={<PageTopProgressBar />}><UserDefaultPage /></Suspense>} />
 
-                    <Route path="spentRecord" element={<SpentRecordPage />} />
-                    <Route path="quickCreate" element={<QuickCreatePage />} />
-                    <Route path="subscriptionRecord" element={<SubscriptionRecordPage />} />
-                    <Route path="recordChart" element={<RecordChartPage />} />
+                    <Route path="spentRecord" element={<Suspense fallback={<PageTopProgressBar />}><SpentRecordPage /></Suspense>} />
+                    <Route path="quickCreate" element={<Suspense fallback={<PageTopProgressBar />}><QuickCreatePage /></Suspense>} />
+                    <Route path="subscriptionRecord" element={<Suspense fallback={<PageTopProgressBar />}><SubscriptionRecordPage /></Suspense>} />
+                    <Route path="recordChart" element={<Suspense fallback={<PageTopProgressBar />}><RecordChartPage /></Suspense>} />
 
-                    <Route path="config" element={<ConfigPage />}>
+                    <Route path="config" element={<Suspense fallback={<PageTopProgressBar />}><ConfigPage /></Suspense>}>
                         {/* <Route index element={<Navigate to="preference" replace />} /> */}
 
-                        <Route path="preference" element={<ConfigPreferencePage />} />
-                        <Route path="budget" element={<ConfigBudgetPage />} />
-                        <Route path="type" element={<ConfigTypePage />} />
-                        <Route path="payment" element={<ConfigPaymentPage />} />
-                        <Route path="preset" element={<ConfigPresetPage />} />
-                        <Route path="about" element={<ConfigAboutPage />} />
+                        <Route path="preference" element={<Suspense fallback={<PageTopProgressBar />}><ConfigPreferencePage /></Suspense>} />
+                        <Route path="budget" element={<Suspense fallback={<PageTopProgressBar />}><ConfigBudgetPage /></Suspense>} />
+                        <Route path="type" element={<Suspense fallback={<PageTopProgressBar />}><ConfigTypePage /></Suspense>} />
+                        <Route path="payment" element={<Suspense fallback={<PageTopProgressBar />}><ConfigPaymentPage /></Suspense>} />
+                        <Route path="preset" element={<Suspense fallback={<PageTopProgressBar />}><ConfigPresetPage /></Suspense>} />
+                        <Route path="about" element={<Suspense fallback={<PageTopProgressBar />}><ConfigAboutPage /></Suspense>} />
                     </Route>
                 </Route>
             ), (
-                <Route path="/login" element={<LoginPage />} />
+                <Route path="/login" element={<Suspense fallback={<PageTopProgressBar />}><LoginPage /></Suspense>} />
             ), (
-                <Route path="/logout" element={<Logout />} />
+                <Route path="/logout" element={<Suspense fallback={<PageTopProgressBar />}><Logout /></Suspense>} />
             )
         ])
     );
