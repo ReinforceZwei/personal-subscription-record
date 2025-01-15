@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext, useMemo, Fragment } from 'react'
 import { DateTime } from 'luxon'
-import { Accordion, AccordionDetails, AccordionSummary, AppBar, Box, Card, CardActionArea, CardActions, CardContent, Chip, Divider, InputLabel, List, ListItem, ListItemButton, ListItemText, Paper, Stack, Toolbar, Typography } from '@mui/material'
+import { Accordion, AccordionDetails, AccordionSummary, AppBar, Box, Card, CardActionArea, CardActions, CardContent, Chip, Divider, IconButton, InputLabel, List, ListItem, ListItemButton, ListItemText, Paper, Stack, Toolbar, Typography } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { DatePicker } from '@mui/x-date-pickers'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -17,6 +17,8 @@ import { sumBy, subtract } from '../vendors/fixedPointMath'
 import SpentRecordList from '../components/SpendRecord/spent-record-list'
 import { useAppDispatch } from '../hooks'
 import { SpentRecord, SpentType } from '../services/pocketbase'
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export default function SpentRecordPage() {
     const dispatch = useAppDispatch()
@@ -87,21 +89,37 @@ export default function SpentRecordPage() {
         })
     }
 
+    const onBackClick = () => {
+        const newValue = selectedDate.minus({ month: 1 })
+        dispatch(setSelectedDate(newValue.toISO()))
+    }
+
+    const onNextClick = () => {
+        const newValue = selectedDate.plus({ month: 1 })
+        if (newValue < DateTime.now()) {
+            dispatch(setSelectedDate(newValue.toISO()))
+        }
+    }
+
 
     return (
         <Box sx={{mt: 1}}>
             <Grid container spacing={1} columns={{ xs: 8, sm: 12 }} rowSpacing={1}>
                 <Grid xs={8} sm={4}>
-                    <DatePicker
-                        label='月份'
-                        views={['year', 'month']}
-                        openTo='month'
-                        value={selectedDate}
-                        onChange={(value) => dispatch(setSelectedDate(value!.startOf('month').toISO()))}
-                        sx={{width: '100%'}}
-                        disableFuture
-                        closeOnSelect
-                    />
+                    <Box display='flex' alignItems='center' justifyContent='center'>
+                        <IconButton onClick={onBackClick}><ArrowBackIosNewIcon /></IconButton>
+                        <DatePicker
+                            label='月份'
+                            views={['year', 'month']}
+                            openTo='month'
+                            value={selectedDate}
+                            onChange={(value) => dispatch(setSelectedDate(value!.startOf('month').toISO()))}
+                            sx={{width: '100%'}}
+                            disableFuture
+                            closeOnSelect
+                        />
+                        <IconButton onClick={onNextClick}><ArrowForwardIosIcon /></IconButton>
+                    </Box>
                 </Grid>
                 <Grid xs={4}>
                     <Card>
