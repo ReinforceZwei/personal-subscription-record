@@ -1,3 +1,4 @@
+export type ColorMode = 'light' | 'dark' | 'system'
 
 // https://zenoo.github.io/mui-theme-creator/
 export const themeOptions = {

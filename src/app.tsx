@@ -19,7 +19,7 @@ import { isTokenExpired } from 'pocketbase';
 import pb from './services/pocketbase'
 import { themeOptions } from './themes';
 import { useGetUserSettingsQuery } from "./redux/userSettingsSlice";
-import { PocketBaseContext } from './context'
+import { PocketBaseContext, ThemeContext } from './context'
 
 import PageTopProgressBar from './components/page-top-progress-bar'
 const Root = lazy(() => import('./routers/root'))
@@ -41,8 +41,9 @@ const RecordChartPage = lazy(() => import('./pages/record-chart-page'))
 
 export default function App() {
 
-    const { data: userSettings } = useGetUserSettingsQuery(undefined, { skip: !pb.authStore.isValid })
-    const colorMode = userSettings?.color_mode || 'system'
+    //const { data: userSettings } = useGetUserSettingsQuery(undefined, { skip: !pb.authStore.isValid })
+    const [colorMode, setColorMode] = React.useState<'light' | 'dark' | 'system'>('system')
+    //const colorMode = 'system'
 
     const router = createBrowserRouter(
         createRoutesFromElements([
@@ -100,15 +101,17 @@ export default function App() {
     return (
         <div>
         <PocketBaseContext.Provider value={pb}>
-            <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale='zh-HK' localeText={zhHK.components.MuiLocalizationProvider.defaultProps.localeText}>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <div>
-                        <RouterProvider router={router} />
-                    </div>
-                </ThemeProvider>
-                
-            </LocalizationProvider>
+            <ThemeContext.Provider value={{colorMode, setColorMode}}>
+                <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale='zh-HK' localeText={zhHK.components.MuiLocalizationProvider.defaultProps.localeText}>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <div>
+                            <RouterProvider router={router} />
+                        </div>
+                    </ThemeProvider>
+                    
+                </LocalizationProvider>
+            </ThemeContext.Provider>
         </PocketBaseContext.Provider>
         </div>
     )
