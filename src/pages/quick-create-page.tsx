@@ -44,7 +44,6 @@ export default function QuickCreatePage() {
         setShowModal(true)
         setSelectedType(type)
         setSelectedPreset(null)
-        console.log(type)
     }
 
     const handleSelectPreset = (preset: SpentPreset) => {
@@ -59,13 +58,11 @@ export default function QuickCreatePage() {
 
     const [addRecord, { isLoading: isAdding }] = useAddRecordMutation()
     const onCreate = async (data: Partial<SpentRecord>) => {
-        console.log(data)
         let final = {
             ...data,
             type: selectedType?.id,
             owned_by: pb?.authStore.model?.id,
         }
-        console.log('final', final)
         try {
             await addRecord(final).unwrap()
             setShowModal(false)

@@ -75,7 +75,6 @@ export default function RecordTypeDialog(props: RecordTypeDialogProps) {
 
 
     const onSave = (data: FormValues) => {
-        console.log(data)
         let final = {
             owned_by: spentType!.owned_by,
             icon: spentType!.icon,
@@ -98,7 +97,6 @@ export default function RecordTypeDialog(props: RecordTypeDialogProps) {
     }
 
     const onCreate = (data: FormValues) => {
-        console.log(data)
         let final = {
             owned_by: pb!.authStore.model!.id,
             icon: '',

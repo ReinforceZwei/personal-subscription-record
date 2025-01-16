@@ -43,7 +43,6 @@ export default function SubscriptionRecordPage() {
     const [confirmDeleteModal, setConfirmDeleteModal] = useState(false)
 
     const handleCreate = (data: Partial<SubscriptionPlan>) => {
-        console.log(data)
         addSubscription(data)
             .unwrap()
             .then(() => {
@@ -56,7 +55,6 @@ export default function SubscriptionRecordPage() {
     }
 
     const handleUpdate = (data: Partial<SubscriptionPlan>) => {
-        console.log(data)
         updateSubscription({ id: editModal.subscription!.id, data })
             .unwrap()
             .then(() => {
@@ -69,7 +67,6 @@ export default function SubscriptionRecordPage() {
     }
 
     const handleDelete = (data: Partial<SubscriptionPlan>) => {
-        console.log(data)
         setConfirmDeleteModal(true)
     }
 

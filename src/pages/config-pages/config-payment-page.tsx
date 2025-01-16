@@ -46,7 +46,6 @@ export default function ConfigPaymentPage() {
     }
 
     const onCreate = (data: Partial<PaymentMethod>) => {
-        console.log('onCreate', data)
         const final = {
             name: data.name,
             icon: '',
@@ -67,7 +66,6 @@ export default function ConfigPaymentPage() {
     }
 
     const onUpdate = (data: Partial<PaymentMethod>) => {
-        console.log('onUpdate', data)
         const final = {
             name: data.name,
             icon: selectedPayment!.icon,
@@ -88,7 +86,6 @@ export default function ConfigPaymentPage() {
     }
 
     const onDelete = (data: PaymentMethod) => {
-        console.log('onDelete', data)
         deletePayment(data.id)
             .unwrap()
             .then(() => {

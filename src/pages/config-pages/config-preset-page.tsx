@@ -38,7 +38,6 @@ export default function ConfigPresetPage() {
     const [deletePreset] = useDeletePresetMutation()
 
     const handleCreate = (data: Partial<SpentPreset>) => {
-        console.log(data)
         addPreset(data)
             .unwrap()
             .then(() => {
@@ -51,8 +50,6 @@ export default function ConfigPresetPage() {
     }
 
     const handleUpdate = (data: Partial<SpentPreset>) => {
-        console.log(data)
-        console.log(editModal)
         updatePreset({ id: editModal.preset!.id, data })
             .unwrap()
             .then(() => {

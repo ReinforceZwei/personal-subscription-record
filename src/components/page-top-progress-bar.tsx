@@ -12,7 +12,6 @@ export default function PageTopProgressBar() {
 
     const increment = () => {
         setProgress((oldProgress) => {
-            console.log(oldProgress)
             if (oldProgress >= 100) {
                 return 100;
             }

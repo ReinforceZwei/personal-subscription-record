@@ -103,7 +103,6 @@ export default function SpentRecordPage() {
     })
 
     const handleTypeSumDetail = (type: SpentType, sum: number, records: SpentRecord[]) => {
-        console.log(type, sum)
         setTypeDetailModal({
             open: true,
             type: type,
@@ -125,7 +124,6 @@ export default function SpentRecordPage() {
     })
 
     const handlePaymentSumDetail = (payment: PaymentMethod, sum: number, records: SpentRecord[]) => {
-        console.log(payment, sum)
         setPaymentDetailModal({
             open: true,
             payment: payment,
