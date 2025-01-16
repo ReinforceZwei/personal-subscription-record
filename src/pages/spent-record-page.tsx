@@ -16,9 +16,11 @@ import { hideLinearProgress, showLinearProgress } from '../redux/uiSlice'
 import { sumBy, subtract } from '../vendors/fixedPointMath'
 import SpentRecordList from '../components/SpendRecord/spent-record-list'
 import { useAppDispatch } from '../hooks'
-import { SpentRecord, SpentType } from '../services/pocketbase'
+import { PaymentMethod, SpentRecord, SpentType } from '../services/pocketbase'
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { useGetPaymentsQuery } from '../redux/paymentSlice'
+import PaymentSumDetailModal from '../components/payment-sum-detail-modal'
 
 export default function SpentRecordPage() {
     const dispatch = useAppDispatch()
@@ -27,16 +29,17 @@ export default function SpentRecordPage() {
     const selectedDate = DateTime.fromISO(useSelector(selectSelectedDate))
 
     const { data: types, isLoading: isTypeLoading } = useGetTypesQuery()
+    const { data: payments, isLoading: isPaymentLoading } = useGetPaymentsQuery()
     const { data: budget, isLoading: isBudgetLoading } = useGetBudgetQuery({date: selectedDate.toISO(), type: 'spent'})
     const { data: records, error, isLoading: isRecordLoading } = useGetRecordsQuery(selectedDate.toISO()!)
 
     useEffect(() => {
-        if (isTypeLoading || isBudgetLoading || isRecordLoading) {
+        if (isTypeLoading || isBudgetLoading || isRecordLoading || isPaymentLoading) {
             dispatch(showLinearProgress())
         } else {
             dispatch(hideLinearProgress())
         }
-    }, [isTypeLoading, isBudgetLoading, isRecordLoading])
+    }, [isTypeLoading, isBudgetLoading, isRecordLoading, isPaymentLoading])
 
     const monthSum = useMemo(() => {
         return sumBy(records || [], x => x.price)
@@ -63,6 +66,26 @@ export default function SpentRecordPage() {
         return []
     }, [records, types])
 
+    const recordsByPayment = useMemo(() => {
+        return _.groupBy(records, x => x.payment)
+    }, [records])
+
+    const paymentMonthSum = useMemo(() => {
+        if (payments && records) {
+            return _.chain(recordsByPayment)
+                .map((v, k) => {
+                    return {
+                        id: k,
+                        payment: _.find(payments, x => x.id === k),
+                        sum: sumBy(v, x => x.price),
+                        records: recordsByPayment[k]
+                    }
+                })
+                .value()
+        }
+        return []
+    })
+
     const balance = useMemo(() => {
         return budget?.budget ? subtract(budget.budget, monthSum) : null
     }, [budget, monthSum])
@@ -85,6 +108,28 @@ export default function SpentRecordPage() {
             open: true,
             type: type,
             typeSum: sum,
+            records: records,
+        })
+    }
+
+    const [paymentDetailModal, setPaymentDetailModal] = useState<{
+        payment: PaymentMethod | null,
+        paymentSum: number,
+        open: boolean,
+        records: SpentRecord[]
+    }>({
+        payment: null,
+        paymentSum: 0,
+        open: false,
+        records: [],
+    })
+
+    const handlePaymentSumDetail = (payment: PaymentMethod, sum: number, records: SpentRecord[]) => {
+        console.log(payment, sum)
+        setPaymentDetailModal({
+            open: true,
+            payment: payment,
+            paymentSum: sum,
             records: records,
         })
     }
@@ -177,6 +222,29 @@ export default function SpentRecordPage() {
                 </AccordionDetails>
             </Accordion>
 
+            <Accordion disableGutters sx={{ mt: 1}}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>支付方式</AccordionSummary>
+
+                <AccordionDetails>
+                    <Grid container spacing={1} columns={{ xs: 8, sm: 12 }}>
+                        {paymentMonthSum.map((details) => (
+                            <Grid xs={4} key={details.payment?.id}>
+                                <Card elevation={2}>
+                                    <CardActionArea onClick={() => {handlePaymentSumDetail(details.payment!, details.sum, details.records)}}>
+                                        <CardContent>
+                                            <Typography component='div'>{details.payment?.name}</Typography>
+                                            <Typography variant='h5'>
+                                                ${details.sum || '---'}
+                                            </Typography>
+                                        </CardContent>
+                                    </CardActionArea>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </AccordionDetails>
+            </Accordion>
+
             {typeDetailModal.open && (
                 <TypeSumDetailModal
                     open={typeDetailModal.open}
@@ -184,6 +252,16 @@ export default function SpentRecordPage() {
                     type={typeDetailModal.type!}
                     typeSum={typeDetailModal.typeSum}
                     records={typeDetailModal.records}
+                />
+            )}
+
+            {paymentDetailModal.open && (
+                <PaymentSumDetailModal
+                    open={paymentDetailModal.open}
+                    onClose={() => setPaymentDetailModal({...paymentDetailModal, open: false})}
+                    payment={paymentDetailModal.payment!}
+                    paymentSum={paymentDetailModal.paymentSum}
+                    records={paymentDetailModal.records}
                 />
             )}
 
