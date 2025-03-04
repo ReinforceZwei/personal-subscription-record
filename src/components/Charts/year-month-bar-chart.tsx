@@ -45,16 +45,16 @@ export default function YearMonthBarChart(props: YearMonthBarChartProps) {
             { isFetching ? (
                 <Skeleton variant="rounded" height={400} />
             ) : (
-                <BarChart
+                (<BarChart
                     //dataset={data}
                     xAxis={[
                         { scaleType: 'band', data: xAxisLabels },
                     ]}
                     series={chartSeries}
                     height={400}
-                />
+                />)
                 //<div></div>
             )}
         </>
-    )
+    );
 }

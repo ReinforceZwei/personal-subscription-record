@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { DateTime } from 'luxon';
 import YearPicker from '../components/CustomDatePicker/year-picker';
 import { useState } from 'react';
@@ -22,22 +22,19 @@ export default function RecordChartPage() {
             <Box display='flex' justifyContent='center'>
                 <YearPicker value={selectedYear} onChange={setSelectedYear} />
             </Box>
-
             <Grid container>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <YearMonthBarChart year={selectedYear} />
                 </Grid>
             </Grid>
-
             <Box display='flex' justifyContent='center'>
                 <MonthPicker year={selectedYear} month={selectedMonth} onChange={handleSelectMonth} />
             </Box>
-
             <Grid container>
-                <Grid xs={12}>
+                <Grid size={12}>
                     <MonthPieChart year={selectedYear} month={selectedMonth} />
                 </Grid>
             </Grid>
         </div>
-    )
+    );
 }

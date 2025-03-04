@@ -4,7 +4,7 @@ import {
     DialogContent, DialogTitle, FormControl, IconButton,
     InputAdornment, InputLabel, MenuItem, Select, TextField, 
 } from "@mui/material"
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { Controller, useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
@@ -36,7 +36,7 @@ export default function EditRecordModal(props: EditRecordModalProps) {
     const [updateRecord] = useUpdateRecordMutation()
     const payments = useMemo(() => allPayments ? allPayments.filter(x => x.enabled) : [], [allPayments])
 
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>()
+    const { handleSubmit, reset, setValue, setFocus, control, formState: { isSubmitting } } = useForm<FormValues>()
 
     useEffect(() => {
         if (record) {
@@ -44,13 +44,14 @@ export default function EditRecordModal(props: EditRecordModalProps) {
         }
     }, [record])
 
-    const onSave = (data: FormValues) => {
-        updateRecord({ id: record.id, data }).unwrap().then(() => {
+    const onSave = async (data: FormValues) => {
+        try {
+            await updateRecord({ id: record.id, data }).unwrap()
             setShowThisModal(false)
-        }).catch(error => {
+        } catch (error) {
             console.error(error)
             alert('Fail to update record')
-        })
+        }
     }
 
     return (
@@ -63,13 +64,15 @@ export default function EditRecordModal(props: EditRecordModalProps) {
                     'alignItems': 'flex-start'
                 }
             }}
-            TransitionProps={{
-                onExited: onClose,
+            slotProps={{
+                transition: {
+                    onExited: onClose,
+                }
             }}
             >
             <DialogTitle>
                 <Grid container spacing={1}>
-                    <Grid xs='auto'>
+                    <Grid size='auto'>
                         <RecordTypeChip label={record.expand?.type.name} bg={record.expand?.type.color} />
                     </Grid>
                     <Grid>
@@ -92,7 +95,7 @@ export default function EditRecordModal(props: EditRecordModalProps) {
                 <DialogContent>
                     <Box sx={{ pt: 1 }}>
                         <Grid container spacing={1}>
-                            <Grid xs={6}>
+                            <Grid size={6}>
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                         <TextField
@@ -117,7 +120,7 @@ export default function EditRecordModal(props: EditRecordModalProps) {
                                     control={control}
                                 />
                             </Grid>
-                            <Grid xs={6}>
+                            <Grid size={6}>
                                 <FormControl fullWidth>
                                     <InputLabel>支付方式</InputLabel>
                                     <Controller
@@ -145,7 +148,7 @@ export default function EditRecordModal(props: EditRecordModalProps) {
                                     />
                                 </FormControl>
                             </Grid>
-                            <Grid xs={12}>
+                            <Grid size={12}>
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                         <Autocomplete
@@ -168,7 +171,7 @@ export default function EditRecordModal(props: EditRecordModalProps) {
                                     control={control}
                                 />
                             </Grid>
-                            <Grid xs={12}>
+                            <Grid size={12}>
                                 {/* <TextareaAutosizeElement 
                                     name='description'
                                     label='Description'
@@ -200,9 +203,9 @@ export default function EditRecordModal(props: EditRecordModalProps) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setShowThisModal(false)}>關閉</Button>
-                    <Button type="submit" variant="contained">儲存</Button>
+                    <Button type="submit" variant="contained" loading={isSubmitting}>儲存</Button>
                 </DialogActions>
             </form>
         </Dialog>
-    )
+    );
 }

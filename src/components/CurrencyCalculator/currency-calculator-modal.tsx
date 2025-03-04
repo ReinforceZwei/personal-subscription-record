@@ -4,7 +4,7 @@ import {
     InputAdornment, InputLabel, MenuItem, Select, TextField,
     Card, CardContent, Typography, Tooltip,
 } from "@mui/material"
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { useState, useMemo, useEffect } from "react"
 import { useGetUserSettingsQuery } from "../../redux/userSettingsSlice";
 import { useGetCurrencyRateQuery } from "../../redux/currencySlice"
@@ -80,8 +80,10 @@ export default function CurrencyCalculatorModal(props: CurrencyCalculatorModalPr
                     'alignItems': 'flex-start'
                 }
             }}
-            TransitionProps={{
-                onExited: onClose,
+            slotProps={{
+                transition: {
+                    onExited: () => onClose(),
+                }
             }}
         >
             <DialogTitle>
@@ -94,10 +96,13 @@ export default function CurrencyCalculatorModal(props: CurrencyCalculatorModalPr
                         top: 8,
                     }}><CloseIcon /></IconButton>
             </DialogTitle>
-
             <DialogContent>
                 <Grid container spacing={1} sx={{mt:1}}>
-                    <Grid xs={12} sm={6}>
+                    <Grid
+                        size={{
+                            xs: 12,
+                            sm: 6
+                        }}>
                         <FormControl fullWidth>
                             <InputLabel>由貨幣</InputLabel>
                             <Select
@@ -114,7 +119,11 @@ export default function CurrencyCalculatorModal(props: CurrencyCalculatorModalPr
                         </FormControl>
                     </Grid>
 
-                    <Grid xs={12} sm={6}>
+                    <Grid
+                        size={{
+                            xs: 12,
+                            sm: 6
+                        }}>
                         <TextField
                             value={sourcePrice}
                             onChange={(e) => setSourcePrice(e.target.value)}
@@ -128,13 +137,17 @@ export default function CurrencyCalculatorModal(props: CurrencyCalculatorModalPr
                         />
                     </Grid>
 
-                    <Grid xs={12}>
+                    <Grid size={12}>
                         <Box display='flex' justifyContent='center'>
                             <IconButton onClick={() => swapSource()}><ImportExportIcon /></IconButton>
                         </Box>
                     </Grid>
 
-                    <Grid xs={12} sm={6}>
+                    <Grid
+                        size={{
+                            xs: 12,
+                            sm: 6
+                        }}>
                         <FormControl fullWidth>
                             <InputLabel>轉換到</InputLabel>
                             <Select
@@ -151,7 +164,11 @@ export default function CurrencyCalculatorModal(props: CurrencyCalculatorModalPr
                         </FormControl>
                     </Grid>
 
-                    <Grid xs={12} sm={6}>
+                    <Grid
+                        size={{
+                            xs: 12,
+                            sm: 6
+                        }}>
                         <Box display='flex' alignItems='center' justifyContent='space-between' height='100%'>
                             <Typography variant='h5' sx={{whiteSpace: 'nowrap'}}>{commonCurrency[dest]?.symbol || '$'} {destPrice}</Typography>
                             <Tooltip title='已複製' placement="top" arrow open={copySucessMsg}>
@@ -163,12 +180,11 @@ export default function CurrencyCalculatorModal(props: CurrencyCalculatorModalPr
                     </Grid>
                 </Grid>
             </DialogContent>
-
             {acceptResult && onResult && (
                 <DialogActions>
                     <Button onClick={() => onResult(destPrice)}>確定</Button>
                 </DialogActions>
             )}
         </Dialog>
-    )
+    );
 }

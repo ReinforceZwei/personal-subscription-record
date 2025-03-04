@@ -5,7 +5,7 @@ import {
     ToggleButton,
     ListItemButton
 } from "@mui/material"
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { Controller, useForm } from "react-hook-form"
 import { useEffect, useState } from "react"
@@ -50,8 +50,10 @@ export default function CreatePaymentModal(props: CreatePaymentModalProps) {
                     'alignItems': 'flex-start'
                 }
             }}
-            TransitionProps={{
-                onExited: onClose
+            slotProps={{
+                transition: {
+                    onExited: () => onClose(),
+                }
             }}
         >
             <DialogTitle>
@@ -65,12 +67,11 @@ export default function CreatePaymentModal(props: CreatePaymentModalProps) {
                         top: 8,
                     }}><CloseIcon /></IconButton>
             </DialogTitle>
-
             <form onSubmit={handleSubmit(onSubmit)}>
                 <DialogContent>
                     <Box>
                         <Grid container spacing={1}>
-                            <Grid xs={12}>
+                            <Grid size={12}>
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                         <TextField
@@ -92,7 +93,7 @@ export default function CreatePaymentModal(props: CreatePaymentModalProps) {
                                 />
                             </Grid>
 
-                            <Grid xs={12}>
+                            <Grid size={12}>
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                         <TextField
@@ -125,5 +126,5 @@ export default function CreatePaymentModal(props: CreatePaymentModalProps) {
                 </DialogActions>
             </form>
         </Dialog>
-    )
+    );
 }
