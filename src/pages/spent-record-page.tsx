@@ -84,7 +84,7 @@ export default function SpentRecordPage() {
                 .value()
         }
         return []
-    })
+    }, [records, payments])
 
     const balance = useMemo(() => {
         return budget?.budget ? subtract(budget.budget, monthSum) : null
