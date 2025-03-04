@@ -36,7 +36,7 @@ export default function EditRecordModal(props: EditRecordModalProps) {
     const [updateRecord] = useUpdateRecordMutation()
     const payments = useMemo(() => allPayments ? allPayments.filter(x => x.enabled) : [], [allPayments])
 
-    const { handleSubmit, reset, setValue, setFocus, control } = useForm<FormValues>()
+    const { handleSubmit, reset, setValue, setFocus, control, formState: { isSubmitting } } = useForm<FormValues>()
 
     useEffect(() => {
         if (record) {
@@ -44,13 +44,14 @@ export default function EditRecordModal(props: EditRecordModalProps) {
         }
     }, [record])
 
-    const onSave = (data: FormValues) => {
-        updateRecord({ id: record.id, data }).unwrap().then(() => {
+    const onSave = async (data: FormValues) => {
+        try {
+            await updateRecord({ id: record.id, data }).unwrap()
             setShowThisModal(false)
-        }).catch(error => {
+        } catch (error) {
             console.error(error)
             alert('Fail to update record')
-        })
+        }
     }
 
     return (
@@ -63,8 +64,10 @@ export default function EditRecordModal(props: EditRecordModalProps) {
                     'alignItems': 'flex-start'
                 }
             }}
-            TransitionProps={{
-                onExited: onClose,
+            slotProps={{
+                transition: {
+                    onExited: onClose,
+                }
             }}
             >
             <DialogTitle>
@@ -200,7 +203,7 @@ export default function EditRecordModal(props: EditRecordModalProps) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setShowThisModal(false)}>關閉</Button>
-                    <Button type="submit" variant="contained">儲存</Button>
+                    <Button type="submit" variant="contained" loading={isSubmitting}>儲存</Button>
                 </DialogActions>
             </form>
         </Dialog>

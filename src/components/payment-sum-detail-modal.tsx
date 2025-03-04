@@ -19,7 +19,17 @@ export default function PaymentSumDetailModal(props: PaymentSumDetailModalProps)
     const [internalShow, setInternalShow] = useState(open)
 
     return (
-        <Dialog open={internalShow} onClose={() => setInternalShow(false)} fullWidth={true} maxWidth='sm' TransitionProps={{onExited: () => {onClose()}}}>
+        <Dialog
+            open={internalShow}
+            onClose={() => setInternalShow(false)}
+            fullWidth={true}
+            maxWidth='sm'
+            slotProps={{
+                transition: {
+                    onExited: () => onClose(),
+                }
+            }}
+        >
             <DialogTitle>
                 詳細資料
 

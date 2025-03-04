@@ -85,8 +85,10 @@ export default function CreateRecordModal(props: CreateRecordModalProps) {
                         'alignItems': 'flex-start'
                     }
                 }}
-                TransitionProps={{
-                    onExited: onClose,
+                slotProps={{
+                    transition: {
+                        onExited: () => onClose(),
+                    }
                 }}
                 >
                 <DialogTitle>

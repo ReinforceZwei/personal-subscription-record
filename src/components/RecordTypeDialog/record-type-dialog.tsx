@@ -143,8 +143,10 @@ export default function RecordTypeDialog(props: RecordTypeDialogProps) {
                         'alignItems': 'flex-start'
                     }
                 }}
-                TransitionProps={{
-                    onExited: () => {onClose && onClose()}
+                slotProps={{
+                    transition: {
+                        onExited: () => onClose(),
+                    }
                 }}
             >
                 <DialogTitle>

@@ -50,8 +50,10 @@ export default function CreatePaymentModal(props: CreatePaymentModalProps) {
                     'alignItems': 'flex-start'
                 }
             }}
-            TransitionProps={{
-                onExited: onClose
+            slotProps={{
+                transition: {
+                    onExited: () => onClose(),
+                }
             }}
         >
             <DialogTitle>

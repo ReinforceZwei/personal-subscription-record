@@ -80,8 +80,10 @@ export default function CurrencyCalculatorModal(props: CurrencyCalculatorModalPr
                     'alignItems': 'flex-start'
                 }
             }}
-            TransitionProps={{
-                onExited: onClose,
+            slotProps={{
+                transition: {
+                    onExited: () => onClose(),
+                }
             }}
         >
             <DialogTitle>

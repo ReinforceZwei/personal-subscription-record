@@ -20,7 +20,16 @@ export default function TypeSumDetailModal(props: TypeSumDetailModalProps) {
     const [internalShow, setInternalShow] = useState(open)
 
     return (
-        <Dialog open={internalShow} onClose={() => setInternalShow(false)} fullWidth={true} maxWidth='sm' TransitionProps={{onExited: () => {onClose()}}}>
+        <Dialog
+            open={internalShow}
+            onClose={() => setInternalShow(false)}
+            fullWidth={true} maxWidth='sm'
+            slotProps={{
+                transition: {
+                    onExited: () => onClose(),
+                }
+            }}
+        >
             <DialogTitle>
                 詳細資料
 

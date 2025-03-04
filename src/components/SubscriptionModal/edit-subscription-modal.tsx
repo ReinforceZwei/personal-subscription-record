@@ -80,8 +80,10 @@ export default function EditSubscriptionModal(props: EditSubscriptionModalProps)
         <Dialog
             open={internalShow}
             onClose={() => setInternalShow(false)}
-            TransitionProps={{
-                onExited: () => onClose(),
+            slotProps={{
+                transition: {
+                    onExited: () => onClose(),
+                }
             }}
             fullWidth={true}
             maxWidth='sm'
