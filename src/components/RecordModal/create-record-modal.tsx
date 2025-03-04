@@ -14,7 +14,6 @@ import { useGetPaymentsQuery } from "../../redux/paymentSlice"
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import CurrencyCalculatorModal from "../CurrencyCalculator/currency-calculator-modal"
 import { SpentPreset, SpentType } from "../../services/pocketbase"
-import { LoadingButton } from "@mui/lab"
 
 interface CreateRecordModalProps {
     selectedType: SpentType,
@@ -225,7 +224,7 @@ export default function CreateRecordModal(props: CreateRecordModalProps) {
                         <IconButton onClick={() => setShowCalc(true)}><CurrencyExchangeIcon /></IconButton>
                         <span style={{flex: '1 1'}}></span>
                         <Button onClick={() => setShowThisModal(false)}>關閉</Button>
-                        <LoadingButton type="submit" variant="contained" loading={isSubmitting}>建立</LoadingButton>
+                        <Button type="submit" variant="contained" loading={isSubmitting}>建立</Button>
                     </DialogActions>
                 </form>
             </Dialog>

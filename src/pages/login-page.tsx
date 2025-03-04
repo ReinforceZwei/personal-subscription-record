@@ -3,9 +3,8 @@ import { PocketBaseContext } from "../context"
 import { USER_COL } from "../services/pocketbase"
 import { Navigate, useNavigate } from "react-router-dom"
 import { Alert, Box, Button, ButtonGroup, Container, CssBaseline, Divider, Paper, TextField, Typography } from "@mui/material"
-import LoadingButton from '@mui/lab/LoadingButton'
 import { Controller, useForm } from "react-hook-form"
-import Grid from "@mui/material/Unstable_Grid2"
+import Grid from '@mui/material/Grid2'
 import _ from 'lodash-es'
 import GitHubIcon from '@mui/icons-material/GitHub';
 import AppleIcon from '@mui/icons-material/Apple';
@@ -94,7 +93,7 @@ export default function LoginPage() {
                     
                     <form onSubmit={handleSubmit(handleLogin)}>
                         <Grid container spacing={2}>
-                            <Grid xs={12}>
+                            <Grid size={12}>
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                         <TextField
@@ -113,7 +112,7 @@ export default function LoginPage() {
                                     control={control}
                                 />
                             </Grid>
-                            <Grid xs={12}>
+                            <Grid size={12}>
                                 <Controller
                                     render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                         <TextField
@@ -133,11 +132,11 @@ export default function LoginPage() {
                                     control={control}
                                 />
                             </Grid>
-                            <Grid xs={12} sx={{textAlign: 'center'}}>
-                                <LoadingButton type='submit' variant="outlined" loading={isSubmitting}>登入</LoadingButton>
+                            <Grid size={12} sx={{textAlign: 'center'}}>
+                                <Button type='submit' variant="outlined" loading={isSubmitting}>登入</Button>
                             </Grid>
                             {loginError && (
-                                <Grid xs={12}>
+                                <Grid size={12}>
                                     <Alert severity="error">登入失敗: {loginError}</Alert>
                                 </Grid>
                             )}
