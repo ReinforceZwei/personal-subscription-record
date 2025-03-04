@@ -1,7 +1,7 @@
 import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment, IconButton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useContext, useEffect, useState } from "react";
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { Link, useNavigate } from 'react-router-dom'
 import { PocketBaseContext } from "../../context";
 import { useGetBudgetQuery, useUpdateBudgetMutation } from "../../redux/budgetSlice";
@@ -66,7 +66,7 @@ export default function ConfigBudgetPage() {
         <Box>
             <form onSubmit={handleSubmit(onSave)}>
                 <Grid container spacing={3} columns={{ xs: 6, sm: 12}}>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <FormControl fullWidth>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
@@ -94,7 +94,7 @@ export default function ConfigBudgetPage() {
                         <FormHelperText>每月消費預算，不包括訂閱項目</FormHelperText>
                         </FormControl>
                     </Grid>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <FormControl fullWidth>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
@@ -123,11 +123,15 @@ export default function ConfigBudgetPage() {
                         </FormControl>
                     </Grid>
 
-                    <Grid xs={6} sm={12}>
+                    <Grid
+                        size={{
+                            xs: 6,
+                            sm: 12
+                        }}>
                         <Button type="submit" variant="outlined" disabled={!isModified}>儲存</Button>
                     </Grid>
                 </Grid>
             </form>
         </Box>
-    )
+    );
 }

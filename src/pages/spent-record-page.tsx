@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useMemo, Fragment } from 'react'
 import { DateTime } from 'luxon'
 import { Accordion, AccordionDetails, AccordionSummary, AppBar, Box, Card, CardActionArea, CardActions, CardContent, Chip, Divider, IconButton, InputLabel, List, ListItem, ListItemButton, ListItemText, Paper, Stack, Toolbar, Typography } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { DatePicker } from '@mui/x-date-pickers'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useSelector, useDispatch } from 'react-redux'
@@ -148,7 +148,11 @@ export default function SpentRecordPage() {
     return (
         <Box sx={{mt: 1}}>
             <Grid container spacing={1} columns={{ xs: 8, sm: 12 }} rowSpacing={1}>
-                <Grid xs={8} sm={4}>
+                <Grid
+                    size={{
+                        xs: 8,
+                        sm: 4
+                    }}>
                     <Box display='flex' alignItems='center' justifyContent='center'>
                         <IconButton onClick={onBackClick}><ArrowBackIosNewIcon /></IconButton>
                         <DatePicker
@@ -164,7 +168,7 @@ export default function SpentRecordPage() {
                         <IconButton onClick={onNextClick}><ArrowForwardIosIcon /></IconButton>
                     </Box>
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                     <Card>
                         <CardContent>
                             <Typography>支出</Typography>
@@ -172,7 +176,7 @@ export default function SpentRecordPage() {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                     <Card>
                         <CardContent>
                             <Typography>餘額</Typography>
@@ -186,14 +190,13 @@ export default function SpentRecordPage() {
                 </Grid>
                 
             </Grid>
-
             <Accordion disableGutters sx={{ mt: 1}}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>詳細分類</AccordionSummary>
 
                 <AccordionDetails>
                     <Grid container spacing={1} columns={{ xs: 8, sm: 12 }}>
                         {typeMonthSum.map((details) => (
-                            <Grid xs={4} key={details.type?.id}>
+                            <Grid key={details.type?.id} size={4}>
                                 <Card elevation={2}>
                                     <CardActionArea onClick={() => {handleTypeSumDetail(details.type!, details.sum, details.records)}}>
                                         <CardContent>
@@ -219,14 +222,13 @@ export default function SpentRecordPage() {
                     </Grid>
                 </AccordionDetails>
             </Accordion>
-
             <Accordion disableGutters sx={{ mt: 1}}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>支付方式</AccordionSummary>
 
                 <AccordionDetails>
                     <Grid container spacing={1} columns={{ xs: 8, sm: 12 }}>
                         {paymentMonthSum.map((details) => (
-                            <Grid xs={4} key={details.payment?.id}>
+                            <Grid key={details.payment?.id} size={4}>
                                 <Card elevation={2}>
                                     <CardActionArea onClick={() => {handlePaymentSumDetail(details.payment!, details.sum, details.records)}}>
                                         <CardContent>
@@ -242,7 +244,6 @@ export default function SpentRecordPage() {
                     </Grid>
                 </AccordionDetails>
             </Accordion>
-
             {typeDetailModal.open && (
                 <TypeSumDetailModal
                     open={typeDetailModal.open}
@@ -252,7 +253,6 @@ export default function SpentRecordPage() {
                     records={typeDetailModal.records}
                 />
             )}
-
             {paymentDetailModal.open && (
                 <PaymentSumDetailModal
                     open={paymentDetailModal.open}
@@ -262,8 +262,7 @@ export default function SpentRecordPage() {
                     records={paymentDetailModal.records}
                 />
             )}
-
             <SpentRecordList records={records!} />
         </Box>
-    )
+    );
 }

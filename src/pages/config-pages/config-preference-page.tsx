@@ -1,7 +1,7 @@
 import { Box, Button, Chip, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment, SelectChangeEvent } from "@mui/material";
 import { useGetUserSettingsQuery, useUpdateUserSettingsMutation } from "../../redux/userSettingsSlice";
 import { useContext, useEffect, useMemo, useState } from "react";
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { Link, useNavigate } from 'react-router-dom'
 import { removePbDefaultField } from "../../vendors/pocketbaseUtils"
 import ConfirmDeleteDialog from "../../components/confirm-delete-dialog";
@@ -94,12 +94,11 @@ export default function ConfigPreferencePage() {
 
     return (
         <Box>
-            
             <Box>
                 <Grid container spacing={3} columns={{ xs: 6, sm: 12}}>
                     {(userSettings == null || !userSettings.id) ? (<Loading />) : (
                     <>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <FormControl fullWidth>
                             <InputLabel>起始頁面</InputLabel>
                             <Select
@@ -116,7 +115,7 @@ export default function ConfigPreferencePage() {
                         </FormControl>
                     </Grid>
 
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <FormControl fullWidth>
                             <InputLabel>顏色外觀</InputLabel>
                             <Select
@@ -133,7 +132,7 @@ export default function ConfigPreferencePage() {
                         </FormControl>
                     </Grid>
 
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <FormControl fullWidth>
                             <InputLabel>喜好貨幣</InputLabel>
                             <Select
@@ -160,7 +159,7 @@ export default function ConfigPreferencePage() {
                     </Grid>
                     </>
                     )}
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Button variant="outlined" fullWidth onClick={() => handleConfirmLogout()}>登出</Button>
                         {showConfirmLogout && 
                             <ConfirmDeleteDialog
@@ -175,7 +174,6 @@ export default function ConfigPreferencePage() {
                     </Grid>
                 </Grid>
             </Box>
-            
         </Box>
-    )
+    );
 }

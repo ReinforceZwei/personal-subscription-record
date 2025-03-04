@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { Box, Button, Card, CardContent, List, ListItemButton, ListItemText, Typography, IconButton, Divider } from "@mui/material";
 import { PieChart } from '@mui/x-charts/PieChart'
 import AddIcon from '@mui/icons-material/Add'
@@ -87,7 +87,7 @@ export default function SubscriptionRecordPage() {
         <Box sx={{mb: 10, mt: 1}}>
             <Grid container columns={{ xs: 8, sm: 12 }} spacing={1}>
                 
-                <Grid xs={4}>
+                <Grid size={4}>
                     <Card>
                         <CardContent>
                             <Typography>總金額（月）</Typography>
@@ -96,7 +96,7 @@ export default function SubscriptionRecordPage() {
                     </Card>
                 </Grid>
 
-                <Grid xs={4}>
+                <Grid size={4}>
                     <Card>
                         <CardContent>
                             <Typography>餘額</Typography>
@@ -109,7 +109,7 @@ export default function SubscriptionRecordPage() {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid xs={4}>
+                <Grid size={4}>
                     <Card>
                         <CardContent>
                             <Typography>預算</Typography>
@@ -118,7 +118,7 @@ export default function SubscriptionRecordPage() {
                     </Card>
                 </Grid>
                 { budget && (
-                <Grid xs={4} height='100%'>
+                <Grid height='100%' size={4}>
                     <PieChart
                         series={[{
                             data: [
@@ -145,7 +145,6 @@ export default function SubscriptionRecordPage() {
                 ))}
                 </List>
             </Box>
-
             { (inactiveSubscriptions && !!inactiveSubscriptions.length) && (
                 <Box>
                     <Divider>已取消</Divider>
@@ -157,7 +156,6 @@ export default function SubscriptionRecordPage() {
                     )) }
                 </Box>
             ) }
-
             { editModal.open && (
                 <EditSubscriptionModal
                     open={editModal.open}
@@ -170,15 +168,13 @@ export default function SubscriptionRecordPage() {
                     onDelete={handleDelete}
                 />
             ) }
-
             { confirmDeleteModal && (
                 <ConfirmDeleteDialog open={confirmDeleteModal} onClose={() => setConfirmDeleteModal(false)} onConfirm={() => handleConfirmDelete()} />
             )}
-
             <HelpMessageDialog open={showHelp} onClose={() => setShowHelp(false)}>
                 <Typography variant="h6" color='common.white'>訂閱記錄</Typography>
                 <Typography variant="body1">記錄訂閱中的項目。訂閱支出不會記錄到消費記錄。</Typography>
             </HelpMessageDialog>
         </Box>
-    )
+    );
 }

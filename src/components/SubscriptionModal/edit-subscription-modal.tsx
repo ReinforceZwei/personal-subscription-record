@@ -4,7 +4,7 @@ import {
     InputAdornment, Select, MenuItem, TextField,
     FormControlLabel, Switch,
 } from "@mui/material"
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
@@ -101,11 +101,10 @@ export default function EditSubscriptionModal(props: EditSubscriptionModalProps)
                         top: 8,
                     }}><CloseIcon /></IconButton>
             </DialogTitle>
-            
             <form onSubmit={handleSubmit((mode === 'edit' ? onUpdate : onCreate))}>
             <DialogContent>
                 <Grid container spacing={1}>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <TextField
@@ -126,7 +125,7 @@ export default function EditSubscriptionModal(props: EditSubscriptionModalProps)
                             control={control}
                         />
                     </Grid>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <TextField
@@ -151,7 +150,7 @@ export default function EditSubscriptionModal(props: EditSubscriptionModalProps)
                         />
                     </Grid>
                     
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <FormControl fullWidth>
                             <InputLabel>支付方式</InputLabel>
                             <Controller
@@ -177,7 +176,7 @@ export default function EditSubscriptionModal(props: EditSubscriptionModalProps)
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <TextField
@@ -200,7 +199,7 @@ export default function EditSubscriptionModal(props: EditSubscriptionModalProps)
                             control={control}
                         />
                     </Grid>
-                    <Grid xs={12}>
+                    <Grid size={12}>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <TextField
@@ -223,7 +222,7 @@ export default function EditSubscriptionModal(props: EditSubscriptionModalProps)
                         />
                     </Grid>
                     
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <FormControlLabel
@@ -255,5 +254,5 @@ export default function EditSubscriptionModal(props: EditSubscriptionModalProps)
             </DialogActions>
             </form>
         </Dialog>
-    )
+    );
 }

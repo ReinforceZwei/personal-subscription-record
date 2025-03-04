@@ -1,5 +1,5 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, FormControl, InputLabel, InputAdornment, Select, MenuItem, TextField } from "@mui/material"
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useMemo, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
@@ -91,11 +91,10 @@ export default function EditPresetModal(props: EditPresetModalProps) {
                         top: 8,
                     }}><CloseIcon /></IconButton>
             </DialogTitle>
-            
             <form onSubmit={handleSubmit((mode === 'edit' ? onUpdate : onCreate))}>
             <DialogContent>
                 <Grid container spacing={1}>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <FormControl fullWidth>
                             <InputLabel>類別</InputLabel>
                             <Controller
@@ -121,7 +120,7 @@ export default function EditPresetModal(props: EditPresetModalProps) {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <TextField
@@ -141,7 +140,7 @@ export default function EditPresetModal(props: EditPresetModalProps) {
                             control={control}
                         />
                     </Grid>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <TextField
@@ -166,7 +165,7 @@ export default function EditPresetModal(props: EditPresetModalProps) {
                         />
                     </Grid>
                     
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <FormControl fullWidth>
                             <InputLabel>支付方式</InputLabel>
                             <Controller
@@ -192,7 +191,7 @@ export default function EditPresetModal(props: EditPresetModalProps) {
                             />
                         </FormControl>
                     </Grid>
-                    <Grid xs={6}>
+                    <Grid size={6}>
                         <Controller
                             render={({ field: { onBlur, onChange, ref, value, name, disabled } }) => (
                                 <TextField
@@ -226,5 +225,5 @@ export default function EditPresetModal(props: EditPresetModalProps) {
             </DialogActions>
             </form>
         </Dialog>
-    )
+    );
 }
