@@ -1,10 +1,8 @@
-import { Box, Button, Chip, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment, SelectChangeEvent } from "@mui/material";
+import { Box, Chip, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, InputAdornment, SelectChangeEvent } from "@mui/material";
 import { useGetUserSettingsQuery, useUpdateUserSettingsMutation } from "../../redux/userSettingsSlice";
 import { useContext, useEffect, useMemo, useState } from "react";
 import Grid from '@mui/material/Grid2'
-import { Link, useNavigate } from 'react-router-dom'
 import { removePbDefaultField } from "../../vendors/pocketbaseUtils"
-import ConfirmDeleteDialog from "../../components/confirm-delete-dialog";
 import commonCurrency from "../../commonCurrency"
 
 const defaultPageOption = [
@@ -31,12 +29,10 @@ function Loading() {
 }
 
 export default function ConfigPreferencePage() {
-    const navigate = useNavigate()
 
     const { data: userSettings } = useGetUserSettingsQuery()
     const [updateUserSettings] = useUpdateUserSettingsMutation()
 
-    const [showConfirmLogout, setShowConfirmLogout] = useState(false)
     const [selectFavCurrency, setSelectFavCurrency] = useState<string[]>([])
 
     const currencyList = useMemo(() => {
@@ -75,14 +71,6 @@ export default function ConfigPreferencePage() {
             }
             updateUserSettings({ id: userSettings!.id, data })
         }
-    }
-
-    const handleConfirmLogout = () => {
-        setShowConfirmLogout(true)
-    }
-
-    const logout = () => {
-        navigate('/logout')
     }
 
     useEffect(() => {
@@ -159,19 +147,6 @@ export default function ConfigPreferencePage() {
                     </Grid>
                     </>
                     )}
-                    <Grid size={6}>
-                        <Button variant="outlined" fullWidth onClick={() => handleConfirmLogout()}>登出</Button>
-                        {showConfirmLogout && 
-                            <ConfirmDeleteDialog
-                                open={showConfirmLogout}
-                                title="確定要登出嗎？"
-                                confirmActionText="登出"
-                                cancelActionText="取消"
-                                onConfirm={() => logout()}
-                                onClose={() => setShowConfirmLogout(false)}
-                            />
-                        }
-                    </Grid>
                 </Grid>
             </Box>
         </Box>
