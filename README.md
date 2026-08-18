@@ -8,7 +8,12 @@ The app is mobile first, focusing on record daily spending at instant.
 
 ### Pre-built Docker Image
 
-The Docker image is bundled with Pocketbase. 
+The Docker image bundles the built frontend and the PocketBase-based backend server
+(see `server/`).
+
+Images are published to GHCR from git tags (`v*`, e.g. `v1.0.0`) with semver tags
+(`ssrs:1.0.0`, `ssrs:1.0`, `ssrs:1`) plus `latest`. Each release also gets a GitHub
+Release with changelog.
 
 ```bash
 docker run -p 8083:80 -d ghcr.io/reinforcezwei/ssrs:latest
