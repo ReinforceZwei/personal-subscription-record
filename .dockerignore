@@ -1,4 +1,6 @@
+.git
+.github
 node_modules
 dist
 *.local
-pb_data
+**/pb_data
