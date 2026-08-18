@@ -52,10 +52,10 @@ WORKDIR /app
 COPY --from=server-builder /app/ssrs-server ./server
 COPY --from=client-builder /app/dist ./pb_public
 
-VOLUME /app/pb_data
+VOLUME /pb_data
 
 # Overridable at runtime, e.g. -e PB_PORT=8090
 ENV PB_PORT=80
 EXPOSE 80
 
-ENTRYPOINT ["/bin/sh", "-c", "exec /app/server serve --http=0.0.0.0:${PB_PORT} --dir=/pb_data --publicDir=/pb_public"]
+ENTRYPOINT ["/bin/sh", "-c", "exec /app/server serve --http=0.0.0.0:${PB_PORT} --dir=/pb_data --publicDir=/app/pb_public"]
