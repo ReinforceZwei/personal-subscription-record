@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useEffect, useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -19,7 +20,18 @@ import { isTokenExpired } from 'pocketbase';
 import pb from './services/pocketbase'
 import { themeOptions } from './themes';
 import { useGetUserSettingsQuery } from "./redux/userSettingsSlice";
+import { selectLastConfigPage } from './redux/routingSlice';
 import { PocketBaseContext, ThemeContext } from './context'
+
+function ConfigIndexRedirect() {
+    const isMobileScreen = useMediaQuery('(max-width: 600px)')
+    const lastPage = useSelector(selectLastConfigPage)
+    // On mobile, bare /config is the settings menu page, handled by MobileLayout
+    if (isMobileScreen) {
+        return null
+    }
+    return <Navigate to={lastPage || 'preference'} replace />
+}
 
 import PageTopProgressBar from './components/page-top-progress-bar'
 const Root = lazy(() => import('./routers/root'))
@@ -57,7 +69,7 @@ export default function App() {
                     <Route path="recordChart" element={<Suspense fallback={<PageTopProgressBar />}><RecordChartPage /></Suspense>} />
 
                     <Route path="config" element={<Suspense fallback={<PageTopProgressBar />}><ConfigPage /></Suspense>}>
-                        {/* <Route index element={<Navigate to="preference" replace />} /> */}
+                        <Route index element={<ConfigIndexRedirect />} />
 
                         <Route path="preference" element={<Suspense fallback={<PageTopProgressBar />}><ConfigPreferencePage /></Suspense>} />
                         <Route path="budget" element={<Suspense fallback={<PageTopProgressBar />}><ConfigBudgetPage /></Suspense>} />

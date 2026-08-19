@@ -2,7 +2,9 @@ import { Box, Button, ButtonGroup, List, ListItem, ListItemButton, ListItemIcon,
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ConfigPages } from "../../config-page";
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppDispatch } from "../../../hooks";
+import { setLastConfigPage } from "../../../redux/routingSlice";
 import ConfirmDeleteDialog from "../../../components/confirm-delete-dialog";
 
 export const ConfigPageTitles: { [key in 'type' | 'payment' | 'preference' | 'budget' | 'preset' | 'about']: string } = {
@@ -17,11 +19,19 @@ export const ConfigPageTitles: { [key in 'type' | 'payment' | 'preference' | 'bu
 export default function ConfigList() {
     const { pathname } = useLocation()
     const navigate = useNavigate()
+    const dispatch = useAppDispatch()
 
     const [showConfirmLogout, setShowConfirmLogout] = useState(false)
     
     const isIndex = pathname === '/config'
     const pageName = pathname.split('/').pop()
+
+    // Remember last visited config sub-page
+    useEffect(() => {
+        if (!isIndex && pageName) {
+            dispatch(setLastConfigPage(pageName))
+        }
+    }, [isIndex, pageName, dispatch])
 
     const handleConfirmLogout = () => {
         setShowConfirmLogout(true)
