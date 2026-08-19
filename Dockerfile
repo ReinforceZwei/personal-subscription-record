@@ -76,4 +76,4 @@ VOLUME /pb_data
 ENV PB_PORT=80
 EXPOSE 80
 
-ENTRYPOINT ["/bin/sh", "-c", "exec /app/server serve --http=0.0.0.0:${PB_PORT} --dir=/pb_data --publicDir=/app/pb_public"]
+ENTRYPOINT ["/bin/sh", "-c", "exec /app/server serve --http=0.0.0.0:${PB_PORT} --dir=/pb_data"]
