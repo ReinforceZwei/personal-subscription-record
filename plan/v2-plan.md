@@ -42,6 +42,7 @@ happiest case: with preset (template), only takes two tap to create a record
   - build dashboard
 - utility tools, easy to add new
   - e.g. Interest Calculator
+- automation rule
 
 ## Technical facing
 
