@@ -53,8 +53,7 @@ Replaces existing `spentRecords`.
 | name               | text                       | No       | free text; could be used for different item names from same payee                                                    |
 | description        | text                       | No       |                                                                                                                      |
 | recurringPlanId    | relation -> recurringPlans | No       | link the transaction to the recurring plan that generated it                                                         |
-| attachments        | file (multiple)            | No       | receipt photos / supporting documents (see note below)                                                                |
-
+| attachments        | file (multiple)            | No       | receipt photos / supporting documents (see note below)                                                                || tagIds             | relation -> tags (multiple)| No       | orthogonal labels for cross-category analytics (e.g. a trip — see `tags` below)                                       |
 Attachments use PocketBase's native file field (stored on disk/S3, served via `/api/files/`), so no separate collection is needed — no attachment metadata worth querying yet. Suggested limits: images + PDF only, ~10 MB each, max 5 per transaction. Client should compress receipt photos before upload. Deleting a transaction deletes its files; files are **not** shared between transactions (e.g. both transfer legs attach their own copy if needed).
 
 Transfer example (move $100 from bank to e-wallet):
@@ -66,6 +65,20 @@ Group transaction example (I pay $60 dinner, friend repays $20):
 
 - txn A: `type: expense`, `amount: 6000`, `categoryId: dining`, `payeeId: restaurant`, `transactionGroupId: g2`
 - txn B: `type: income`, `amount: 2000`, `payeeId: friend`, `transactionGroupId: g2`
+
+#### tags
+
+New in v2. Many-to-many labels orthogonal to categories — categories answer "what kind of spending", tags answer "which event/context". Canonical use case: a trip — tag every expense with "Japan 2026" regardless of category, then total trip cost = sum by tag, still breakable down by category.
+
+
+| Field       | Data Type         | Required | Description                          |
+| ----------- | ----------------- | -------- | :----------------------------------- |
+| userId      | relation -> users | Yes      |                                      |
+| name        | text              | Yes      | tag name (unique per user)           |
+| color       | text              | No       | display color                        |
+| enabled     | bool              | Yes      | soft delete                          |
+
+Tags participate in analytics filtering and budget rules (a "trip budget" = budget with `tagIds: [japan-2026]`) the same way categories do.
 
 #### categories
 
