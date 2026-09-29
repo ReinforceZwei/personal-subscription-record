@@ -54,6 +54,7 @@ Replaces existing `spentRecords`.
 | description        | text                       | No       |                                                                                                                      |
 | recurringPlanId    | relation -> recurringPlans | No       | link the transaction to the recurring plan that generated it                                                         |
 | attachments        | file (multiple)            | No       | receipt photos / supporting documents (see note below)                                                                || tagIds             | relation -> tags (multiple)| No       | orthogonal labels for cross-category analytics (e.g. a trip — see `tags` below)                                       |
+
 Attachments use PocketBase's native file field (stored on disk/S3, served via `/api/files/`), so no separate collection is needed — no attachment metadata worth querying yet. Suggested limits: images + PDF only, ~10 MB each, max 5 per transaction. Client should compress receipt photos before upload. Deleting a transaction deletes its files; files are **not** shared between transactions (e.g. both transfer legs attach their own copy if needed).
 
 Transfer example (move $100 from bank to e-wallet):
@@ -118,19 +119,21 @@ Integration with existing `spentRecordNames`: that collection only exists to pow
 Replaces existing `spentPresets`. Renamed because it can now also template income.
 
 
-| Field       | Data Type              | Required | Description                                                   |
-| ----------- | ---------------------- | -------- | :------------------------------------------------------------ |
-| userId      | relation -> users      | Yes      |                                                               |
-| name        | text                   | Yes      | template display name (button label in quick-create)          |
-| description | text                   | No       | prefill description                                           |
-| type        | select: expense/income | Yes      | transaction type to create                                    |
-| amount      | integer                | No       | prefill amount, minor units (empty = prompt at creation time) |
-| currency    | text                   | No       | prefill currency (defaults to account currency)               |
-| accountId   | relation -> accounts   | No       | prefill account                                               |
-| categoryId  | relation -> categories | No       | prefill category                                              |
-| payeeId     | relation -> payees     | No       | prefill payee                                                 |
-| weight      | integer                | No       | display order on quick-create page                            |
-| enabled     | bool                   | Yes      | soft delete                                                   |
+| Field                  | Data Type                   | Required | Description                                                   |
+| ---------------------- | --------------------------- | -------- | :------------------------------------------------------------ |
+| userId                 | relation -> users           | Yes      |                                                               |
+| name                   | text                        | Yes      | template display name (button label in quick-create)          |
+| transactionName        | text                        | No       | prefill transaction `name`                                    |
+| transactionDescription | text                        | No       | prefill transaction `description`                             |
+| type                   | select: expense/income      | Yes      | transaction type to create                                    |
+| amount                 | integer                     | No       | prefill amount, minor units (empty = prompt at creation time) |
+| currency               | text                        | No       | prefill currency (defaults to account currency)               |
+| accountId              | relation -> accounts        | No       | prefill account                                               |
+| categoryId             | relation -> categories      | No       | prefill category                                              |
+| payeeId                | relation -> payees          | No       | prefill payee                                                 |
+| tagIds                 | relation -> tags (multiple) | No       | prefill tags                                                  |
+| weight                 | integer                     | No       | display order on quick-create page                            |
+| enabled                | bool                        | Yes      | soft delete                                                   |
 
 Core value: with a fully prefilled template, creating a record is still two taps.
 
@@ -139,22 +142,25 @@ Core value: with a fully prefilled template, creating a record is still two taps
 Generalized from existing `subscriptionPlans`: a **generator of transactions** for anything recurring — bills/subscriptions (expense) and salary (income). A "subscription" is just a recurring expense plan.
 
 
-| Field        | Data Type              | Required | Description                                                                           |
-| ------------ | ---------------------- | -------- | :------------------------------------------------------------------------------------ |
-| userId       | relation -> users      | Yes      |                                                                                       |
-| name         | text                   | Yes      | plan display name (e.g. "Netflix", "Salary")                                          |
-| description  | text                   | No       |                                                                                       |
-| type         | select: expense/income | Yes      | type of the generated transaction                                                     |
-| amount       | integer                | Yes      | amount, minor units                                                                   |
-| currency     | text                   | Yes      | currency                                                                              |
-| accountId    | relation -> accounts   | Yes      | account the money leaves / arrives in                                                 |
-| categoryId   | relation -> categories | Yes      | category for generated transactions (e.g. "Salary" for income plans)                  |
-| payeeId      | relation -> payees     | No       | merchant / employer                                                                   |
-| rrule        | text                   | Yes      | recurrence rule (RFC 5545 rrule string, e.g.`FREQ=MONTHLY;BYMONTHDAY=25`)             |
-| nextDueDate  | date                   | Yes      | next occurrence date; computed by iterating`rrule` from the last occurrence           |
-| autoCreate   | bool                   | Yes      | if true, cron materializes the transaction automatically; if false, remind to confirm |
-| remindBefore | integer                | No       | days before due date to surface a reminder                                            |
-| enabled      | bool                   | Yes      | soft delete / pause                                                                   |
+| Field                  | Data Type                   | Required | Description                                                                           |
+| ---------------------- | --------------------------- | -------- | :------------------------------------------------------------------------------------ |
+| userId                 | relation -> users           | Yes      |                                                                                       |
+| name                   | text                        | Yes      | plan display name (e.g. "Netflix", "Salary")                                          |
+| description            | text                        | No       | plan notes; not copied to generated transactions                                      |
+| transactionName        | text                        | No       | prefill `name` on generated transactions (e.g. "Netflix subscription")                |
+| transactionDescription | text                        | No       | prefill `description` on generated transactions                                       |
+| type                   | select: expense/income      | Yes      | type of the generated transaction                                                     |
+| amount                 | integer                     | Yes      | amount, minor units                                                                   |
+| currency               | text                        | Yes      | currency                                                                              |
+| accountId              | relation -> accounts        | Yes      | account the money leaves / arrives in                                                 |
+| categoryId             | relation -> categories      | Yes      | category for generated transactions (e.g. "Salary" for income plans)                  |
+| payeeId                | relation -> payees          | No       | merchant / employer                                                                   |
+| tagIds                 | relation -> tags (multiple) | No       | tags applied to generated transactions (e.g. a subscription group)                    |
+| rrule                  | text                        | Yes      | recurrence rule (RFC 5545 rrule string, e.g.`FREQ=MONTHLY;BYMONTHDAY=25`)             |
+| nextDueDate            | date                        | Yes      | next occurrence date; computed by iterating`rrule` from the last occurrence           |
+| autoCreate             | bool                        | Yes      | if true, cron materializes the transaction automatically; if false, remind to confirm |
+| remindBefore           | integer                     | No       | days before due date to surface a reminder                                            |
+| enabled                | bool                        | Yes      | soft delete / pause                                                                   |
 
 `rrule` replaces a fixed interval select — RFC 5545 covers every realistic cadence (monthly, quarterly, every 4 weeks, 15th and last day of month, etc.). The server parses it with a Go rrule library to compute the next occurrence; the client only needs a friendly preset picker (monthly / yearly / every N weeks / custom) that emits an rrule string, so users never see raw rrule syntax.
 
@@ -179,7 +185,7 @@ Amount is stored in original transaction currency (`amount` + `currency`). When 
 
 ## 4. Recurring plans as generators
 
-`recurringPlans` is a template collection. A PocketBase cron hook materializes upcoming occurrences (`nextDueDate <= today` and `autoCreate`) into real `transactions` (with `recurringPlanId` set), then advances `nextDueDate` by iterating the plan's `rrule`. Reminders surface non-auto plans via `remindBefore`; confirming a reminder lets the user adjust the actual amount/date before the transaction is created.
+`recurringPlans` is a template collection. A PocketBase cron hook materializes upcoming occurrences (`nextDueDate <= today` and `autoCreate`) into real `transactions` (with `recurringPlanId` set), then advances `nextDueDate` by iterating the plan's `rrule`. Each generated transaction copies `transactionName` / `transactionDescription` / `tagIds` from the plan (falling back to the plan `name` when the name is empty), so generated rows read like hand-entered ones. Reminders surface non-auto plans via `remindBefore`; confirming a reminder lets the user adjust the actual amount/date before the transaction is created.
 
 No balance tracking is required for this to be meaningful — analytics aggregate income/expense transactions over periods; recurring income rows feed the same income sums.
 
@@ -189,7 +195,7 @@ What budget mean: aggregation of specific transactions within a specific timefra
 
 Budget = `{ rules, period, amount }` as a standalone collection; progress computed from `transactions`
 
-`rules` for qualifying transactions to aggregate; `period` defines the timeframe; `amount` is the expense limit
+`rules` for qualifying transactions to aggregate (categories, tags, payees, accounts — AND across dimensions, OR within each list); `period` defines the timeframe; `amount` is the expense limit
 
 #### budgets
 
@@ -203,11 +209,14 @@ Budget = `{ rules, period, amount }` as a standalone collection; progress comput
 | period      | select: weekly/monthly/yearly     | Yes      | evaluation window                                                                       |
 | startDate   | date                              | Yes      | anchor aligning the window (e.g. startDate = 25th → monthly window runs 25th to 24th)  |
 | categoryIds | relation -> categories (multiple) | No       | only these categories count; empty = all expense categories                             |
+| tagIds      | relation -> tags (multiple)       | No       | further restrict to these tags; empty = any tag                                         |
 | payeeIds    | relation -> payees (multiple)     | No       | further restrict to these payees; empty = any payee                                     |
 | accountIds  | relation -> accounts (multiple)   | No       | further restrict to these accounts; empty = any account                                 |
 | enabled     | bool                              | Yes      | soft delete / pause                                                                     |
 
-Rule semantics: **AND across dimensions, OR within a list** — e.g. `{ categoryIds: [dining, groceries] }` = dining OR groceries; `{ categoryIds: [dining], accountIds: [cash] }` = dining paid by cash. `type = expense` is always implied.
+Rule semantics: **AND across dimensions, OR within a list** — e.g. `{ categoryIds: [dining, groceries] }` = dining OR groceries; `{ categoryIds: [dining], accountIds: [cash] }` = dining paid by cash; `{ tagIds: [japan-2026] }` = only transactions tagged "Japan 2026". `type = expense` is always implied.
+
+Tag rules match on **any** of the tags (`tagIds` OR within the list, AND against the other dimensions). A transaction with no tags never matches a budget that lists `tagIds` — a "trip budget" only counts what you actually tagged as part of the trip.
 
 A JSON rule engine (arbitrary field conditions, negation, nested logic) is **deliberately deferred** — multi-relations cover realistic personal budgets; revisit only if a concrete need appears.
 
