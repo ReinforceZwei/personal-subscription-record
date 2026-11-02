@@ -4,6 +4,11 @@ PocketBase-based backend written in Go. Replaces the PocketBase binary + JS migr
 with a proper backend server that embeds PocketBase as a framework, following the same
 structure as [anime-list-next/server](https://github.com/ReinforceZwei/anime-list-next/tree/main/server).
 
+## Requirements
+
+- Go 1.27+ — the server embeds PocketBase v0.41+ as a library, so the toolchain
+  requirement follows PocketBase's own.
+
 ## Setup & Run
 
 ```sh

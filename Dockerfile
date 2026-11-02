@@ -23,7 +23,7 @@ ENV VITE_COMMIT_HASH=${COMMIT}
 RUN npm run build
 
 # ── Server build ─────────────────────────────────────────────────────────────
-FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS server-builder
+FROM --platform=$BUILDPLATFORM golang:1.27-alpine AS server-builder
 
 ARG TARGETOS
 ARG TARGETARCH
